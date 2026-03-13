@@ -17,9 +17,9 @@ export default function CouponsPage() {
   const [mine, setMine] = useState<UserCoupon[]>([])
 
   useEffect(() => {
-    listAvailableCoupons().then(setAvailable).catch(() => {})
+    listAvailableCoupons().then((v) => setAvailable(v ?? [])).catch(() => {})
     if (isLoggedIn) {
-      listMyCoupons().then(setMine).catch(() => {})
+      listMyCoupons().then((v) => setMine(v ?? [])).catch(() => {})
     }
   }, [isLoggedIn])
 
@@ -34,7 +34,7 @@ export default function CouponsPage() {
       setAvailable((prev) =>
         prev.map((c) => (c.id === id ? { ...c, remaining: c.remaining - 1 } : c))
       )
-      listMyCoupons().then(setMine).catch(() => {})
+      listMyCoupons().then((v) => setMine(v ?? [])).catch(() => {})
     } catch (e: unknown) {
       Toast.show((e as Error).message || '领取失败')
     }

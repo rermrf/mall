@@ -53,7 +53,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/me',
-        element: <AuthGuard><Lazy><UserPage /></Lazy></AuthGuard>,
+        element: <Lazy><UserPage /></Lazy>,
       },
     ],
   },

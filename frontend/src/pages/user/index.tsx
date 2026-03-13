@@ -29,10 +29,10 @@ export default function UserPage() {
       } catch {
         // ignore network errors during logout
       }
+      navigate('/', { replace: true })
       clearAuth()
       setProfile(null)
       Toast.show('已退出登录')
-      navigate('/', { replace: true })
     }
   }
 

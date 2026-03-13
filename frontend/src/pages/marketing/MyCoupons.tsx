@@ -24,7 +24,7 @@ export default function MyCouponsPage() {
 
   useEffect(() => {
     const status = activeTab === '0' ? undefined : Number(activeTab)
-    listMyCoupons(status).then(setCoupons).catch(() => setCoupons([]))
+    listMyCoupons(status).then((v) => setCoupons(v ?? [])).catch(() => setCoupons([]))
   }, [activeTab])
 
   return (

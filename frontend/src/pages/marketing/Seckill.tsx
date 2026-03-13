@@ -110,7 +110,7 @@ export default function SeckillPage() {
   const [activities, setActivities] = useState<SeckillActivity[]>([])
 
   useEffect(() => {
-    listSeckillActivities().then(setActivities).catch(() => {})
+    listSeckillActivities().then((v) => setActivities(v ?? [])).catch(() => {})
   }, [])
 
   return (

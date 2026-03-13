@@ -20,9 +20,9 @@ export default function SearchPage() {
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   useEffect(() => {
-    getHotWords().then(setHotWords).catch(() => {})
+    getHotWords().then((v) => setHotWords(v ?? [])).catch(() => {})
     if (isLoggedIn) {
-      getSearchHistory(20).then(setHistory).catch(() => {})
+      getSearchHistory(20).then((v) => setHistory(v ?? [])).catch(() => {})
     }
   }, [isLoggedIn])
 
@@ -39,7 +39,7 @@ export default function SearchPage() {
     setPage(pageNum)
     setSearched(true)
     if (isLoggedIn) {
-      getSearchHistory(20).then(setHistory).catch(() => {})
+      getSearchHistory(20).then((v) => setHistory(v ?? [])).catch(() => {})
     }
   }, [isLoggedIn])
 
