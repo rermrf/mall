@@ -37,7 +37,7 @@ type AddCartItemReq struct {
 }
 
 func (h *CartHandler) AddItem(ctx *gin.Context, req AddCartItemReq) (ginx.Result, error) {
-	uid, _ := ctx.Get("user_id")
+	uid, _ := ctx.Get("uid")
 	tenantId, _ := ctx.Get("tenant_id")
 	_, err := h.cartClient.AddItem(ctx.Request.Context(), &cartv1.AddItemRequest{
 		UserId:    uid.(int64),
@@ -59,7 +59,7 @@ type UpdateCartItemReq struct {
 }
 
 func (h *CartHandler) UpdateItem(ctx *gin.Context, req UpdateCartItemReq) (ginx.Result, error) {
-	uid, _ := ctx.Get("user_id")
+	uid, _ := ctx.Get("uid")
 	skuIdStr := ctx.Param("skuId")
 	skuId, err := strconv.ParseInt(skuIdStr, 10, 64)
 	if err != nil {
@@ -79,7 +79,7 @@ func (h *CartHandler) UpdateItem(ctx *gin.Context, req UpdateCartItemReq) (ginx.
 }
 
 func (h *CartHandler) RemoveItem(ctx *gin.Context) {
-	uid, _ := ctx.Get("user_id")
+	uid, _ := ctx.Get("uid")
 	skuIdStr := ctx.Param("skuId")
 	skuId, err := strconv.ParseInt(skuIdStr, 10, 64)
 	if err != nil {
@@ -112,7 +112,7 @@ type CartItemVO struct {
 }
 
 func (h *CartHandler) GetCart(ctx *gin.Context) {
-	uid, _ := ctx.Get("user_id")
+	uid, _ := ctx.Get("uid")
 	// 1. 获取购物车基础数据
 	cartResp, err := h.cartClient.GetCart(ctx.Request.Context(), &cartv1.GetCartRequest{
 		UserId: uid.(int64),
@@ -187,7 +187,7 @@ func (h *CartHandler) GetCart(ctx *gin.Context) {
 }
 
 func (h *CartHandler) ClearCart(ctx *gin.Context) {
-	uid, _ := ctx.Get("user_id")
+	uid, _ := ctx.Get("uid")
 	_, err := h.cartClient.ClearCart(ctx.Request.Context(), &cartv1.ClearCartRequest{
 		UserId: uid.(int64),
 	})
@@ -205,7 +205,7 @@ type BatchRemoveReq struct {
 }
 
 func (h *CartHandler) BatchRemove(ctx *gin.Context, req BatchRemoveReq) (ginx.Result, error) {
-	uid, _ := ctx.Get("user_id")
+	uid, _ := ctx.Get("uid")
 	_, err := h.cartClient.BatchRemoveItems(ctx.Request.Context(), &cartv1.BatchRemoveItemsRequest{
 		UserId: uid.(int64),
 		SkuIds: req.SkuIDs,

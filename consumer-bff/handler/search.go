@@ -101,7 +101,7 @@ func (h *SearchHandler) GetHotWords(ctx *gin.Context) {
 }
 
 func (h *SearchHandler) GetSearchHistory(ctx *gin.Context) {
-	uid, _ := ctx.Get("user_id")
+	uid, _ := ctx.Get("uid")
 	limitStr := ctx.DefaultQuery("limit", "20")
 	limit, _ := strconv.ParseInt(limitStr, 10, 32)
 	if limit <= 0 {
@@ -121,7 +121,7 @@ func (h *SearchHandler) GetSearchHistory(ctx *gin.Context) {
 }
 
 func (h *SearchHandler) ClearSearchHistory(ctx *gin.Context) {
-	uid, _ := ctx.Get("user_id")
+	uid, _ := ctx.Get("uid")
 	_, err := h.searchClient.ClearSearchHistory(ctx.Request.Context(), &searchv1.ClearSearchHistoryRequest{
 		UserId: uid.(int64),
 	})
