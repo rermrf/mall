@@ -8,8 +8,8 @@ import styles from './cart.module.css'
 export default function CartPage() {
   const navigate = useNavigate()
   const { items, loading, fetchCart, toggleSelect, updateQuantity, remove, clearAll, batchRemoveSelected } = useCartStore()
-  const selectedItems = useCartStore((s) => s.selectedItems())
-  const totalAmount = useCartStore((s) => s.totalAmount())
+  const selectedItems = items.filter((i) => i.selected)
+  const totalAmount = selectedItems.reduce((sum, i) => sum + i.price * i.quantity, 0)
 
   useEffect(() => {
     fetchCart()
