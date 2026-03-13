@@ -23,32 +23,36 @@ export default function CartPage() {
     navigate('/order/confirm')
   }
 
-  const handleClear = async () => {
-    const confirmed = await Dialog.confirm({ content: '确定清空购物车？' })
-    if (confirmed) {
-      try {
-        await clearAll()
-        Toast.show('已清空')
-      } catch (e: unknown) {
-        Toast.show((e as Error).message || '操作失败')
-      }
-    }
+  const handleClear = () => {
+    Dialog.confirm({
+      content: '确定清空购物车？',
+      onConfirm: async () => {
+        try {
+          await clearAll()
+          Toast.show('已清空')
+        } catch (e: unknown) {
+          Toast.show((e as Error).message || '操作失败')
+        }
+      },
+    })
   }
 
-  const handleBatchRemove = async () => {
+  const handleBatchRemove = () => {
     if (selectedItems.length === 0) {
       Toast.show('请先选择商品')
       return
     }
-    const confirmed = await Dialog.confirm({ content: `删除选中的 ${selectedItems.length} 件商品？` })
-    if (confirmed) {
-      try {
-        await batchRemoveSelected()
-        Toast.show('已删除')
-      } catch (e: unknown) {
-        Toast.show((e as Error).message || '操作失败')
-      }
-    }
+    Dialog.confirm({
+      content: `删除选中的 ${selectedItems.length} 件商品？`,
+      onConfirm: async () => {
+        try {
+          await batchRemoveSelected()
+          Toast.show('已删除')
+        } catch (e: unknown) {
+          Toast.show((e as Error).message || '操作失败')
+        }
+      },
+    })
   }
 
   if (loading && items.length === 0) {

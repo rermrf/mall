@@ -24,16 +24,19 @@ export default function AddressesPage() {
     fetchAddresses()
   }, [fetchAddresses])
 
-  const handleDelete = async (id: number) => {
-    const confirmed = await Dialog.confirm({ content: '确定删除该地址？' })
-    if (!confirmed) return
-    try {
-      await deleteAddress(id)
-      Toast.show('已删除')
-      setAddresses((prev) => prev.filter((a) => a.id !== id))
-    } catch (e: unknown) {
-      Toast.show((e as Error).message || '删除失败')
-    }
+  const handleDelete = (id: number) => {
+    Dialog.confirm({
+      content: '确定删除该地址？',
+      onConfirm: async () => {
+        try {
+          await deleteAddress(id)
+          Toast.show('已删除')
+          setAddresses((prev) => prev.filter((a) => a.id !== id))
+        } catch (e: unknown) {
+          Toast.show((e as Error).message || '删除失败')
+        }
+      },
+    })
   }
 
   return (

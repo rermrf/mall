@@ -25,14 +25,22 @@ function extractTokens(headers: Record<string, string>) {
 
 export async function login(params: LoginParams) {
   const res = await client.post('/login', params)
+  const body = res.data
+  if (body.code !== 0) {
+    throw new Error(body.msg || '登录失败')
+  }
   extractTokens(res.headers as Record<string, string>)
-  return res.data
+  return body.data
 }
 
 export async function loginByPhone(params: LoginByPhoneParams) {
   const res = await client.post('/login/phone', params)
+  const body = res.data
+  if (body.code !== 0) {
+    throw new Error(body.msg || '登录失败')
+  }
   extractTokens(res.headers as Record<string, string>)
-  return res.data
+  return body.data
 }
 
 export async function signup(params: SignupParams) {
@@ -58,6 +66,10 @@ export interface OAuthLoginParams {
 
 export async function oauthLogin(params: OAuthLoginParams) {
   const res = await client.post('/login/oauth', params)
+  const body = res.data
+  if (body.code !== 0) {
+    throw new Error(body.msg || '登录失败')
+  }
   extractTokens(res.headers as Record<string, string>)
-  return res.data
+  return body.data
 }

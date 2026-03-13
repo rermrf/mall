@@ -21,19 +21,21 @@ export default function UserPage() {
     }
   }, [isLoggedIn])
 
-  const handleLogout = async () => {
-    const confirmed = await Dialog.confirm({ content: '确定退出登录？' })
-    if (confirmed) {
-      try {
-        await logout()
-      } catch {
-        // ignore network errors during logout
-      }
-      navigate('/', { replace: true })
-      clearAuth()
-      setProfile(null)
-      Toast.show('已退出登录')
-    }
+  const handleLogout = () => {
+    Dialog.confirm({
+      content: '确定退出登录？',
+      onConfirm: async () => {
+        try {
+          await logout()
+        } catch {
+          // ignore network errors during logout
+        }
+        navigate('/', { replace: true })
+        clearAuth()
+        setProfile(null)
+        Toast.show('已退出登录')
+      },
+    })
   }
 
   const menus: Array<{ label: string; path: string; badge?: number }> = [

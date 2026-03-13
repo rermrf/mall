@@ -37,40 +37,52 @@ export default function OrderDetailPage() {
       .finally(() => setLoading(false))
   }, [orderNo])
 
-  const handleCancel = async () => {
-    const confirmed = await Dialog.confirm({ content: '确定取消该订单？' })
-    if (!confirmed || !orderNo) return
-    try {
-      await cancelOrder(orderNo)
-      Toast.show('订单已取消')
-      setOrder((prev) => prev ? { ...prev, status: 6 } : prev)
-    } catch (e: unknown) {
-      Toast.show((e as Error).message || '取消失败')
-    }
+  const handleCancel = () => {
+    if (!orderNo) return
+    Dialog.confirm({
+      content: '确定取消该订单？',
+      onConfirm: async () => {
+        try {
+          await cancelOrder(orderNo)
+          Toast.show('订单已取消')
+          setOrder((prev) => prev ? { ...prev, status: 6 } : prev)
+        } catch (e: unknown) {
+          Toast.show((e as Error).message || '取消失败')
+        }
+      },
+    })
   }
 
-  const handleConfirmReceive = async () => {
-    const confirmed = await Dialog.confirm({ content: '确认已收到商品？' })
-    if (!confirmed || !orderNo) return
-    try {
-      await confirmReceive(orderNo)
-      Toast.show('已确认收货')
-      setOrder((prev) => prev ? { ...prev, status: 4 } : prev)
-    } catch (e: unknown) {
-      Toast.show((e as Error).message || '操作失败')
-    }
+  const handleConfirmReceive = () => {
+    if (!orderNo) return
+    Dialog.confirm({
+      content: '确认已收到商品？',
+      onConfirm: async () => {
+        try {
+          await confirmReceive(orderNo)
+          Toast.show('已确认收货')
+          setOrder((prev) => prev ? { ...prev, status: 4 } : prev)
+        } catch (e: unknown) {
+          Toast.show((e as Error).message || '操作失败')
+        }
+      },
+    })
   }
 
-  const handleRefund = async () => {
-    const confirmed = await Dialog.confirm({ content: '确定申请退款？' })
-    if (!confirmed || !orderNo) return
-    try {
-      const res = await applyRefund(orderNo, { reason: '买家申请退款' })
-      Toast.show('已提交退款申请')
-      navigate(`/refunds/${res.refund_no}`)
-    } catch (e: unknown) {
-      Toast.show((e as Error).message || '申请失败')
-    }
+  const handleRefund = () => {
+    if (!orderNo) return
+    Dialog.confirm({
+      content: '确定申请退款？',
+      onConfirm: async () => {
+        try {
+          const res = await applyRefund(orderNo, { reason: '买家申请退款' })
+          Toast.show('已提交退款申请')
+          navigate(`/refunds/${res.refund_no}`)
+        } catch (e: unknown) {
+          Toast.show((e as Error).message || '申请失败')
+        }
+      },
+    })
   }
 
   if (loading) {
