@@ -17,8 +17,8 @@ export default function HomePage() {
 
   useEffect(() => {
     getShop().then(setShop).catch(() => {})
-    listSeckillActivities().then(setSeckills).catch(() => {})
-    listAvailableCoupons().then(setCoupons).catch(() => {})
+    listSeckillActivities().then((v) => setSeckills(v ?? [])).catch(() => {})
+    listAvailableCoupons().then((v) => setCoupons(v ?? [])).catch(() => {})
   }, [])
 
   const allSeckillItems = seckills.flatMap((s) => s.items || [])
