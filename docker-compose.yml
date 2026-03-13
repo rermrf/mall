@@ -1,0 +1,401 @@
+# ============================================================
+# Mall 开发环境 Docker Compose
+# ============================================================
+#
+# 使用方式:
+#   docker compose --profile consumer up -d    # Consumer 开发
+#   docker compose --profile full up -d        # 全部服务
+#   docker compose --profile consumer --profile local up -d  # + 本地基础设施
+#   docker compose --profile consumer down     # 停止
+#   docker compose logs -f consumer-bff        # 查看日志
+#
+# Profiles:
+#   consumer  - 11 core + consumer-bff + seed
+#   merchant  - 11 core + merchant-bff
+#   admin     - 11 core + admin-bff
+#   full      - 全部 14 服务 + seed
+#   local     - 本地 MySQL/Redis/Kafka/etcd/ES
+# ============================================================
+
+x-service-common: &service-common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  restart: unless-stopped
+  networks:
+    - mall
+
+# ============================================================
+# Core gRPC Microservices (always started with any profile)
+# ============================================================
+services:
+
+  user:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: user
+    profiles: [consumer, merchant, admin, full]
+    ports:
+      - "8081:8081"
+
+  tenant:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: tenant
+    profiles: [consumer, merchant, admin, full]
+    ports:
+      - "8082:8082"
+
+  product:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: product
+    profiles: [consumer, merchant, admin, full]
+    ports:
+      - "8083:8083"
+    depends_on:
+      tenant:
+        condition: service_started
+
+  inventory:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: inventory
+    profiles: [consumer, merchant, admin, full]
+    ports:
+      - "8084:8084"
+
+  order:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: order
+    profiles: [consumer, merchant, admin, full]
+    ports:
+      - "8085:8085"
+    depends_on:
+      user:
+        condition: service_started
+      product:
+        condition: service_started
+      inventory:
+        condition: service_started
+      payment:
+        condition: service_started
+
+  payment:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: payment
+    profiles: [consumer, merchant, admin, full]
+    ports:
+      - "8086:8086"
+
+  cart:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: cart
+    profiles: [consumer, merchant, admin, full]
+    ports:
+      - "8087:8087"
+
+  search:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: search
+    profiles: [consumer, merchant, admin, full]
+    ports:
+      - "8088:8088"
+    depends_on:
+      product:
+        condition: service_started
+
+  marketing:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: marketing
+    profiles: [consumer, merchant, admin, full]
+    ports:
+      - "8089:8089"
+    depends_on:
+      order:
+        condition: service_started
+
+  logistics:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: logistics
+    profiles: [consumer, merchant, admin, full]
+    ports:
+      - "8090:8090"
+
+  notification:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: notification
+    profiles: [consumer, merchant, admin, full]
+    ports:
+      - "8091:8091"
+    depends_on:
+      order:
+        condition: service_started
+
+  # ============================================================
+  # BFF Layers (profile-selective)
+  # ============================================================
+
+  consumer-bff:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: consumer-bff
+    profiles: [consumer, full]
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+    depends_on:
+      user:
+        condition: service_started
+      tenant:
+        condition: service_started
+      product:
+        condition: service_started
+      inventory:
+        condition: service_started
+      order:
+        condition: service_started
+      payment:
+        condition: service_started
+      cart:
+        condition: service_started
+      search:
+        condition: service_started
+      marketing:
+        condition: service_started
+      logistics:
+        condition: service_started
+      notification:
+        condition: service_started
+
+  merchant-bff:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: merchant-bff
+    profiles: [merchant, full]
+    ports:
+      - "8180:8180"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8180/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+    depends_on:
+      user:
+        condition: service_started
+      tenant:
+        condition: service_started
+      product:
+        condition: service_started
+      inventory:
+        condition: service_started
+      order:
+        condition: service_started
+      payment:
+        condition: service_started
+      marketing:
+        condition: service_started
+      logistics:
+        condition: service_started
+      notification:
+        condition: service_started
+
+  admin-bff:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: admin-bff
+    profiles: [admin, full]
+    ports:
+      - "8280:8280"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8280/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+    depends_on:
+      user:
+        condition: service_started
+      tenant:
+        condition: service_started
+      product:
+        condition: service_started
+      order:
+        condition: service_started
+      payment:
+        condition: service_started
+      notification:
+        condition: service_started
+      inventory:
+        condition: service_started
+      marketing:
+        condition: service_started
+      logistics:
+        condition: service_started
+
+  # ============================================================
+  # Seed Data (run-once, after BFF is healthy)
+  # ============================================================
+
+  seed:
+    <<: *service-common
+    build:
+      context: .
+      dockerfile: script/seed/Dockerfile
+    profiles: [consumer, full]
+    restart: "no"
+    depends_on:
+      consumer-bff:
+        condition: service_healthy
+
+  # ============================================================
+  # Local Infrastructure (--profile local)
+  # ============================================================
+
+  mysql:
+    image: mysql:8.0
+    profiles: [local]
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "wen123..."
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./script/mysql/init-databases.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - mall
+
+  redis:
+    image: redis:7-alpine
+    profiles: [local]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - mall
+
+  etcd:
+    image: bitnami/etcd:3.5
+    profiles: [local]
+    ports:
+      - "2379:2379"
+    environment:
+      ALLOW_NONE_AUTHENTICATION: "yes"
+      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd:2379"
+      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
+    volumes:
+      - etcd-data:/bitnami/etcd
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - mall
+
+  kafka:
+    image: bitnami/kafka:3.7
+    profiles: [local]
+    ports:
+      - "9094:9094"
+    environment:
+      KAFKA_CFG_NODE_ID: 1
+      KAFKA_CFG_PROCESS_ROLES: "broker,controller"
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_CFG_LISTENERS: "PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094"
+      KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092,EXTERNAL://kafka:9094"
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+      KAFKA_KRAFT_CLUSTER_ID: "mall-dev-cluster-001"
+    volumes:
+      - kafka-data:/bitnami/kafka
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions.sh --bootstrap-server localhost:9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - mall
+
+  elasticsearch:
+    image: elasticsearch:7.17.24
+    profiles: [local]
+    ports:
+      - "9200:9200"
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: "-Xms256m -Xmx256m"
+      xpack.security.enabled: "false"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - mall
+
+networks:
+  mall:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:
+  etcd-data:
+  kafka-data:
+  es-data:

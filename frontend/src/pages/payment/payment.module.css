@@ -1,0 +1,84 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.content {
+  padding: 24px;
+  text-align: center;
+}
+
+.amount {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 24px 0 8px;
+}
+
+.amountLabel {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 32px;
+}
+
+.channels {
+  padding: 0 24px;
+}
+
+.channelItem {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.channelItem:active {
+  transform: scale(0.98);
+}
+
+.channelItemSelected {
+  border: 2px solid var(--color-accent);
+}
+
+.channelName {
+  flex: 1;
+  font-size: 16px;
+  margin-left: 12px;
+}
+
+.channelIcon {
+  font-size: 24px;
+}
+
+.payBtn {
+  margin: 32px 24px 0;
+  --background-color: var(--color-primary);
+  --border-color: var(--color-primary);
+  height: 48px;
+  font-size: 16px;
+  border-radius: var(--radius);
+}
+
+.successPage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.successIcon {
+  font-size: 64px;
+  color: var(--color-success);
+}
+
+.successText {
+  font-size: 20px;
+  font-weight: 600;
+}

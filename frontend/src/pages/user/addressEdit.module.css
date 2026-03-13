@@ -1,0 +1,54 @@
+.page {
+  padding: 12px 12px 24px;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.navBar {
+  margin: -12px -12px 12px;
+}
+
+.card {
+  padding: 16px;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.label {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row > * {
+  flex: 1;
+}
+
+.defaultRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.defaultLabel {
+  font-size: 15px;
+}
+
+.saveBtn {
+  width: 100%;
+  margin-top: 24px;
+  --background-color: var(--color-primary);
+  --border-color: var(--color-primary);
+  border-radius: var(--radius);
+}

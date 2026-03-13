@@ -1,0 +1,13 @@
+server:
+  addr: ":8180"
+
+etcd:
+  addrs:
+    - "127.0.0.1:2379"
+
+redis:
+  addr: "127.0.0.1:6379"
+
+jwt:
+  accessSecret: "merchant-bff-access-secret-key32!"
+  refreshSecret: "merchant-bff-refresh-secret-key32!"

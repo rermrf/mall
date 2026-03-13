@@ -1,0 +1,203 @@
+syntax = "proto3";
+
+package tenant.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "/tenant/v1;tenantv1";
+
+// ==================== Messages ====================
+
+message Tenant {
+  int64 id = 1;
+  string name = 2;
+  string contact_name = 3;
+  string contact_phone = 4;
+  string business_license = 5;
+  int32 status = 6; // 1-待审核 2-正常 3-冻结 4-注销
+  int64 plan_id = 7;
+  int64 plan_expire_time = 8;
+  google.protobuf.Timestamp ctime = 9;
+  google.protobuf.Timestamp utime = 10;
+}
+
+message TenantPlan {
+  int64 id = 1;
+  string name = 2;
+  int64 price = 3; // 分
+  int32 duration_days = 4;
+  int32 max_products = 5;
+  int32 max_staff = 6;
+  string features = 7; // JSON
+  int32 status = 8;
+  google.protobuf.Timestamp ctime = 9;
+  google.protobuf.Timestamp utime = 10;
+}
+
+message Shop {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string name = 3;
+  string logo = 4;
+  string description = 5;
+  int32 status = 6; // 1-营业中 2-休息中 3-关闭
+  string rating = 7; // decimal as string
+  string subdomain = 8; // 子域名：shop1 → shop1.mall.com
+  string custom_domain = 9; // 自定义域名（可选）：www.myshop.com
+  google.protobuf.Timestamp ctime = 10;
+  google.protobuf.Timestamp utime = 11;
+}
+
+message QuotaUsage {
+  string quota_type = 1; // product_count / staff_count
+  int32 used = 2;
+  int32 max_limit = 3;
+}
+
+// ==================== TenantService ====================
+
+service TenantService {
+  // 商家入驻（提交审核）
+  rpc CreateTenant(CreateTenantRequest) returns (CreateTenantResponse);
+  // 查询商家信息
+  rpc GetTenant(GetTenantRequest) returns (GetTenantResponse);
+  // 更新商家信息
+  rpc UpdateTenant(UpdateTenantRequest) returns (UpdateTenantResponse);
+  // 商家列表（平台管理端）
+  rpc ListTenants(ListTenantsRequest) returns (ListTenantsResponse);
+  // 审核商家
+  rpc ApproveTenant(ApproveTenantRequest) returns (ApproveTenantResponse);
+  // 冻结/解冻商家
+  rpc FreezeTenant(FreezeTenantRequest) returns (FreezeTenantResponse);
+
+  // 套餐
+  rpc GetPlan(GetPlanRequest) returns (GetPlanResponse);
+  rpc ListPlans(ListPlansRequest) returns (ListPlansResponse);
+  rpc CreatePlan(CreatePlanRequest) returns (CreatePlanResponse);
+  rpc UpdatePlan(UpdatePlanRequest) returns (UpdatePlanResponse);
+
+  // 配额
+  rpc CheckQuota(CheckQuotaRequest) returns (CheckQuotaResponse);
+  rpc IncrQuota(IncrQuotaRequest) returns (IncrQuotaResponse);
+  rpc DecrQuota(DecrQuotaRequest) returns (DecrQuotaResponse);
+
+  // 店铺
+  rpc GetShop(GetShopRequest) returns (GetShopResponse);
+  rpc UpdateShop(UpdateShopRequest) returns (UpdateShopResponse);
+  // 域名解析（consumer-bff TenantResolve 中间件调用）
+  rpc GetShopByDomain(GetShopByDomainRequest) returns (GetShopByDomainResponse);
+}
+
+// ==================== Requests & Responses ====================
+
+message CreateTenantRequest {
+  Tenant tenant = 1;
+}
+message CreateTenantResponse {
+  int64 id = 1;
+}
+
+message GetTenantRequest {
+  int64 id = 1;
+}
+message GetTenantResponse {
+  Tenant tenant = 1;
+}
+
+message UpdateTenantRequest {
+  Tenant tenant = 1;
+}
+message UpdateTenantResponse {}
+
+message ListTenantsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+  int32 status = 3; // 过滤状态，0=全部
+}
+message ListTenantsResponse {
+  repeated Tenant tenants = 1;
+  int64 total = 2;
+}
+
+message ApproveTenantRequest {
+  int64 id = 1;
+  bool approved = 2; // true=通过 false=拒绝
+  string reason = 3;
+}
+message ApproveTenantResponse {}
+
+message FreezeTenantRequest {
+  int64 id = 1;
+  bool freeze = 2; // true=冻结 false=解冻
+}
+message FreezeTenantResponse {}
+
+// 套餐
+message GetPlanRequest {
+  int64 id = 1;
+}
+message GetPlanResponse {
+  TenantPlan plan = 1;
+}
+
+message ListPlansRequest {}
+message ListPlansResponse {
+  repeated TenantPlan plans = 1;
+}
+
+message CreatePlanRequest {
+  TenantPlan plan = 1;
+}
+message CreatePlanResponse {
+  int64 id = 1;
+}
+
+message UpdatePlanRequest {
+  TenantPlan plan = 1;
+}
+message UpdatePlanResponse {}
+
+// 配额
+message CheckQuotaRequest {
+  int64 tenant_id = 1;
+  string quota_type = 2;
+}
+message CheckQuotaResponse {
+  bool allowed = 1;
+  QuotaUsage usage = 2;
+}
+
+message IncrQuotaRequest {
+  int64 tenant_id = 1;
+  string quota_type = 2;
+  int32 delta = 3;
+}
+message IncrQuotaResponse {}
+
+message DecrQuotaRequest {
+  int64 tenant_id = 1;
+  string quota_type = 2;
+  int32 delta = 3;
+}
+message DecrQuotaResponse {}
+
+// 店铺
+message GetShopRequest {
+  int64 tenant_id = 1;
+}
+message GetShopResponse {
+  Shop shop = 1;
+}
+
+message UpdateShopRequest {
+  Shop shop = 1;
+}
+message UpdateShopResponse {}
+
+// 域名解析
+message GetShopByDomainRequest {
+  string domain = 1; // 子域名（shop1）或自定义域名（www.myshop.com）
+}
+message GetShopByDomainResponse {
+  Shop shop = 1;
+}

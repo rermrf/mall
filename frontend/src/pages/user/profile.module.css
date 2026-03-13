@@ -1,0 +1,65 @@
+.page {
+  padding: 12px 12px 24px;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.navBar {
+  margin: -12px -12px 12px;
+}
+
+.card {
+  padding: 16px;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.avatarRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.avatarPreview {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--color-border);
+}
+
+.avatarPlaceholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--color-text-secondary);
+}
+
+.avatarInput {
+  flex: 1;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.label {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+}
+
+.saveBtn {
+  width: 100%;
+  margin-top: 24px;
+  --background-color: var(--color-primary);
+  --border-color: var(--color-primary);
+  border-radius: var(--radius);
+}

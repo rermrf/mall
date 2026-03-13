@@ -1,0 +1,158 @@
+syntax = "proto3";
+
+package logistics.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "/logistics/v1;logisticsv1";
+
+// ==================== Messages ====================
+
+message FreightTemplate {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string name = 3;
+  int32 charge_type = 4; // 1-按件 2-按重量
+  int64 free_threshold = 5; // 包邮门槛（分），0=不包邮
+  repeated FreightRule rules = 6;
+  google.protobuf.Timestamp ctime = 7;
+  google.protobuf.Timestamp utime = 8;
+}
+
+message FreightRule {
+  int64 id = 1;
+  int64 template_id = 2;
+  string regions = 3; // JSON: 适用地区省编码列表
+  int32 first_unit = 4; // 首件/首重
+  int64 first_price = 5; // 首费（分）
+  int32 additional_unit = 6; // 续件/续重
+  int64 additional_price = 7; // 续费（分）
+}
+
+message Shipment {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 order_id = 3;
+  string carrier_code = 4;
+  string carrier_name = 5;
+  string tracking_no = 6;
+  int32 status = 7; // 1-已发货 2-运输中 3-已签收
+  repeated ShipmentTrack tracks = 8;
+  google.protobuf.Timestamp ctime = 9;
+  google.protobuf.Timestamp utime = 10;
+}
+
+message ShipmentTrack {
+  int64 id = 1;
+  int64 shipment_id = 2;
+  string description = 3;
+  string location = 4;
+  int64 track_time = 5;
+}
+
+// 运费计算请求中的商品项
+message FreightItem {
+  int64 sku_id = 1;
+  int32 quantity = 2;
+  int32 weight = 3; // 克
+}
+
+// ==================== LogisticsService ====================
+
+service LogisticsService {
+  // 运费模板
+  rpc CreateFreightTemplate(CreateFreightTemplateRequest) returns (CreateFreightTemplateResponse);
+  rpc UpdateFreightTemplate(UpdateFreightTemplateRequest) returns (UpdateFreightTemplateResponse);
+  rpc GetFreightTemplate(GetFreightTemplateRequest) returns (GetFreightTemplateResponse);
+  rpc ListFreightTemplates(ListFreightTemplatesRequest) returns (ListFreightTemplatesResponse);
+  rpc DeleteFreightTemplate(DeleteFreightTemplateRequest) returns (DeleteFreightTemplateResponse);
+
+  // 运费计算（下单时调用）
+  rpc CalculateFreight(CalculateFreightRequest) returns (CalculateFreightResponse);
+
+  // 发货 & 物流追踪
+  rpc CreateShipment(CreateShipmentRequest) returns (CreateShipmentResponse);
+  rpc GetShipment(GetShipmentRequest) returns (GetShipmentResponse);
+  rpc GetShipmentByOrder(GetShipmentByOrderRequest) returns (GetShipmentByOrderResponse);
+  rpc AddTrack(AddTrackRequest) returns (AddTrackResponse);
+}
+
+// ==================== Requests & Responses ====================
+
+// 运费模板
+message CreateFreightTemplateRequest {
+  FreightTemplate template = 1;
+}
+message CreateFreightTemplateResponse {
+  int64 id = 1;
+}
+
+message UpdateFreightTemplateRequest {
+  FreightTemplate template = 1;
+}
+message UpdateFreightTemplateResponse {}
+
+message GetFreightTemplateRequest {
+  int64 id = 1;
+}
+message GetFreightTemplateResponse {
+  FreightTemplate template = 1;
+}
+
+message ListFreightTemplatesRequest {
+  int64 tenant_id = 1;
+}
+message ListFreightTemplatesResponse {
+  repeated FreightTemplate templates = 1;
+}
+
+message DeleteFreightTemplateRequest {
+  int64 id = 1;
+  int64 tenant_id = 2;
+}
+message DeleteFreightTemplateResponse {}
+
+// 运费计算
+message CalculateFreightRequest {
+  int64 tenant_id = 1;
+  string province = 2; // 收货省份
+  repeated FreightItem items = 3;
+}
+message CalculateFreightResponse {
+  int64 freight = 1; // 运费（分）
+  bool free_shipping = 2; // 是否包邮
+}
+
+// 发货
+message CreateShipmentRequest {
+  int64 tenant_id = 1;
+  int64 order_id = 2;
+  string carrier_code = 3;
+  string carrier_name = 4;
+  string tracking_no = 5;
+}
+message CreateShipmentResponse {
+  int64 id = 1;
+}
+
+message GetShipmentRequest {
+  int64 id = 1;
+}
+message GetShipmentResponse {
+  Shipment shipment = 1;
+}
+
+message GetShipmentByOrderRequest {
+  int64 order_id = 1;
+}
+message GetShipmentByOrderResponse {
+  Shipment shipment = 1;
+}
+
+message AddTrackRequest {
+  int64 shipment_id = 1;
+  string description = 2;
+  string location = 3;
+  int64 track_time = 4;
+}
+message AddTrackResponse {}

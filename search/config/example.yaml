@@ -1,0 +1,20 @@
+es:
+  url: "http://127.0.0.1:9200"
+
+redis:
+  addr: "127.0.0.1:6379"
+  password: ""
+  db: 7
+
+kafka:
+  addrs:
+    - "127.0.0.1:9094"
+
+grpc:
+  port: 8088
+  etcdAddrs:
+    - "127.0.0.1:2379"
+
+etcd:
+  addrs:
+    - "127.0.0.1:2379"

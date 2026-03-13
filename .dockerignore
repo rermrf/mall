@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docs
+docs/
+*.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Frontend source (not needed for Go builds)
+frontend/src/
+frontend/public/
+frontend/index.html
+frontend/package*.json
+frontend/tsconfig*.json
+frontend/vite.config.ts
+frontend/eslint.config.js

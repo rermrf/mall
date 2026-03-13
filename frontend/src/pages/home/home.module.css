@@ -1,0 +1,126 @@
+.page {
+  padding-bottom: 16px;
+}
+
+.header {
+  padding: 16px;
+  background: var(--color-card);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.shopLogo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.shopName {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.section {
+  margin: 0 12px 16px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+.seckillScroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.seckillScroll::-webkit-scrollbar {
+  display: none;
+}
+
+.seckillCard {
+  flex-shrink: 0;
+  width: 120px;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.seckillImage {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+}
+
+.seckillInfo {
+  padding: 6px 8px;
+}
+
+.seckillName {
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seckillPrice {
+  color: var(--color-danger);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.seckillOriginal {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  text-decoration: line-through;
+}
+
+.couponScroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.couponScroll::-webkit-scrollbar {
+  display: none;
+}
+
+.couponCard {
+  flex-shrink: 0;
+  width: 160px;
+  padding: 12px;
+  background: linear-gradient(135deg, #FFF8F0, #FFFFFF);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.couponValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.couponName {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+.couponCondition {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}

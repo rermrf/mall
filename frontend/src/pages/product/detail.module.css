@@ -1,0 +1,88 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding-bottom: 70px;
+}
+
+.image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  background: #f5f5f5;
+}
+
+.info {
+  padding: 16px;
+  background: var(--color-card);
+  margin-bottom: 12px;
+}
+
+.name {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.description {
+  padding: 16px;
+  background: var(--color-card);
+  margin-bottom: 12px;
+}
+
+.descTitle {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.descText {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+}
+
+.stock {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 8px;
+}
+
+.stockLow {
+  color: var(--color-danger);
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--color-card);
+  border-top: 1px solid var(--color-border);
+  z-index: 99;
+}
+
+.cartBtn {
+  flex: 1;
+  --border-color: var(--color-primary);
+  border-radius: var(--radius);
+  height: 44px;
+}
+
+.buyBtn {
+  flex: 1;
+  --background-color: var(--color-primary);
+  --border-color: var(--color-primary);
+  border-radius: var(--radius);
+  height: 44px;
+}

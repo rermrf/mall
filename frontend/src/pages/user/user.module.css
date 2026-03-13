@@ -1,0 +1,109 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding-bottom: 60px;
+}
+
+.header {
+  background: var(--color-primary);
+  padding: 40px 20px 30px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-accent);
+  background: #333;
+}
+
+.avatarPlaceholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #666;
+  border: 2px solid var(--color-accent);
+}
+
+.userInfo {
+  flex: 1;
+}
+
+.nickname {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.phone {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 4px;
+}
+
+.loginBtn {
+  color: var(--color-accent);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.section {
+  margin: 12px;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  cursor: pointer;
+}
+
+.menuItem + .menuItem {
+  border-top: 1px solid var(--color-border);
+}
+
+.menuLabel {
+  flex: 1;
+  font-size: 15px;
+}
+
+.menuArrow {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.logoutSection {
+  margin: 24px 12px;
+}
+
+.logoutBtn {
+  width: 100%;
+  border-radius: var(--radius);
+}
+
+.menuBadge {
+  display: inline-block;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  padding: 0 4px;
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 10px;
+  border-radius: 8px;
+  text-align: center;
+  margin-right: 8px;
+}

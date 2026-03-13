@@ -1,0 +1,118 @@
+.page {
+  padding: 12px;
+}
+
+.searchBar {
+  margin-bottom: 12px;
+}
+
+.hotSection {
+  padding: 12px 0;
+}
+
+.hotTitle {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.hotTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hotTag {
+  padding: 6px 14px;
+  background: var(--color-card);
+  border-radius: 16px;
+  font-size: 13px;
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--color-text-secondary);
+}
+
+.loadMore {
+  text-align: center;
+  padding: 16px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.historySection {
+  padding: 12px 0;
+}
+
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.historyTitle {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.historyClear {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.historyTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.historyTag {
+  padding: 6px 14px;
+  background: var(--color-card);
+  border-radius: 16px;
+  font-size: 13px;
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+}
+
+.suggestionsWrap {
+  position: relative;
+}
+
+.suggestions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.suggestionItem {
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.suggestionItem + .suggestionItem {
+  border-top: 1px solid var(--color-border);
+}

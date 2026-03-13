@@ -1,0 +1,105 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.navBar {
+  background: var(--color-card);
+}
+
+.tabs {
+  --active-line-color: var(--color-accent);
+  --active-title-color: var(--color-primary);
+  background: var(--color-card);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.content {
+  padding: 12px;
+}
+
+.orderCard {
+  background: var(--color-card);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.orderNo {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.statusTag {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-accent);
+}
+
+.cardBody {
+  padding: 12px 16px;
+}
+
+.itemsRow {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 10px;
+}
+
+.itemsRow::-webkit-scrollbar {
+  display: none;
+}
+
+.itemThumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.payAmount {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actionBtn {
+  font-size: 13px;
+  border-radius: var(--radius);
+  padding: 4px 12px;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--color-text-secondary);
+}
+
+.loadMore {
+  padding: 12px 0;
+}

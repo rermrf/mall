@@ -1,0 +1,237 @@
+syntax = "proto3";
+
+package marketing.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "/marketing/v1;marketingv1";
+
+// ==================== Messages ====================
+
+message Coupon {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string name = 3;
+  int32 type = 4; // 1-满减 2-折扣 3-无门槛
+  int64 threshold = 5; // 使用门槛（分），0=无门槛
+  int64 discount_value = 6; // 满减=金额分，折扣=折扣比*100
+  int32 total_count = 7;
+  int32 received_count = 8;
+  int32 used_count = 9;
+  int32 per_limit = 10;
+  int64 start_time = 11;
+  int64 end_time = 12;
+  int32 scope_type = 13; // 1-全店 2-指定分类 3-指定商品
+  string scope_ids = 14; // JSON
+  int32 status = 15; // 1-未开始 2-进行中 3-已结束 4-已停用
+  google.protobuf.Timestamp ctime = 16;
+}
+
+message UserCoupon {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 coupon_id = 3;
+  int64 tenant_id = 4;
+  int32 status = 5; // 1-未使用 2-已使用 3-已过期
+  int64 order_id = 6;
+  int64 receive_time = 7;
+  int64 use_time = 8;
+  Coupon coupon = 9; // 嵌套优惠券详情
+}
+
+message SeckillActivity {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string name = 3;
+  int64 start_time = 4;
+  int64 end_time = 5;
+  int32 status = 6; // 1-未开始 2-进行中 3-已结束
+  repeated SeckillItem items = 7;
+}
+
+message SeckillItem {
+  int64 id = 1;
+  int64 activity_id = 2;
+  int64 tenant_id = 3;
+  int64 sku_id = 4;
+  int64 seckill_price = 5; // 分
+  int32 seckill_stock = 6;
+  int32 per_limit = 7;
+}
+
+message PromotionRule {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string name = 3;
+  int32 type = 4; // 1-满减 2-满折
+  int64 threshold = 5;
+  int64 discount_value = 6;
+  int64 start_time = 7;
+  int64 end_time = 8;
+  int32 status = 9;
+}
+
+// 优惠计算结果
+message DiscountResult {
+  int64 coupon_discount = 1; // 优惠券优惠金额（分）
+  int64 promotion_discount = 2; // 满减优惠金额（分）
+  int64 total_discount = 3; // 总优惠（分）
+  int64 pay_amount = 4; // 应付（分）
+}
+
+// ==================== MarketingService ====================
+
+service MarketingService {
+  // 优惠券
+  rpc CreateCoupon(CreateCouponRequest) returns (CreateCouponResponse);
+  rpc UpdateCoupon(UpdateCouponRequest) returns (UpdateCouponResponse);
+  rpc ListCoupons(ListCouponsRequest) returns (ListCouponsResponse);
+  rpc ReceiveCoupon(ReceiveCouponRequest) returns (ReceiveCouponResponse);
+  rpc ListUserCoupons(ListUserCouponsRequest) returns (ListUserCouponsResponse);
+  // 锁定/释放优惠券（下单/取消时）
+  rpc UseCoupon(UseCouponRequest) returns (UseCouponResponse);
+  rpc ReleaseCoupon(ReleaseCouponRequest) returns (ReleaseCouponResponse);
+
+  // 优惠计算（下单时调用）
+  rpc CalculateDiscount(CalculateDiscountRequest) returns (CalculateDiscountResponse);
+
+  // 秒杀
+  rpc CreateSeckillActivity(CreateSeckillActivityRequest) returns (CreateSeckillActivityResponse);
+  rpc UpdateSeckillActivity(UpdateSeckillActivityRequest) returns (UpdateSeckillActivityResponse);
+  rpc ListSeckillActivities(ListSeckillActivitiesRequest) returns (ListSeckillActivitiesResponse);
+  rpc GetSeckillActivity(GetSeckillActivityRequest) returns (GetSeckillActivityResponse);
+  // 秒杀抢购（核心亮点：Redis+Lua → Kafka 削峰）
+  rpc Seckill(SeckillRequest) returns (SeckillResponse);
+
+  // 满减规则
+  rpc CreatePromotionRule(CreatePromotionRuleRequest) returns (CreatePromotionRuleResponse);
+  rpc UpdatePromotionRule(UpdatePromotionRuleRequest) returns (UpdatePromotionRuleResponse);
+  rpc ListPromotionRules(ListPromotionRulesRequest) returns (ListPromotionRulesResponse);
+}
+
+// ==================== Requests & Responses ====================
+
+// 优惠券
+message CreateCouponRequest {
+  Coupon coupon = 1;
+}
+message CreateCouponResponse {
+  int64 id = 1;
+}
+
+message UpdateCouponRequest {
+  Coupon coupon = 1;
+}
+message UpdateCouponResponse {}
+
+message ListCouponsRequest {
+  int64 tenant_id = 1;
+  int32 status = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+message ListCouponsResponse {
+  repeated Coupon coupons = 1;
+  int64 total = 2;
+}
+
+message ReceiveCouponRequest {
+  int64 user_id = 1;
+  int64 coupon_id = 2;
+}
+message ReceiveCouponResponse {}
+
+message ListUserCouponsRequest {
+  int64 user_id = 1;
+  int64 tenant_id = 2; // 0=全部
+  int32 status = 3; // 0=全部
+}
+message ListUserCouponsResponse {
+  repeated UserCoupon coupons = 1;
+}
+
+message UseCouponRequest {
+  int64 user_coupon_id = 1;
+  int64 order_id = 2;
+}
+message UseCouponResponse {}
+
+message ReleaseCouponRequest {
+  int64 user_coupon_id = 1;
+}
+message ReleaseCouponResponse {}
+
+// 优惠计算
+message CalculateDiscountRequest {
+  int64 tenant_id = 1;
+  int64 user_id = 2;
+  int64 coupon_id = 3; // 0=不使用优惠券
+  int64 total_amount = 4; // 商品总金额（分）
+  repeated int64 category_ids = 5; // 涉及的分类（用于匹配满减规则）
+}
+message CalculateDiscountResponse {
+  DiscountResult result = 1;
+}
+
+// 秒杀
+message CreateSeckillActivityRequest {
+  SeckillActivity activity = 1;
+}
+message CreateSeckillActivityResponse {
+  int64 id = 1;
+}
+
+message UpdateSeckillActivityRequest {
+  SeckillActivity activity = 1;
+}
+message UpdateSeckillActivityResponse {}
+
+message ListSeckillActivitiesRequest {
+  int64 tenant_id = 1;
+  int32 status = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+message ListSeckillActivitiesResponse {
+  repeated SeckillActivity activities = 1;
+  int64 total = 2;
+}
+
+message GetSeckillActivityRequest {
+  int64 id = 1;
+}
+message GetSeckillActivityResponse {
+  SeckillActivity activity = 1;
+}
+
+// 秒杀抢购
+message SeckillRequest {
+  int64 user_id = 1;
+  int64 item_id = 2; // seckill_item ID
+}
+message SeckillResponse {
+  bool success = 1;
+  string order_no = 2; // 成功时返回异步创建的订单号（Kafka 消费后生成）
+  string message = 3;
+}
+
+// 满减
+message CreatePromotionRuleRequest {
+  PromotionRule rule = 1;
+}
+message CreatePromotionRuleResponse {
+  int64 id = 1;
+}
+
+message UpdatePromotionRuleRequest {
+  PromotionRule rule = 1;
+}
+message UpdatePromotionRuleResponse {}
+
+message ListPromotionRulesRequest {
+  int64 tenant_id = 1;
+  int32 status = 2;
+}
+message ListPromotionRulesResponse {
+  repeated PromotionRule rules = 1;
+}

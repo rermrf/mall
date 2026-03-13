@@ -1,0 +1,63 @@
+.page {
+  padding: 12px;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.navBar {
+  margin: -12px -12px 12px;
+}
+
+.refundCard {
+  padding: 16px;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.refundNo {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.statusTag {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-accent);
+}
+
+.amount {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.reason {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+}
+
+.time {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--color-text-secondary);
+}
+
+.loadMore {
+  padding: 12px 0;
+}

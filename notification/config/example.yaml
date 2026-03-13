@@ -1,0 +1,32 @@
+db:
+  dsn: "root:root@tcp(127.0.0.1:3306)/mall_notification?charset=utf8mb4&parseTime=true&loc=Local"
+
+redis:
+  addr: "127.0.0.1:6379"
+  password: ""
+  db: 10
+
+kafka:
+  addrs:
+    - "127.0.0.1:9094"
+
+grpc:
+  port: 8091
+  etcdAddrs:
+    - "127.0.0.1:2379"
+
+etcd:
+  addrs:
+    - "127.0.0.1:2379"
+
+sms:
+  accessKeyId: ""
+  accessKeySecret: ""
+  endpoint: "dysmsapi.aliyuncs.com"
+
+email:
+  host: "smtp.example.com"
+  port: 587
+  username: ""
+  password: ""
+  from: "noreply@example.com"

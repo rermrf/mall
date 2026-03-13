@@ -1,0 +1,87 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.navBar {
+  background: var(--color-card);
+}
+
+.tabs {
+  --active-line-color: var(--color-accent);
+  --active-title-color: var(--color-primary);
+  background: var(--color-card);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.content {
+  padding: 12px;
+}
+
+.couponCard {
+  display: flex;
+  align-items: center;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.couponDisabled {
+  opacity: 0.5;
+}
+
+.couponLeft {
+  width: 100px;
+  padding: 16px 12px;
+  text-align: center;
+  background: linear-gradient(135deg, #FFF8F0, #FFFFFF);
+  border-right: 1px dashed var(--color-border);
+}
+
+.couponValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.couponCondition {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.couponRight {
+  flex: 1;
+  padding: 12px 16px;
+}
+
+.couponName {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.couponTime {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.statusTag {
+  display: inline-block;
+  font-size: 11px;
+  margin-top: 4px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--color-text-secondary);
+}

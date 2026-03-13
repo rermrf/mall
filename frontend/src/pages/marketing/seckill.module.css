@@ -1,0 +1,119 @@
+.page {
+  padding: 12px;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.navBar {
+  margin: -12px -12px 12px;
+}
+
+.activityCard {
+  background: var(--color-card);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.activityHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.activityName {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.countdown {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdownLabel {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-right: 4px;
+}
+
+.countdownTime {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.itemsList {
+  padding: 12px 16px;
+}
+
+.seckillItem {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  align-items: center;
+}
+
+.seckillItem + .seckillItem {
+  border-top: 1px solid var(--color-border);
+}
+
+.itemImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemName {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.itemPrices {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.seckillPrice {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-danger);
+}
+
+.originalPrice {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  text-decoration: line-through;
+}
+
+.itemStock {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+.buyBtn {
+  border-radius: var(--radius);
+  --background-color: var(--color-danger);
+  --border-color: var(--color-danger);
+  min-width: 70px;
+  flex-shrink: 0;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--color-text-secondary);
+}

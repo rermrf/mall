@@ -1,0 +1,195 @@
+syntax = "proto3";
+
+package order.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "/order/v1;orderv1";
+
+// ==================== Messages ====================
+
+message Order {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string order_no = 3; // 雪花算法生成
+  int64 buyer_id = 4;
+  int32 status = 5; // 1-pending 2-paid 3-shipped 4-received 5-completed 6-cancelled 7-refunded
+  int64 total_amount = 6; // 分
+  int64 discount_amount = 7;
+  int64 freight_amount = 8;
+  int64 pay_amount = 9;
+  int64 coupon_id = 10;
+  int64 payment_id = 11;
+  string receiver_name = 12;
+  string receiver_phone = 13;
+  string receiver_address = 14;
+  string remark = 15;
+  int64 pay_time = 16;
+  int64 ship_time = 17;
+  int64 receive_time = 18;
+  int64 close_time = 19;
+  repeated OrderItem items = 20;
+  google.protobuf.Timestamp ctime = 21;
+  google.protobuf.Timestamp utime = 22;
+}
+
+message OrderItem {
+  int64 id = 1;
+  int64 order_id = 2;
+  int64 product_id = 3;
+  int64 sku_id = 4;
+  string product_name = 5; // 快照
+  string sku_spec = 6; // 快照
+  string product_image = 7; // 快照
+  int64 price = 8; // 分
+  int32 quantity = 9;
+  int64 total_amount = 10;
+}
+
+message OrderStatusLog {
+  int64 id = 1;
+  int64 order_id = 2;
+  int32 from_status = 3;
+  int32 to_status = 4;
+  int64 operator_id = 5;
+  int32 operator_type = 6; // 1-买家 2-商家 3-平台 4-系统
+  string remark = 7;
+  int64 ctime = 8;
+}
+
+message RefundOrder {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 order_id = 3;
+  string refund_no = 4;
+  int64 buyer_id = 5;
+  int32 type = 6; // 1-仅退款 2-退货退款
+  int32 status = 7; // 1-待审核 2-审核通过 3-退款中 4-已退款 5-已拒绝
+  int64 refund_amount = 8;
+  string reason = 9;
+  google.protobuf.Timestamp ctime = 10;
+  google.protobuf.Timestamp utime = 11;
+}
+
+// 下单请求中的商品项
+message CreateOrderItem {
+  int64 sku_id = 1;
+  int32 quantity = 2;
+}
+
+// ==================== OrderService ====================
+
+service OrderService {
+  // 创建订单（C端下单）
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  // 查询订单详情
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+  // 订单列表（买家/商家/平台维度）
+  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse);
+  // 取消订单（买家主动取消）
+  rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
+  // 确认收货
+  rpc ConfirmReceive(ConfirmReceiveRequest) returns (ConfirmReceiveResponse);
+  // 更新订单状态（内部调用：支付回调、发货等）
+  rpc UpdateOrderStatus(UpdateOrderStatusRequest) returns (UpdateOrderStatusResponse);
+
+  // 售后
+  rpc ApplyRefund(ApplyRefundRequest) returns (ApplyRefundResponse);
+  rpc HandleRefund(HandleRefundRequest) returns (HandleRefundResponse);
+  rpc GetRefundOrder(GetRefundOrderRequest) returns (GetRefundOrderResponse);
+  rpc ListRefundOrders(ListRefundOrdersRequest) returns (ListRefundOrdersResponse);
+}
+
+// ==================== Requests & Responses ====================
+
+message CreateOrderRequest {
+  int64 buyer_id = 1;
+  int64 tenant_id = 2;
+  repeated CreateOrderItem items = 3;
+  int64 address_id = 4;
+  int64 coupon_id = 5;
+  string remark = 6;
+}
+message CreateOrderResponse {
+  string order_no = 1;
+  int64 pay_amount = 2; // 应付金额（分）
+}
+
+message GetOrderRequest {
+  string order_no = 1;
+}
+message GetOrderResponse {
+  Order order = 1;
+}
+
+message ListOrdersRequest {
+  int64 buyer_id = 1; // C端按买家查
+  int64 tenant_id = 2; // 商家端按租户查
+  int32 status = 3; // 0=全部
+  int32 page = 4;
+  int32 page_size = 5;
+}
+message ListOrdersResponse {
+  repeated Order orders = 1;
+  int64 total = 2;
+}
+
+message CancelOrderRequest {
+  string order_no = 1;
+  int64 buyer_id = 2;
+}
+message CancelOrderResponse {}
+
+message ConfirmReceiveRequest {
+  string order_no = 1;
+  int64 buyer_id = 2;
+}
+message ConfirmReceiveResponse {}
+
+message UpdateOrderStatusRequest {
+  string order_no = 1;
+  int32 status = 2;
+  int64 operator_id = 3;
+  int32 operator_type = 4;
+  string remark = 5;
+}
+message UpdateOrderStatusResponse {}
+
+// 售后
+message ApplyRefundRequest {
+  string order_no = 1;
+  int64 buyer_id = 2;
+  int32 type = 3; // 1-仅退款 2-退货退款
+  int64 refund_amount = 4;
+  string reason = 5;
+}
+message ApplyRefundResponse {
+  string refund_no = 1;
+}
+
+message HandleRefundRequest {
+  string refund_no = 1;
+  int64 tenant_id = 2;
+  bool approved = 3;
+  string reason = 4;
+}
+message HandleRefundResponse {}
+
+message GetRefundOrderRequest {
+  string refund_no = 1;
+}
+message GetRefundOrderResponse {
+  RefundOrder refund_order = 1;
+}
+
+message ListRefundOrdersRequest {
+  int64 tenant_id = 1;
+  int64 buyer_id = 2; // 0=不限
+  int32 status = 3; // 0=全部
+  int32 page = 4;
+  int32 page_size = 5;
+}
+message ListRefundOrdersResponse {
+  repeated RefundOrder refund_orders = 1;
+  int64 total = 2;
+}

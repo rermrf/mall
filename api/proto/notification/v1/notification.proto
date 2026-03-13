@@ -1,0 +1,139 @@
+syntax = "proto3";
+
+package notification.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "/notification/v1;notificationv1";
+
+// ==================== Messages ====================
+
+message NotificationTemplate {
+  int64 id = 1;
+  int64 tenant_id = 2; // 0=平台模板
+  string code = 3; // 模板编码：order_paid, ship_notify 等
+  int32 channel = 4; // 1-短信 2-邮件 3-站内信
+  string title = 5;
+  string content = 6; // 模板内容，支持占位符 {{.OrderNo}}
+  int32 status = 7; // 1-启用 2-停用
+  google.protobuf.Timestamp ctime = 8;
+}
+
+message Notification {
+  int64 id = 1;
+  int64 user_id = 2;
+  int64 tenant_id = 3;
+  int32 channel = 4; // 1-短信 2-邮件 3-站内信
+  string title = 5;
+  string content = 6;
+  bool is_read = 7;
+  int32 status = 8; // 1-待发送 2-已发送 3-发送失败
+  google.protobuf.Timestamp ctime = 9;
+}
+
+// ==================== NotificationService ====================
+
+service NotificationService {
+  // 发送通知（内部调用 / Kafka Consumer 触发）
+  rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse);
+  // 批量发送
+  rpc BatchSendNotification(BatchSendNotificationRequest) returns (BatchSendNotificationResponse);
+
+  // 站内信查询（C端/商家端）
+  rpc ListNotifications(ListNotificationsRequest) returns (ListNotificationsResponse);
+  // 标记已读
+  rpc MarkRead(MarkReadRequest) returns (MarkReadResponse);
+  // 全部标记已读
+  rpc MarkAllRead(MarkAllReadRequest) returns (MarkAllReadResponse);
+  // 未读数量
+  rpc GetUnreadCount(GetUnreadCountRequest) returns (GetUnreadCountResponse);
+
+  // 模板管理（平台管理端）
+  rpc CreateTemplate(CreateTemplateRequest) returns (CreateTemplateResponse);
+  rpc UpdateTemplate(UpdateTemplateRequest) returns (UpdateTemplateResponse);
+  rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse);
+  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
+}
+
+// ==================== Requests & Responses ====================
+
+message SendNotificationRequest {
+  int64 user_id = 1;
+  int64 tenant_id = 2;
+  string template_code = 3; // 模板编码
+  int32 channel = 4; // 发送渠道
+  map<string, string> params = 5; // 模板参数 {{.Key}} → Value
+}
+message SendNotificationResponse {
+  int64 id = 1;
+}
+
+message BatchSendNotificationRequest {
+  repeated int64 user_ids = 1;
+  int64 tenant_id = 2;
+  string template_code = 3;
+  int32 channel = 4;
+  map<string, string> params = 5;
+}
+message BatchSendNotificationResponse {
+  int32 success_count = 1;
+  int32 fail_count = 2;
+}
+
+message ListNotificationsRequest {
+  int64 user_id = 1;
+  int32 channel = 2; // 0=全部
+  bool unread_only = 3;
+  int32 page = 4;
+  int32 page_size = 5;
+}
+message ListNotificationsResponse {
+  repeated Notification notifications = 1;
+  int64 total = 2;
+}
+
+message MarkReadRequest {
+  int64 id = 1;
+  int64 user_id = 2;
+}
+message MarkReadResponse {}
+
+message MarkAllReadRequest {
+  int64 user_id = 1;
+}
+message MarkAllReadResponse {}
+
+message GetUnreadCountRequest {
+  int64 user_id = 1;
+}
+message GetUnreadCountResponse {
+  int64 count = 1;
+}
+
+// 模板管理
+message CreateTemplateRequest {
+  NotificationTemplate template = 1;
+}
+message CreateTemplateResponse {
+  int64 id = 1;
+}
+
+message UpdateTemplateRequest {
+  NotificationTemplate template = 1;
+}
+message UpdateTemplateResponse {}
+
+message ListTemplatesRequest {
+  int64 tenant_id = 1; // 0=平台模板
+  int32 channel = 2; // 0=全部
+}
+message ListTemplatesResponse {
+  repeated NotificationTemplate templates = 1;
+}
+
+// 删除模板
+message DeleteTemplateRequest {
+  int64 id = 1;
+  int64 tenant_id = 2; // 0=平台模板
+}
+message DeleteTemplateResponse {}

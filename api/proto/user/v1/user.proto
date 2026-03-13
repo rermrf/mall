@@ -1,0 +1,253 @@
+syntax = "proto3";
+
+package user.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "/user/v1;userv1";
+
+// ==================== Messages ====================
+
+message User {
+  int64 id = 1;
+  int64 tenant_id = 2; // 所属租户（租户级隔离，唯一索引：tenant_id + phone）
+  string phone = 3;
+  string email = 4;
+  string nickname = 5;
+  string avatar = 6;
+  int32 status = 7; // 1-正常 2-冻结 3-注销
+  google.protobuf.Timestamp ctime = 8;
+  google.protobuf.Timestamp utime = 9;
+}
+
+message UserAddress {
+  int64 id = 1;
+  int64 user_id = 2;
+  string name = 3;
+  string phone = 4;
+  string province = 5;
+  string city = 6;
+  string district = 7;
+  string detail = 8;
+  bool is_default = 9;
+}
+
+message Role {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string name = 3;
+  string code = 4;
+  string description = 5;
+}
+
+message Permission {
+  int64 id = 1;
+  string code = 2;
+  string name = 3;
+  int32 type = 4; // 1-菜单 2-按钮 3-API
+  string resource = 5; // 资源标识
+}
+
+// ==================== UserService ====================
+
+service UserService {
+  // 用户注册
+  rpc Signup(SignupRequest) returns (SignupResponse);
+  // 密码登录
+  rpc Login(LoginRequest) returns (LoginResponse);
+  // 发送短信验证码
+  rpc SendSmsCode(SendSmsCodeRequest) returns (SendSmsCodeResponse);
+  // 验证码登录
+  rpc LoginByPhone(LoginByPhoneRequest) returns (LoginByPhoneResponse);
+  // OAuth2 登录（微信/Google）
+  rpc OAuthLogin(OAuthLoginRequest) returns (OAuthLoginResponse);
+  // 刷新 Token
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+  // 登出（JWT 加入 Redis 黑名单）
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+  // 根据 ID 查询
+  rpc FindById(FindByIdRequest) returns (FindByIdResponse);
+  // 根据手机号查询
+  rpc FindByPhone(FindByPhoneRequest) returns (FindByPhoneResponse);
+  // 用户列表（平台管理端）
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  // 更新用户资料
+  rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
+  // 更新用户状态（冻结/解冻）
+  rpc UpdateUserStatus(UpdateUserStatusRequest) returns (UpdateUserStatusResponse);
+
+  // RBAC 权限
+  rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
+  rpc AssignRole(AssignRoleRequest) returns (AssignRoleResponse);
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
+  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse);
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse);
+
+  // 收货地址
+  rpc CreateAddress(CreateAddressRequest) returns (CreateAddressResponse);
+  rpc ListAddresses(ListAddressesRequest) returns (ListAddressesResponse);
+  rpc UpdateAddress(UpdateAddressRequest) returns (UpdateAddressResponse);
+  rpc DeleteAddress(DeleteAddressRequest) returns (DeleteAddressResponse);
+}
+
+// ==================== Requests & Responses ====================
+
+message SignupRequest {
+  int64 tenant_id = 1;
+  string phone = 2;
+  string email = 3;
+  string password = 4;
+}
+message SignupResponse {
+  int64 id = 1;
+}
+
+message LoginRequest {
+  int64 tenant_id = 1;
+  string phone = 2;
+  string password = 3;
+}
+message LoginResponse {
+  User user = 1;
+}
+
+message SendSmsCodeRequest {
+  int64 tenant_id = 1;
+  string phone = 2;
+  int32 scene = 3; // 1-登录 2-注册 3-重置密码
+}
+message SendSmsCodeResponse {}
+
+message LoginByPhoneRequest {
+  int64 tenant_id = 1;
+  string phone = 2;
+  string code = 3;
+}
+message LoginByPhoneResponse {
+  User user = 1;
+}
+
+message OAuthLoginRequest {
+  int64 tenant_id = 1;
+  string provider = 2; // wechat / google
+  string code = 3; // OAuth2 授权码
+}
+message OAuthLoginResponse {
+  User user = 1;
+  bool is_new = 2; // 是否新用户（首次 OAuth 登录自动注册）
+}
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+message RefreshTokenResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message LogoutRequest {
+  string access_token = 1;
+}
+message LogoutResponse {}
+
+message FindByIdRequest {
+  int64 id = 1;
+}
+message FindByIdResponse {
+  User user = 1;
+}
+
+message FindByPhoneRequest {
+  int64 tenant_id = 1;
+  string phone = 2;
+}
+message FindByPhoneResponse {
+  User user = 1;
+}
+
+message UpdateProfileRequest {
+  int64 id = 1;
+  string nickname = 2;
+  string avatar = 3;
+}
+message UpdateProfileResponse {}
+
+message UpdateUserStatusRequest {
+  int64 id = 1;
+  int32 status = 2;
+}
+message UpdateUserStatusResponse {}
+
+// 用户列表
+message ListUsersRequest {
+  int64 tenant_id = 1; // 0=全平台
+  int32 page = 2;
+  int32 page_size = 3;
+  int32 status = 4; // 0=全部
+  string keyword = 5; // 手机号/昵称模糊搜索
+}
+message ListUsersResponse {
+  repeated User users = 1;
+  int64 total = 2;
+}
+
+// RBAC
+message GetPermissionsRequest {
+  int64 user_id = 1;
+  int64 tenant_id = 2;
+}
+message GetPermissionsResponse {
+  repeated Permission permissions = 1;
+}
+
+message AssignRoleRequest {
+  int64 user_id = 1;
+  int64 tenant_id = 2;
+  int64 role_id = 3;
+}
+message AssignRoleResponse {}
+
+message CreateRoleRequest {
+  Role role = 1;
+}
+message CreateRoleResponse {
+  int64 id = 1;
+}
+
+message UpdateRoleRequest {
+  Role role = 1;
+}
+message UpdateRoleResponse {}
+
+message ListRolesRequest {
+  int64 tenant_id = 1;
+}
+message ListRolesResponse {
+  repeated Role roles = 1;
+}
+
+// 收货地址
+message CreateAddressRequest {
+  UserAddress address = 1;
+}
+message CreateAddressResponse {
+  int64 id = 1;
+}
+
+message ListAddressesRequest {
+  int64 user_id = 1;
+}
+message ListAddressesResponse {
+  repeated UserAddress addresses = 1;
+}
+
+message UpdateAddressRequest {
+  UserAddress address = 1;
+}
+message UpdateAddressResponse {}
+
+message DeleteAddressRequest {
+  int64 id = 1;
+  int64 user_id = 2;
+}
+message DeleteAddressResponse {}

@@ -1,0 +1,203 @@
+.page {
+  padding: 12px 12px 80px;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.navBar {
+  margin: -12px -12px 12px;
+}
+
+.addressCard {
+  padding: 16px;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.addressName {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.addressPhone {
+  color: var(--color-text-secondary);
+  margin-left: 12px;
+}
+
+.addressDetail {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: 6px;
+}
+
+.noAddress {
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.itemsCard {
+  padding: 12px;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.orderItem {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.orderItem + .orderItem {
+  border-top: 1px solid var(--color-border);
+}
+
+.orderItemImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.orderItemInfo {
+  flex: 1;
+}
+
+.orderItemName {
+  font-size: 14px;
+}
+
+.orderItemMeta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.remarkInput {
+  padding: 12px;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--color-card);
+  border-top: 1px solid var(--color-border);
+  z-index: 99;
+}
+
+.footerTotal {
+  flex: 1;
+  font-size: 16px;
+}
+
+.submitBtn {
+  --background-color: var(--color-primary);
+  --border-color: var(--color-primary);
+  border-radius: var(--radius);
+  min-width: 120px;
+}
+
+.couponCard {
+  padding: 14px 16px;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.couponLabel {
+  font-size: 14px;
+}
+
+.couponSelected {
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.couponArrow {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.popupContent {
+  padding: 16px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.popupTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.popupCouponItem {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.popupCouponItemActive {
+  border-color: var(--color-accent);
+  background: #FFFAF0;
+}
+
+.popupCouponValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-accent);
+  min-width: 60px;
+  text-align: center;
+}
+
+.popupCouponInfo {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.popupCouponName {
+  font-size: 14px;
+}
+
+.popupCouponCondition {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.popupNoCoupon {
+  padding: 12px;
+  text-align: center;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+}
+
+.popupNoCouponActive {
+  border-color: var(--color-accent);
+  background: #FFFAF0;
+}

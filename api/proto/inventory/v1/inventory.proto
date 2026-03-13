@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package inventory.v1;
+
+option go_package = "/inventory/v1;inventoryv1";
+
+// ==================== Messages ====================
+
+message Inventory {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 sku_id = 3;
+  int32 total = 4;
+  int32 available = 5;
+  int32 locked = 6;
+  int32 sold = 7;
+  int32 alert_threshold = 8;
+  int64 ctime = 9;
+  int64 utime = 10;
+}
+
+message DeductItem {
+  int64 sku_id = 1;
+  int32 quantity = 2;
+}
+
+message InventoryLog {
+  int64 id = 1;
+  int64 sku_id = 2;
+  int64 order_id = 3;
+  int32 type = 4; // 1-预扣 2-确认 3-回滚 4-手动调整
+  int32 quantity = 5;
+  int32 before_available = 6;
+  int32 after_available = 7;
+  int64 ctime = 8;
+  int64 tenant_id = 9;
+}
+
+// ==================== InventoryService ====================
+
+service InventoryService {
+  // 设置库存（商家端）
+  rpc SetStock(SetStockRequest) returns (SetStockResponse);
+  // 查询库存
+  rpc GetStock(GetStockRequest) returns (GetStockResponse);
+  // 批量查询库存
+  rpc BatchGetStock(BatchGetStockRequest) returns (BatchGetStockResponse);
+
+  // ===== 库存三阶段（核心亮点）=====
+  // 预扣库存（Redis+Lua 原子操作）
+  rpc Deduct(DeductRequest) returns (DeductResponse);
+  // 确认扣减（支付成功后，MySQL 落库）
+  rpc Confirm(ConfirmRequest) returns (ConfirmResponse);
+  // 回滚库存（超时/取消订单）
+  rpc Rollback(RollbackRequest) returns (RollbackResponse);
+
+  // 库存变更日志
+  rpc ListLogs(ListLogsRequest) returns (ListLogsResponse);
+}
+
+// ==================== Requests & Responses ====================
+
+message SetStockRequest {
+  int64 tenant_id = 1;
+  int64 sku_id = 2;
+  int32 total = 3;
+  int32 alert_threshold = 4;
+}
+message SetStockResponse {}
+
+message GetStockRequest {
+  int64 sku_id = 1;
+}
+message GetStockResponse {
+  Inventory inventory = 1;
+}
+
+message BatchGetStockRequest {
+  repeated int64 sku_ids = 1;
+}
+message BatchGetStockResponse {
+  repeated Inventory inventories = 1;
+}
+
+// 预扣：支持多个 SKU 同时预扣（一个订单多件商品）
+message DeductRequest {
+  int64 order_id = 1;
+  int64 tenant_id = 2;
+  repeated DeductItem items = 3;
+}
+message DeductResponse {
+  bool success = 1;
+  string message = 2; // 失败时返回原因（如"SKU xxx 库存不足"）
+}
+
+message ConfirmRequest {
+  int64 order_id = 1;
+}
+message ConfirmResponse {}
+
+message RollbackRequest {
+  int64 order_id = 1;
+}
+message RollbackResponse {}
+
+message ListLogsRequest {
+  int64 tenant_id = 1;
+  int64 sku_id = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+message ListLogsResponse {
+  repeated InventoryLog logs = 1;
+  int64 total = 2;
+}

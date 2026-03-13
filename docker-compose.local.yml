@@ -1,0 +1,193 @@
+# ============================================================
+# 本地基础设施覆盖配置
+# 使用方式: docker compose -f docker-compose.yml -f docker-compose.local.yml --profile consumer --profile local up -d
+# 或简写: make dev-up-local
+# ============================================================
+
+x-local-env: &local-env
+  MYSQL_HOST: mysql
+  REDIS_HOST: redis
+  KAFKA_HOST: kafka
+  ETCD_HOST: etcd
+  ES_HOST: elasticsearch
+
+services:
+  user:
+    environment:
+      <<: *local-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  tenant:
+    environment:
+      <<: *local-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  product:
+    environment:
+      <<: *local-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  inventory:
+    environment:
+      <<: *local-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  order:
+    environment:
+      <<: *local-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  payment:
+    environment:
+      <<: *local-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  cart:
+    environment:
+      <<: *local-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  search:
+    environment:
+      <<: *local-env
+    depends_on:
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+
+  marketing:
+    environment:
+      <<: *local-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  logistics:
+    environment:
+      <<: *local-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  notification:
+    environment:
+      <<: *local-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  consumer-bff:
+    environment:
+      REDIS_HOST: redis
+      ETCD_HOST: etcd
+    depends_on:
+      redis:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  merchant-bff:
+    environment:
+      REDIS_HOST: redis
+      ETCD_HOST: etcd
+    depends_on:
+      redis:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  admin-bff:
+    environment:
+      REDIS_HOST: redis
+      ETCD_HOST: etcd
+    depends_on:
+      redis:
+        condition: service_healthy
+      etcd:
+        condition: service_healthy
+
+  seed:
+    command: ["-user-dsn", "root:wen123...@tcp(mysql:3306)/mall_user?charset=utf8mb4&parseTime=true&loc=Local",
+              "-tenant-dsn", "root:wen123...@tcp(mysql:3306)/mall_tenant?charset=utf8mb4&parseTime=true&loc=Local"]
+    depends_on:
+      mysql:
+        condition: service_healthy
+      consumer-bff:
+        condition: service_healthy

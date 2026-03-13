@@ -1,0 +1,131 @@
+.page {
+  padding: 12px 12px 24px;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.navBar {
+  margin: -12px -12px 12px;
+}
+
+.statusBanner {
+  padding: 24px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  color: #fff;
+  text-align: center;
+}
+
+.statusPending {
+  background: var(--color-accent);
+}
+
+.statusSuccess {
+  background: var(--color-success);
+}
+
+.statusRejected {
+  background: var(--color-danger);
+}
+
+.statusDefault {
+  background: var(--color-primary);
+}
+
+.statusText {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.card {
+  padding: 16px;
+  background: var(--color-card);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.infoRow + .infoRow {
+  border-top: 1px solid var(--color-border);
+}
+
+.infoLabel {
+  color: var(--color-text-secondary);
+}
+
+.infoValue {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.timeline {
+  padding: 0 8px;
+}
+
+.timelineItem {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 20px;
+  position: relative;
+}
+
+.timelineItem:last-child {
+  padding-bottom: 0;
+}
+
+.timelineDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-border);
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.timelineDotActive {
+  background: var(--color-accent);
+}
+
+.timelineItem:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 18px;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.timelineContent {
+  flex: 1;
+}
+
+.timelineTitle {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.timelineTime {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 40vh 0;
+}

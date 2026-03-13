@@ -1,0 +1,216 @@
+syntax = "proto3";
+
+package product.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "/product/v1;productv1";
+
+// ==================== Messages ====================
+
+message Product {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 category_id = 3;
+  int64 brand_id = 4;
+  string name = 5;
+  string subtitle = 6;
+  string main_image = 7;
+  string images = 8; // JSON array
+  string description = 9;
+  int32 status = 10; // 1-草稿 2-上架 3-下架
+  int64 sales = 11;
+  repeated ProductSKU skus = 12;
+  repeated ProductSpec specs = 13;
+  google.protobuf.Timestamp ctime = 14;
+  google.protobuf.Timestamp utime = 15;
+}
+
+message ProductSKU {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 product_id = 3;
+  string spec_values = 4; // JSON: {"颜色":"红","尺码":"XL"}
+  int64 price = 5; // 分
+  int64 original_price = 6;
+  int64 cost_price = 7;
+  string sku_code = 8;
+  string bar_code = 9;
+  int32 status = 10;
+}
+
+message ProductSpec {
+  int64 id = 1;
+  int64 product_id = 2;
+  string name = 3; // 规格名：颜色/尺码
+  string values = 4; // JSON array: ["红","蓝","绿"]
+  int64 tenant_id = 5;
+}
+
+message Category {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 parent_id = 3;
+  string name = 4;
+  int32 level = 5;
+  int32 sort = 6;
+  string icon = 7;
+  int32 status = 8;
+  repeated Category children = 9;
+}
+
+message Brand {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string name = 3;
+  string logo = 4;
+  int32 status = 5;
+}
+
+// ==================== ProductService ====================
+
+service ProductService {
+  // 商品 CRUD
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+  rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+  rpc UpdateProductStatus(UpdateProductStatusRequest) returns (UpdateProductStatusResponse);
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+  // 批量查询（订单服务用）
+  rpc BatchGetProducts(BatchGetProductsRequest) returns (BatchGetProductsResponse);
+
+  // 分类
+  rpc CreateCategory(CreateCategoryRequest) returns (CreateCategoryResponse);
+  rpc UpdateCategory(UpdateCategoryRequest) returns (UpdateCategoryResponse);
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse);
+
+  // 品牌
+  rpc CreateBrand(CreateBrandRequest) returns (CreateBrandResponse);
+  rpc UpdateBrand(UpdateBrandRequest) returns (UpdateBrandResponse);
+  rpc ListBrands(ListBrandsRequest) returns (ListBrandsResponse);
+
+  // 销量更新（订单完成后调用）
+  rpc IncrSales(IncrSalesRequest) returns (IncrSalesResponse);
+
+  // 删除
+  rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
+  rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryResponse);
+  rpc DeleteBrand(DeleteBrandRequest) returns (DeleteBrandResponse);
+}
+
+// ==================== Requests & Responses ====================
+
+message CreateProductRequest {
+  Product product = 1;
+}
+message CreateProductResponse {
+  int64 id = 1;
+}
+
+message GetProductRequest {
+  int64 id = 1;
+}
+message GetProductResponse {
+  Product product = 1;
+}
+
+message UpdateProductRequest {
+  Product product = 1;
+}
+message UpdateProductResponse {}
+
+message UpdateProductStatusRequest {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int32 status = 3; // 2-上架 3-下架
+}
+message UpdateProductStatusResponse {}
+
+message ListProductsRequest {
+  int64 tenant_id = 1;
+  int64 category_id = 2;
+  int32 status = 3;
+  int32 page = 4;
+  int32 page_size = 5;
+}
+message ListProductsResponse {
+  repeated Product products = 1;
+  int64 total = 2;
+}
+
+message BatchGetProductsRequest {
+  repeated int64 ids = 1;
+}
+message BatchGetProductsResponse {
+  repeated Product products = 1;
+}
+
+// 分类
+message CreateCategoryRequest {
+  Category category = 1;
+}
+message CreateCategoryResponse {
+  int64 id = 1;
+}
+
+message UpdateCategoryRequest {
+  Category category = 1;
+}
+message UpdateCategoryResponse {}
+
+message ListCategoriesRequest {
+  int64 tenant_id = 1; // 0=平台分类
+}
+message ListCategoriesResponse {
+  repeated Category categories = 1; // 树形结构
+}
+
+// 品牌
+message CreateBrandRequest {
+  Brand brand = 1;
+}
+message CreateBrandResponse {
+  int64 id = 1;
+}
+
+message UpdateBrandRequest {
+  Brand brand = 1;
+}
+message UpdateBrandResponse {}
+
+message ListBrandsRequest {
+  int64 tenant_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+message ListBrandsResponse {
+  repeated Brand brands = 1;
+  int64 total = 2;
+}
+
+// 销量
+message IncrSalesRequest {
+  int64 product_id = 1;
+  int64 tenant_id = 2;
+  int32 count = 3;
+}
+message IncrSalesResponse {}
+
+// 删除
+message DeleteProductRequest {
+  int64 id = 1;
+  int64 tenant_id = 2;
+}
+message DeleteProductResponse {}
+
+message DeleteCategoryRequest {
+  int64 id = 1;
+  int64 tenant_id = 2;
+}
+message DeleteCategoryResponse {}
+
+message DeleteBrandRequest {
+  int64 id = 1;
+  int64 tenant_id = 2;
+}
+message DeleteBrandResponse {}

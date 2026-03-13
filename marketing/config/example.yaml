@@ -1,0 +1,20 @@
+db:
+  dsn: "root:root@tcp(127.0.0.1:3306)/mall_marketing?charset=utf8mb4&parseTime=true&loc=Local"
+
+redis:
+  addr: "127.0.0.1:6379"
+  password: ""
+  db: 8
+
+kafka:
+  addrs:
+    - "127.0.0.1:9094"
+
+grpc:
+  port: 8089
+  etcdAddrs:
+    - "127.0.0.1:2379"
+
+etcd:
+  addrs:
+    - "127.0.0.1:2379"

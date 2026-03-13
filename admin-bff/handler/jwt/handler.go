@@ -1,0 +1,230 @@
+package ijwt
+
+import (
+	"context"
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
+
+	userv1 "github.com/rermrf/mall/api/proto/gen/user/v1"
+	"github.com/rermrf/mall/pkg/ginx"
+)
+
+
+type Claims struct {
+	Uid       int64  `json:"uid"`
+	TenantId  int64  `json:"tenant_id"`
+	UserAgent string `json:"user_agent"`
+	jwt.RegisteredClaims
+}
+
+type LoginReq struct {
+	Phone    string `json:"phone"`
+	Password string `json:"password"`
+}
+
+type RefreshReq struct{}
+
+type LogoutReq struct{}
+
+type JWTHandler struct {
+	userClient    userv1.UserServiceClient
+	rdb           redis.Cmdable
+	accessSecret  []byte
+	refreshSecret []byte
+}
+
+func NewJWTHandler(userClient userv1.UserServiceClient, rdb redis.Cmdable, accessSecret string, refreshSecret string) *JWTHandler {
+	return &JWTHandler{
+		userClient:    userClient,
+		rdb:           rdb,
+		accessSecret:  []byte(accessSecret),
+		refreshSecret: []byte(refreshSecret),
+	}
+}
+
+func (h *JWTHandler) Login(ctx *gin.Context, req LoginReq) (ginx.Result, error) {
+	resp, err := h.userClient.Login(ctx.Request.Context(), &userv1.LoginRequest{
+		TenantId: 0,
+		Phone:    req.Phone,
+		Password: req.Password,
+	})
+	if err != nil {
+		return ginx.Result{}, fmt.Errorf("调用用户服务登录失败: %w", err)
+	}
+
+	err = h.SetTokenHeaders(ctx, resp.User.GetId(), 0)
+	if err != nil {
+		return ginx.Result{}, fmt.Errorf("生成 token 失败: %w", err)
+	}
+
+	return ginx.Result{
+		Code: 0,
+		Msg:  "登录成功",
+	}, nil
+}
+
+func (h *JWTHandler) Refresh(ctx *gin.Context, _ RefreshReq) (ginx.Result, error) {
+	refreshToken := ctx.GetHeader("X-Refresh-Token")
+	if refreshToken == "" {
+		return ginx.Result{Code: 401001, Msg: "缺少 refresh token"}, nil
+	}
+
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(refreshToken, claims, func(token *jwt.Token) (interface{}, error) {
+		return h.refreshSecret, nil
+	})
+	if err != nil || !token.Valid {
+		return ginx.Result{Code: 401001, Msg: "refresh token 无效或已过期"}, nil
+	}
+
+	if claims.ID != "" {
+		if h.IsTokenBlacklisted(ctx.Request.Context(), claims.ID) {
+			return ginx.Result{Code: 401001, Msg: "token 已失效"}, nil
+		}
+	}
+
+	err = h.SetTokenHeaders(ctx, claims.Uid, claims.TenantId)
+	if err != nil {
+		return ginx.Result{}, fmt.Errorf("生成 token 失败: %w", err)
+	}
+
+	return ginx.Result{
+		Code: 0,
+		Msg:  "刷新成功",
+	}, nil
+}
+
+func (h *JWTHandler) Logout(ctx *gin.Context, _ LogoutReq) (ginx.Result, error) {
+	accessToken := h.extractTokenFromHeader(ctx)
+	if accessToken == "" {
+		return ginx.Result{Code: 401001, Msg: "缺少 access token"}, nil
+	}
+
+	refreshToken := ctx.GetHeader("X-Refresh-Token")
+	if refreshToken == "" {
+		return ginx.Result{Code: 401001, Msg: "缺少 refresh token"}, nil
+	}
+
+	// 解析 access token
+	accessClaims := &Claims{}
+	accessTokenObj, err := jwt.ParseWithClaims(accessToken, accessClaims, func(token *jwt.Token) (interface{}, error) {
+		return h.accessSecret, nil
+	})
+	if err != nil || !accessTokenObj.Valid {
+		return ginx.Result{Code: 401001, Msg: "access token 无效或已过期"}, nil
+	}
+
+	// 解析 refresh token
+	refreshClaims := &Claims{}
+	refreshTokenObj, err := jwt.ParseWithClaims(refreshToken, refreshClaims, func(token *jwt.Token) (interface{}, error) {
+		return h.refreshSecret, nil
+	})
+	if err != nil || !refreshTokenObj.Valid {
+		return ginx.Result{Code: 401001, Msg: "refresh token 无效或已过期"}, nil
+	}
+
+	// 将两个 token 的 ID 加入黑名单
+	reqCtx := ctx.Request.Context()
+	if accessClaims.ID != "" && accessClaims.ExpiresAt != nil {
+		ttl := time.Until(accessClaims.ExpiresAt.Time)
+		if ttl > 0 {
+			h.rdb.Set(reqCtx, "blacklist:"+accessClaims.ID, "", ttl)
+		}
+	}
+
+	if refreshClaims.ID != "" && refreshClaims.ExpiresAt != nil {
+		ttl := time.Until(refreshClaims.ExpiresAt.Time)
+		if ttl > 0 {
+			h.rdb.Set(reqCtx, "blacklist:"+refreshClaims.ID, "", ttl)
+		}
+	}
+
+	return ginx.Result{
+		Code: 0,
+		Msg:  "登出成功",
+	}, nil
+}
+
+func (h *JWTHandler) SetTokenHeaders(ctx *gin.Context, uid int64, tenantId int64) error {
+	now := time.Now()
+	ua := ctx.GetHeader("User-Agent")
+
+	accessClaims := Claims{
+		Uid:       uid,
+		TenantId:  tenantId,
+		UserAgent: ua,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ID:        uuid.New().String(),
+			ExpiresAt: jwt.NewNumericDate(now.Add(30 * time.Minute)),
+			IssuedAt:  jwt.NewNumericDate(now),
+		},
+	}
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims)
+	accessStr, err := accessToken.SignedString(h.accessSecret)
+	if err != nil {
+		return err
+	}
+
+	refreshClaims := Claims{
+		Uid:       uid,
+		TenantId:  tenantId,
+		UserAgent: ua,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ID:        uuid.New().String(),
+			ExpiresAt: jwt.NewNumericDate(now.Add(7 * 24 * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(now),
+		},
+	}
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
+	refreshStr, err := refreshToken.SignedString(h.refreshSecret)
+	if err != nil {
+		return err
+	}
+
+	ctx.Header("X-Jwt-Token", accessStr)
+	ctx.Header("X-Refresh-Token", refreshStr)
+	return nil
+}
+
+func (h *JWTHandler) ParseAccessToken(tokenStr string) (*Claims, error) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
+		return h.accessSecret, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	if !token.Valid {
+		return nil, fmt.Errorf("token 无效")
+	}
+	return claims, nil
+}
+
+func (h *JWTHandler) IsTokenBlacklisted(ctx context.Context, jti string) bool {
+	val, err := h.rdb.Get(ctx, "blacklist:"+jti).Result()
+	if err == redis.Nil {
+		return false
+	}
+	if err != nil {
+		return false
+	}
+	return val != ""
+}
+
+func (h *JWTHandler) extractTokenFromHeader(ctx *gin.Context) string {
+	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		return ""
+	}
+	parts := strings.SplitN(authHeader, " ", 2)
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		return ""
+	}
+	return parts[1]
+}

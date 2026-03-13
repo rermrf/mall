@@ -1,0 +1,78 @@
+package handler
+
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/rermrf/emo/logger"
+	tenantv1 "github.com/rermrf/mall/api/proto/gen/tenant/v1"
+	"github.com/rermrf/mall/pkg/ginx"
+)
+
+type TenantHandler struct {
+	tenantClient tenantv1.TenantServiceClient
+	l            logger.Logger
+}
+
+func NewTenantHandler(tenantClient tenantv1.TenantServiceClient, l logger.Logger) *TenantHandler {
+	return &TenantHandler{
+		tenantClient: tenantClient,
+		l:            l,
+	}
+}
+
+func (h *TenantHandler) GetShop(ctx *gin.Context) {
+	tenantId, _ := ctx.Get("tenant_id")
+	resp, err := h.tenantClient.GetShop(ctx.Request.Context(), &tenantv1.GetShopRequest{
+		TenantId: tenantId.(int64),
+	})
+	if err != nil {
+		h.l.Error("获取店铺信息失败", logger.Error(err))
+		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		return
+	}
+	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetShop()})
+}
+
+type UpdateShopReq struct {
+	Name         string `json:"name"`
+	Logo         string `json:"logo"`
+	Description  string `json:"description"`
+	Subdomain    string `json:"subdomain"`
+	CustomDomain string `json:"custom_domain"`
+}
+
+func (h *TenantHandler) UpdateShop(ctx *gin.Context, req UpdateShopReq) (ginx.Result, error) {
+	tenantId, _ := ctx.Get("tenant_id")
+	_, err := h.tenantClient.UpdateShop(ctx.Request.Context(), &tenantv1.UpdateShopRequest{
+		Shop: &tenantv1.Shop{
+			TenantId:     tenantId.(int64),
+			Name:         req.Name,
+			Logo:         req.Logo,
+			Description:  req.Description,
+			Subdomain:    req.Subdomain,
+			CustomDomain: req.CustomDomain,
+		},
+	})
+	if err != nil {
+		return ginx.Result{}, fmt.Errorf("更新店铺信息失败: %w", err)
+	}
+	return ginx.Result{Code: 0, Msg: "success"}, nil
+}
+
+func (h *TenantHandler) CheckQuota(ctx *gin.Context) {
+	tenantId, _ := ctx.Get("tenant_id")
+	quotaType := ctx.Param("type")
+	resp, err := h.tenantClient.CheckQuota(ctx.Request.Context(), &tenantv1.CheckQuotaRequest{
+		TenantId:  tenantId.(int64),
+		QuotaType: quotaType,
+	})
+	if err != nil {
+		h.l.Error("查询配额失败", logger.Error(err))
+		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		return
+	}
+	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp})
+}
