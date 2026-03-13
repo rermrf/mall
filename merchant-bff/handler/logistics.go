@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -65,7 +64,7 @@ func (h *LogisticsHandler) CreateFreightTemplate(ctx *gin.Context, req CreateFre
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("创建运费模板失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建运费模板失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{"id": resp.GetId()}}, nil
 }
@@ -96,7 +95,7 @@ func (h *LogisticsHandler) UpdateFreightTemplate(ctx *gin.Context, req UpdateFre
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新运费模板失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新运费模板失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -107,7 +106,8 @@ func (h *LogisticsHandler) GetFreightTemplate(ctx *gin.Context) {
 	resp, err := h.logisticsClient.GetFreightTemplate(ctx.Request.Context(), &logisticsv1.GetFreightTemplateRequest{Id: id})
 	if err != nil {
 		h.l.Error("查询运费模板详情失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetTemplate()})
@@ -120,7 +120,8 @@ func (h *LogisticsHandler) ListFreightTemplates(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询运费模板列表失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetTemplates()})
@@ -135,7 +136,8 @@ func (h *LogisticsHandler) DeleteFreightTemplate(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("删除运费模板失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})
@@ -157,7 +159,7 @@ func (h *LogisticsHandler) ShipOrder(ctx *gin.Context, req ShipOrderReq) (ginx.R
 	// 1. 通过 order-svc 获取订单信息（取 order_id）
 	orderResp, err := h.orderClient.GetOrder(ctx.Request.Context(), &orderv1.GetOrderRequest{OrderNo: orderNo})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询订单失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询订单失败")
 	}
 
 	// 2. 创建物流单
@@ -169,7 +171,7 @@ func (h *LogisticsHandler) ShipOrder(ctx *gin.Context, req ShipOrderReq) (ginx.R
 		TrackingNo:  req.TrackingNo,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("创建物流单失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建物流单失败")
 	}
 
 	// 3. 更新订单状态为已发货
@@ -181,7 +183,7 @@ func (h *LogisticsHandler) ShipOrder(ctx *gin.Context, req ShipOrderReq) (ginx.R
 		Remark:       "商家发货",
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新订单状态失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新订单状态失败")
 	}
 
 	return ginx.Result{Code: 0, Msg: "success"}, nil
@@ -196,7 +198,8 @@ func (h *LogisticsHandler) GetOrderLogistics(ctx *gin.Context) {
 	orderResp, err := h.orderClient.GetOrder(ctx.Request.Context(), &orderv1.GetOrderRequest{OrderNo: orderNo})
 	if err != nil {
 		h.l.Error("查询订单失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 
@@ -205,7 +208,8 @@ func (h *LogisticsHandler) GetOrderLogistics(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询物流信息失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetShipment()})

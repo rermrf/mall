@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -45,7 +44,7 @@ func (h *UserHandler) ListUsers(ctx *gin.Context, req ListUsersReq) (ginx.Result
 		Keyword:  req.Keyword,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用用户服务列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询用户列表失败", ginx.UserErrMappings...)
 	}
 
 	return ginx.Result{
@@ -71,7 +70,7 @@ func (h *UserHandler) UpdateUserStatus(ctx *gin.Context, req UpdateUserStatusReq
 		Status: req.Status,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用用户服务更新状态失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新用户状态失败", ginx.UserErrMappings...)
 	}
 
 	return ginx.Result{
@@ -93,7 +92,7 @@ func (h *UserHandler) ListRoles(ctx *gin.Context, req ListRolesReq) (ginx.Result
 		TenantId: req.TenantId,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用用户服务角色列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询角色列表失败", ginx.UserErrMappings...)
 	}
 
 	return ginx.Result{
@@ -124,7 +123,7 @@ func (h *UserHandler) CreateRole(ctx *gin.Context, req CreateRoleReq) (ginx.Resu
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用用户服务创建角色失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建角色失败", ginx.UserErrMappings...)
 	}
 
 	return ginx.Result{
@@ -156,7 +155,7 @@ func (h *UserHandler) UpdateRole(ctx *gin.Context, req UpdateRoleReq) (ginx.Resu
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用用户服务更新角色失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新角色失败", ginx.UserErrMappings...)
 	}
 
 	return ginx.Result{

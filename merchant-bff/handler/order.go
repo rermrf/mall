@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -38,7 +37,7 @@ func (h *OrderHandler) ListOrders(ctx *gin.Context, req ListOrdersReq) (ginx.Res
 		PageSize: req.PageSize,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询订单列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询订单列表失败", ginx.OrderErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"orders": resp.GetOrders(),
@@ -57,7 +56,8 @@ func (h *OrderHandler) GetOrder(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询订单详情失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.OrderErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetOrder()})
@@ -77,7 +77,8 @@ func (h *OrderHandler) ShipOrder(ctx *gin.Context) {
 	_ = tenantId // tenant_id 通过 gRPC interceptor 传递
 	if err != nil {
 		h.l.Error("发货失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.OrderErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})
@@ -98,7 +99,7 @@ func (h *OrderHandler) HandleRefund(ctx *gin.Context, req HandleRefundReq) (ginx
 		Reason:   req.Reason,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("处理退款失败: %w", err)
+		return ginx.HandleGRPCError(err, "处理退款失败", ginx.OrderErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -118,7 +119,7 @@ func (h *OrderHandler) ListRefundOrders(ctx *gin.Context, req ListRefundsReq) (g
 		PageSize: req.PageSize,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询退款列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询退款列表失败", ginx.OrderErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"refund_orders": resp.GetRefundOrders(),

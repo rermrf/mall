@@ -65,7 +65,7 @@ func (h *JWTHandler) Login(ctx *gin.Context, req LoginReq) (ginx.Result, error) 
 		Password: req.Password,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("登录失败: %w", err)
+		return ginx.HandleGRPCError(err, "登录失败", ginx.UserErrMappings...)
 	}
 	err = h.SetTokenHeaders(ctx, resp.User.GetId(), tenantId)
 	if err != nil {
@@ -82,7 +82,7 @@ func (h *JWTHandler) LoginByPhone(ctx *gin.Context, req LoginByPhoneReq) (ginx.R
 		Code:     req.Code,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("手机登录失败: %w", err)
+		return ginx.HandleGRPCError(err, "手机登录失败", ginx.UserErrMappings...)
 	}
 	err = h.SetTokenHeaders(ctx, resp.User.GetId(), tenantId)
 	if err != nil {
@@ -99,7 +99,7 @@ func (h *JWTHandler) OAuthLogin(ctx *gin.Context, req OAuthLoginReq) (ginx.Resul
 		Code:     req.Code,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("第三方登录失败: %w", err)
+		return ginx.HandleGRPCError(err, "第三方登录失败", ginx.UserErrMappings...)
 	}
 	err = h.SetTokenHeaders(ctx, resp.User.GetId(), tenantId)
 	if err != nil {

@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -48,7 +47,7 @@ func (h *CartHandler) AddItem(ctx *gin.Context, req AddCartItemReq) (ginx.Result
 		Quantity:  req.Quantity,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("加入购物车失败: %w", err)
+		return ginx.HandleGRPCError(err, "加入购物车失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -74,7 +73,7 @@ func (h *CartHandler) UpdateItem(ctx *gin.Context, req UpdateCartItemReq) (ginx.
 		UpdateSelected: req.UpdateSelected,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新购物车失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新购物车失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -93,7 +92,8 @@ func (h *CartHandler) RemoveItem(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("删除购物车商品失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})
@@ -119,7 +119,8 @@ func (h *CartHandler) GetCart(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("获取购物车失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	items := cartResp.GetItems()
@@ -192,7 +193,8 @@ func (h *CartHandler) ClearCart(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("清空购物车失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})
@@ -209,7 +211,7 @@ func (h *CartHandler) BatchRemove(ctx *gin.Context, req BatchRemoveReq) (ginx.Re
 		SkuIds: req.SkuIDs,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("批量删除购物车商品失败: %w", err)
+		return ginx.HandleGRPCError(err, "批量删除购物车商品失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }

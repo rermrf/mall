@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -38,7 +37,7 @@ func (h *UserHandler) Signup(ctx *gin.Context, req SignupReq) (ginx.Result, erro
 		Password: req.Password,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("注册失败: %w", err)
+		return ginx.HandleGRPCError(err, "注册失败", ginx.UserErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "注册成功", Data: map[string]any{"id": resp.GetId()}}, nil
 }
@@ -58,7 +57,7 @@ func (h *UserHandler) SendSmsCode(ctx *gin.Context, req SendSmsCodeReq) (ginx.Re
 		Scene:    req.Scene,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("发送验证码失败: %w", err)
+		return ginx.HandleGRPCError(err, "发送验证码失败", ginx.UserErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "发送成功"}, nil
 }
@@ -72,7 +71,8 @@ func (h *UserHandler) GetProfile(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("获取个人信息失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.UserErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetUser()})
@@ -91,7 +91,7 @@ func (h *UserHandler) UpdateProfile(ctx *gin.Context, req UpdateProfileReq) (gin
 		Avatar:   req.Avatar,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新个人信息失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新个人信息失败", ginx.UserErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -123,7 +123,7 @@ func (h *UserHandler) CreateAddress(ctx *gin.Context, req CreateAddressReq) (gin
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("创建地址失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建地址失败", ginx.OrderErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{"id": resp.GetId()}}, nil
 }
@@ -135,7 +135,8 @@ func (h *UserHandler) ListAddresses(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("获取地址列表失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.OrderErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetAddresses()})
@@ -172,7 +173,7 @@ func (h *UserHandler) UpdateAddress(ctx *gin.Context, req UpdateAddressReq) (gin
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新地址失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新地址失败", ginx.OrderErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -191,7 +192,8 @@ func (h *UserHandler) DeleteAddress(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("删除地址失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.OrderErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})

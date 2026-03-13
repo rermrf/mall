@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -47,7 +46,7 @@ func (h *LogisticsHandler) ListFreightTemplates(ctx *gin.Context, req AdminListF
 		TenantId: req.TenantId,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询运费模板列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询运费模板列表失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: resp.GetTemplates()}, nil
 }
@@ -58,7 +57,8 @@ func (h *LogisticsHandler) GetFreightTemplate(ctx *gin.Context) {
 	resp, err := h.logisticsClient.GetFreightTemplate(ctx.Request.Context(), &logisticsv1.GetFreightTemplateRequest{Id: id})
 	if err != nil {
 		h.l.Error("查询运费模板详情失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetTemplate()})
@@ -72,7 +72,8 @@ func (h *LogisticsHandler) GetShipment(ctx *gin.Context) {
 	resp, err := h.logisticsClient.GetShipment(ctx.Request.Context(), &logisticsv1.GetShipmentRequest{Id: id})
 	if err != nil {
 		h.l.Error("查询物流单失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetShipment()})
@@ -83,7 +84,8 @@ func (h *LogisticsHandler) GetOrderLogistics(ctx *gin.Context) {
 	orderResp, err := h.orderClient.GetOrder(ctx.Request.Context(), &orderv1.GetOrderRequest{OrderNo: orderNo})
 	if err != nil {
 		h.l.Error("查询订单失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	resp, err := h.logisticsClient.GetShipmentByOrder(ctx.Request.Context(), &logisticsv1.GetShipmentByOrderRequest{
@@ -91,7 +93,8 @@ func (h *LogisticsHandler) GetOrderLogistics(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询物流信息失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetShipment()})

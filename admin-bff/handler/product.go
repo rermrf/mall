@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -47,7 +46,7 @@ func (h *ProductHandler) CreateCategory(ctx *gin.Context, req AdminCreateCategor
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("创建平台分类失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建平台分类失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{"id": resp.GetId()}}, nil
 }
@@ -77,7 +76,7 @@ func (h *ProductHandler) UpdateCategory(ctx *gin.Context, req AdminUpdateCategor
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新平台分类失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新平台分类失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -89,7 +88,7 @@ func (h *ProductHandler) ListCategories(ctx *gin.Context, _ AdminListCategoriesR
 		TenantId: 0,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询平台分类列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询平台分类列表失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: resp.GetCategories()}, nil
 }
@@ -112,7 +111,7 @@ func (h *ProductHandler) CreateBrand(ctx *gin.Context, req AdminCreateBrandReq) 
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("创建平台品牌失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建平台品牌失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{"id": resp.GetId()}}, nil
 }
@@ -136,7 +135,7 @@ func (h *ProductHandler) UpdateBrand(ctx *gin.Context, req AdminUpdateBrandReq) 
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新平台品牌失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新平台品牌失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -153,7 +152,7 @@ func (h *ProductHandler) ListBrands(ctx *gin.Context, req AdminListBrandsReq) (g
 		PageSize: req.PageSize,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询平台品牌列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询平台品牌列表失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"brands": resp.GetBrands(),

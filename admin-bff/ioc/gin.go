@@ -88,15 +88,7 @@ func InitGinServer(
 		auth.POST("/notification-templates", ginx.WrapBody[handler.CreateTemplateReq](l, notificationHandler.CreateTemplate))
 		auth.PUT("/notification-templates/:id", ginx.WrapBody[handler.UpdateTemplateReq](l, notificationHandler.UpdateTemplate))
 		auth.GET("/notification-templates", ginx.WrapQuery[handler.ListTemplatesReq](l, notificationHandler.ListTemplates))
-		auth.DELETE("/notification-templates/:id", func(c *gin.Context) {
-			res, err := notificationHandler.DeleteTemplate(c)
-			if err != nil {
-				l.Error("删除通知模板失败", logger.Error(err))
-				c.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
-				return
-			}
-			c.JSON(http.StatusOK, res)
-		})
+		auth.DELETE("/notification-templates/:id", notificationHandler.DeleteTemplate)
 		// 发送通知
 		auth.POST("/notifications/send", ginx.WrapBody[handler.SendNotificationReq](l, notificationHandler.SendNotification))
 

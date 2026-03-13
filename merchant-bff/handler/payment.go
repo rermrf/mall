@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -38,7 +37,7 @@ func (h *PaymentHandler) ListPayments(ctx *gin.Context, req ListPaymentsReq) (gi
 		PageSize: req.PageSize,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询支付列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询支付列表失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"payments": resp.GetPayments(),
@@ -57,7 +56,8 @@ func (h *PaymentHandler) GetPayment(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询支付详情失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetPayment()})
@@ -76,7 +76,7 @@ func (h *PaymentHandler) Refund(ctx *gin.Context, req RefundReq) (ginx.Result, e
 		Reason:    req.Reason,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("发起退款失败: %w", err)
+		return ginx.HandleGRPCError(err, "发起退款失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"refund_no": resp.GetRefundNo(),
@@ -94,7 +94,8 @@ func (h *PaymentHandler) GetRefund(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询退款详情失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetRefund()})

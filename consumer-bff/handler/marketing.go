@@ -34,7 +34,8 @@ func (h *MarketingHandler) ListAvailableCoupons(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询可领优惠券列表失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.MarketingErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetCoupons()})
@@ -51,7 +52,8 @@ func (h *MarketingHandler) ReceiveCoupon(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("领取优惠券失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: err.Error()})
+		result, _ := ginx.HandleRawError(err, ginx.MarketingErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})
@@ -70,7 +72,8 @@ func (h *MarketingHandler) ListMyCoupons(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询我的优惠券失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.MarketingErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetCoupons()})
@@ -87,7 +90,8 @@ func (h *MarketingHandler) ListSeckillActivities(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询秒杀活动列表失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.MarketingErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetActivities()})
@@ -104,7 +108,8 @@ func (h *MarketingHandler) Seckill(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("秒杀请求失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统繁忙"})
+		result, _ := ginx.HandleRawError(err, ginx.MarketingErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	if !resp.GetSuccess() {

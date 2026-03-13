@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -43,7 +42,7 @@ func (h *OrderHandler) ListOrders(ctx *gin.Context, req AdminListOrdersReq) (gin
 		PageSize: req.PageSize,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询全平台订单列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询全平台订单列表失败", ginx.OrderErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"orders": resp.GetOrders(),
@@ -58,7 +57,8 @@ func (h *OrderHandler) GetOrder(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询订单详情失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.OrderErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetOrder()})

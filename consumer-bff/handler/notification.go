@@ -40,7 +40,7 @@ func (h *NotificationHandler) ListNotifications(ctx *gin.Context, req ListNotifi
 	})
 	if err != nil {
 		h.l.Error("查询通知列表失败", logger.Error(err))
-		return ginx.Result{Code: 5, Msg: "系统错误"}, err
+		return ginx.HandleGRPCError(err, "查询通知列表失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"notifications": resp.GetNotifications(),
@@ -55,7 +55,8 @@ func (h *NotificationHandler) GetUnreadCount(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询未读数量失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetCount()})
@@ -71,7 +72,8 @@ func (h *NotificationHandler) MarkRead(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("标记已读失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})
@@ -84,7 +86,8 @@ func (h *NotificationHandler) MarkAllRead(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("全部标记已读失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})

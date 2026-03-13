@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,7 +29,8 @@ func (h *TenantHandler) GetShop(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("获取店铺信息失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.TenantErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetShop()})
@@ -57,7 +57,7 @@ func (h *TenantHandler) UpdateShop(ctx *gin.Context, req UpdateShopReq) (ginx.Re
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新店铺信息失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新店铺信息失败", ginx.TenantErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -71,7 +71,8 @@ func (h *TenantHandler) CheckQuota(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询配额失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.TenantErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp})

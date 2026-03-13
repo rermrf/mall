@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -37,7 +36,8 @@ func (h *InventoryHandler) GetStock(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询库存失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetInventory()})
@@ -52,7 +52,7 @@ func (h *InventoryHandler) BatchGetStock(ctx *gin.Context, req AdminBatchGetStoc
 		SkuIds: req.SkuIds,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("批量查询库存失败: %w", err)
+		return ginx.HandleGRPCError(err, "批量查询库存失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: resp.GetInventories()}, nil
 }
@@ -76,7 +76,7 @@ func (h *InventoryHandler) ListLogs(ctx *gin.Context, req AdminListLogsReq) (gin
 		PageSize: req.PageSize,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询库存日志失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询库存日志失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"logs":  resp.GetLogs(),

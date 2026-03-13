@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -51,7 +51,7 @@ func (h *NotificationHandler) CreateTemplate(ctx *gin.Context, req CreateTemplat
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("创建通知模板失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建通知模板失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{"id": resp.GetId()}}, nil
 }
@@ -84,7 +84,7 @@ func (h *NotificationHandler) UpdateTemplate(ctx *gin.Context, req UpdateTemplat
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新通知模板失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新通知模板失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -104,21 +104,24 @@ func (h *NotificationHandler) ListTemplates(ctx *gin.Context, req ListTemplatesR
 		Channel:  req.Channel,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询通知模板列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询通知模板列表失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: resp.GetTemplates()}, nil
 }
 
-func (h *NotificationHandler) DeleteTemplate(ctx *gin.Context) (ginx.Result, error) {
+func (h *NotificationHandler) DeleteTemplate(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, _ := strconv.ParseInt(idStr, 10, 64)
 	_, err := h.notificationClient.DeleteTemplate(ctx.Request.Context(), &notificationv1.DeleteTemplateRequest{
 		Id: id,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("删除通知模板失败: %w", err)
+		h.l.Error("删除通知模板失败", logger.Error(err))
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
+		return
 	}
-	return ginx.Result{Code: 0, Msg: "success"}, nil
+	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})
 }
 
 // ==================== 发送通知 ====================
@@ -144,7 +147,7 @@ func (h *NotificationHandler) SendNotification(ctx *gin.Context, req SendNotific
 		Params:       req.Params,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("发送通知失败: %w", err)
+		return ginx.HandleGRPCError(err, "发送通知失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{"id": resp.GetId()}}, nil
 }

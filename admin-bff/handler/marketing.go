@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -46,7 +45,7 @@ func (h *MarketingHandler) ListCoupons(ctx *gin.Context, req AdminListCouponsReq
 		PageSize: req.PageSize,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询优惠券列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询优惠券列表失败", ginx.MarketingErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"coupons": resp.GetCoupons(),
@@ -75,7 +74,7 @@ func (h *MarketingHandler) ListSeckill(ctx *gin.Context, req AdminListSeckillReq
 		PageSize: req.PageSize,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询秒杀活动列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询秒杀活动列表失败", ginx.MarketingErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"activities": resp.GetActivities(),
@@ -89,7 +88,8 @@ func (h *MarketingHandler) GetSeckill(ctx *gin.Context) {
 	resp, err := h.marketingClient.GetSeckillActivity(ctx.Request.Context(), &marketingv1.GetSeckillActivityRequest{Id: id})
 	if err != nil {
 		h.l.Error("查询秒杀活动详情失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.MarketingErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetActivity()})
@@ -112,7 +112,7 @@ func (h *MarketingHandler) ListPromotions(ctx *gin.Context, req AdminListPromoti
 		Status:   req.Status,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询满减规则列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询满减规则列表失败", ginx.MarketingErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: resp.GetRules()}, nil
 }

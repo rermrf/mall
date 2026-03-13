@@ -55,7 +55,7 @@ func (h *JWTHandler) Login(ctx *gin.Context, req LoginReq) (ginx.Result, error) 
 		Password: req.Password,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用用户服务登录失败: %w", err)
+		return ginx.HandleGRPCError(err, "登录失败", ginx.UserErrMappings...)
 	}
 
 	err = h.SetTokenHeaders(ctx, resp.User.GetId(), 0)

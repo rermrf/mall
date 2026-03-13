@@ -33,7 +33,8 @@ func (h *TenantHandler) GetShop(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("获取店铺信息失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.TenantErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetShop()})

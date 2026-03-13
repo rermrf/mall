@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -43,7 +42,7 @@ func (h *TenantHandler) CreateTenant(ctx *gin.Context, req CreateTenantReq) (gin
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用租户服务创建租户失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建租户失败", ginx.TenantErrMappings...)
 	}
 
 	return ginx.Result{
@@ -66,7 +65,7 @@ func (h *TenantHandler) ListTenants(ctx *gin.Context, req ListTenantsReq) (ginx.
 		Status:   req.Status,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用租户服务列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询租户列表失败", ginx.TenantErrMappings...)
 	}
 
 	return ginx.Result{
@@ -88,8 +87,9 @@ func (h *TenantHandler) GetTenant(ctx *gin.Context) {
 		Id: id,
 	})
 	if err != nil {
-		h.l.Error("调用租户服务获取租户失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		h.l.Error("查询租户详情失败", logger.Error(err))
+		result, _ := ginx.HandleRawError(err, ginx.TenantErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 
@@ -118,7 +118,7 @@ func (h *TenantHandler) ApproveTenant(ctx *gin.Context, req ApproveTenantReq) (g
 		Reason:   req.Reason,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用租户服务审核租户失败: %w", err)
+		return ginx.HandleGRPCError(err, "审核租户失败", ginx.TenantErrMappings...)
 	}
 
 	return ginx.Result{
@@ -143,7 +143,7 @@ func (h *TenantHandler) FreezeTenant(ctx *gin.Context, req FreezeTenantReq) (gin
 		Freeze: req.Freeze,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用租户服务冻结租户失败: %w", err)
+		return ginx.HandleGRPCError(err, "冻结租户失败", ginx.TenantErrMappings...)
 	}
 
 	return ginx.Result{
@@ -157,7 +157,7 @@ type ListPlansReq struct{}
 func (h *TenantHandler) ListPlans(ctx *gin.Context, _ ListPlansReq) (ginx.Result, error) {
 	resp, err := h.tenantClient.ListPlans(ctx.Request.Context(), &tenantv1.ListPlansRequest{})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用租户服务套餐列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询套餐列表失败", ginx.TenantErrMappings...)
 	}
 
 	return ginx.Result{
@@ -188,7 +188,7 @@ func (h *TenantHandler) CreatePlan(ctx *gin.Context, req CreatePlanReq) (ginx.Re
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用租户服务创建套餐失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建套餐失败", ginx.TenantErrMappings...)
 	}
 
 	return ginx.Result{
@@ -226,7 +226,7 @@ func (h *TenantHandler) UpdatePlan(ctx *gin.Context, req UpdatePlanReq) (ginx.Re
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("调用租户服务更新套餐失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新套餐失败", ginx.TenantErrMappings...)
 	}
 
 	return ginx.Result{

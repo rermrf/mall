@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -40,7 +39,7 @@ func (h *PaymentHandler) CreatePayment(ctx *gin.Context, req CreatePaymentReq) (
 		Amount:   req.Amount,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("创建支付单失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建支付单失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"payment_no": resp.GetPaymentNo(),
@@ -59,7 +58,8 @@ func (h *PaymentHandler) GetPayment(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("查询支付状态失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetPayment()})
@@ -76,7 +76,7 @@ func (h *PaymentHandler) HandleNotify(ctx *gin.Context, req HandleNotifyReq) (gi
 		NotifyBody: req.NotifyBody,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("处理支付回调失败: %w", err)
+		return ginx.HandleGRPCError(err, "处理支付回调失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"success": resp.GetSuccess(),

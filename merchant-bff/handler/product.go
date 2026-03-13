@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -91,7 +90,7 @@ func (h *ProductHandler) CreateProduct(ctx *gin.Context, req CreateProductReq) (
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("创建商品失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建商品失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{"id": resp.GetId()}}, nil
 }
@@ -147,7 +146,7 @@ func (h *ProductHandler) UpdateProduct(ctx *gin.Context, req UpdateProductReq) (
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新商品失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新商品失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -158,7 +157,8 @@ func (h *ProductHandler) GetProduct(ctx *gin.Context) {
 	resp, err := h.productClient.GetProduct(ctx.Request.Context(), &productv1.GetProductRequest{Id: id})
 	if err != nil {
 		h.l.Error("查询商品详情失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err, ginx.ProductErrMappings...)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetProduct()})
@@ -181,7 +181,7 @@ func (h *ProductHandler) ListProducts(ctx *gin.Context, req ListProductsReq) (gi
 		PageSize:   req.PageSize,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询商品列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询商品列表失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"products": resp.GetProducts(),
@@ -203,7 +203,7 @@ func (h *ProductHandler) UpdateProductStatus(ctx *gin.Context, req UpdateProduct
 		Status:   req.Status,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新商品状态失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新商品状态失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -233,7 +233,7 @@ func (h *ProductHandler) CreateCategory(ctx *gin.Context, req CreateCategoryReq)
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("创建分类失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建分类失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{"id": resp.GetId()}}, nil
 }
@@ -264,7 +264,7 @@ func (h *ProductHandler) UpdateCategory(ctx *gin.Context, req UpdateCategoryReq)
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新分类失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新分类失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -277,7 +277,7 @@ func (h *ProductHandler) ListCategories(ctx *gin.Context, _ ListCategoriesReq) (
 		TenantId: tenantId.(int64),
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询分类列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询分类列表失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: resp.GetCategories()}, nil
 }
@@ -301,7 +301,7 @@ func (h *ProductHandler) CreateBrand(ctx *gin.Context, req CreateBrandReq) (ginx
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("创建品牌失败: %w", err)
+		return ginx.HandleGRPCError(err, "创建品牌失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{"id": resp.GetId()}}, nil
 }
@@ -326,7 +326,7 @@ func (h *ProductHandler) UpdateBrand(ctx *gin.Context, req UpdateBrandReq) (ginx
 		},
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("更新品牌失败: %w", err)
+		return ginx.HandleGRPCError(err, "更新品牌失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success"}, nil
 }
@@ -344,7 +344,7 @@ func (h *ProductHandler) ListBrands(ctx *gin.Context, req ListBrandsReq) (ginx.R
 		PageSize: req.PageSize,
 	})
 	if err != nil {
-		return ginx.Result{}, fmt.Errorf("查询品牌列表失败: %w", err)
+		return ginx.HandleGRPCError(err, "查询品牌列表失败", ginx.ProductErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"brands": resp.GetBrands(),

@@ -54,7 +54,7 @@ func (h *SearchHandler) Search(ctx *gin.Context, req SearchReq) (ginx.Result, er
 		PageSize:   req.PageSize,
 	})
 	if err != nil {
-		return ginx.Result{}, err
+		return ginx.HandleGRPCError(err, "搜索商品失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"products": resp.GetProducts(),
@@ -75,7 +75,8 @@ func (h *SearchHandler) GetSuggestions(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("获取搜索建议失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetSuggestions()})
@@ -92,7 +93,8 @@ func (h *SearchHandler) GetHotWords(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("获取热搜词失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetWords()})
@@ -111,7 +113,8 @@ func (h *SearchHandler) GetSearchHistory(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("获取搜索历史失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetHistories()})
@@ -124,7 +127,8 @@ func (h *SearchHandler) ClearSearchHistory(ctx *gin.Context) {
 	})
 	if err != nil {
 		h.l.Error("清空搜索历史失败", logger.Error(err))
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 5, Msg: "系统错误"})
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
 		return
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})
