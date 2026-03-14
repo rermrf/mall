@@ -9,6 +9,7 @@ import {
   InboxOutlined,
   GiftOutlined,
   CarOutlined,
+  DollarOutlined,
   ShopOutlined,
   TeamOutlined,
   BellOutlined,
@@ -70,6 +71,14 @@ const menuRoutes = {
         { path: '/logistics/template', name: '运费模板' },
       ],
     },
+    {
+      path: '/payment',
+      name: '支付管理',
+      icon: <DollarOutlined />,
+      routes: [
+        { path: '/payment', name: '支付列表' },
+      ],
+    },
     { path: '/shop/settings', name: '店铺设置', icon: <ShopOutlined /> },
     {
       path: '/staff',
@@ -124,6 +133,8 @@ export default function MainLayout() {
           key="user"
           menu={{
             items: [
+              { key: 'profile', icon: <UserOutlined />, label: '个人资料', onClick: () => navigate('/profile') },
+              { type: 'divider' as const },
               { key: 'logout', icon: <LogoutOutlined />, label: '退出登录', onClick: handleLogout },
             ],
           }}

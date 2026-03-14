@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Card, Descriptions, Table, Tag, Button, Space, message, Modal, Input } from 'antd'
+import { Card, Descriptions, Table, Tag, Button, Space, message, Modal, Input, Spin } from 'antd'
 import { getOrder } from '@/api/order'
 import { shipOrder, getOrderLogistics } from '@/api/logistics'
 import type { Order } from '@/types/order'
@@ -14,6 +14,15 @@ export default function OrderDetail() {
   const [shipModal, setShipModal] = useState(false)
   const [shipForm, setShipForm] = useState<ShipOrderReq>({ carrier_code: '', carrier_name: '', tracking_no: '' })
   const [loading, setLoading] = useState(false)
+
+  const statusMap: Record<number, { text: string; color: string }> = {
+    0: { text: '已取消', color: 'default' },
+    1: { text: '待付款', color: 'orange' },
+    2: { text: '待发货', color: 'blue' },
+    3: { text: '已发货', color: 'cyan' },
+    4: { text: '已完成', color: 'green' },
+    5: { text: '退款中', color: 'red' },
+  }
 
   useEffect(() => {
     if (orderNo) {
@@ -40,14 +49,14 @@ export default function OrderDetail() {
     }
   }
 
-  if (!order) return null
+  if (!order) return <Spin spinning style={{ display: 'flex', justifyContent: 'center', padding: 100 }} />
 
   return (
     <div>
       <Card title="订单信息" extra={<Button onClick={() => navigate(-1)}>返回</Button>}>
         <Descriptions column={2}>
           <Descriptions.Item label="订单号">{order.order_no}</Descriptions.Item>
-          <Descriptions.Item label="状态"><Tag>{order.status}</Tag></Descriptions.Item>
+          <Descriptions.Item label="状态"><Tag color={statusMap[order.status]?.color}>{statusMap[order.status]?.text ?? '未知'}</Tag></Descriptions.Item>
           <Descriptions.Item label="支付金额">¥{((order.pay_amount ?? 0) / 100).toFixed(2)}</Descriptions.Item>
           <Descriptions.Item label="运费">¥{((order.freight_amount ?? 0) / 100).toFixed(2)}</Descriptions.Item>
           <Descriptions.Item label="收货人">{order.receiver_name}</Descriptions.Item>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Card, message } from 'antd'
+import { Card, message, Spin } from 'antd'
 import { ProForm, ProFormText, ProFormTextArea } from '@ant-design/pro-components'
 import { getShop, updateShop } from '@/api/shop'
 import type { Shop, UpdateShopReq } from '@/types/shop'
@@ -13,8 +13,9 @@ export default function ShopSettings() {
 
   return (
     <Card title="店铺设置">
-      {shop && (
-        <ProForm<UpdateShopReq>
+      <Spin spinning={!shop}>
+        {shop && (
+          <ProForm<UpdateShopReq>
           initialValues={{
             name: shop.name,
             logo: shop.logo,
@@ -38,6 +39,7 @@ export default function ShopSettings() {
           <ProFormText name="custom_domain" label="自定义域名" />
         </ProForm>
       )}
+      </Spin>
     </Card>
   )
 }

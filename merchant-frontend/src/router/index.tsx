@@ -26,6 +26,9 @@ const ShopSettings = lazy(() => import('@/pages/shop/ShopSettings'))
 const StaffList = lazy(() => import('@/pages/staff/StaffList'))
 const RoleList = lazy(() => import('@/pages/staff/RoleList'))
 const NotificationList = lazy(() => import('@/pages/notification/NotificationList'))
+const PaymentList = lazy(() => import('@/pages/payment/PaymentList'))
+const PaymentDetail = lazy(() => import('@/pages/payment/PaymentDetail'))
+const ProfileEdit = lazy(() => import('@/pages/profile/ProfileEdit'))
 
 function Loading() {
   return <div style={{ display: 'flex', justifyContent: 'center', padding: '20vh 0' }}><Spin size="large" /></div>
@@ -65,6 +68,9 @@ export const router = createBrowserRouter([
       { path: '/staff/list', element: <L><StaffList /></L> },
       { path: '/staff/role', element: <L><RoleList /></L> },
       { path: '/notification', element: <L><NotificationList /></L> },
+      { path: '/payment', element: <L><PaymentList /></L> },
+      { path: '/payment/:paymentNo', element: <L><PaymentDetail /></L> },
+      { path: '/profile', element: <L><ProfileEdit /></L> },
     ],
   },
 ])

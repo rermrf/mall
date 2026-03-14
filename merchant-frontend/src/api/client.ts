@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { message } from 'antd'
 import type { ApiResult } from '@/types/api'
 
 const client = axios.create({
@@ -58,6 +59,10 @@ client.interceptors.response.use(
         isRefreshing = false
       }
     }
+    const msg = error.response?.data?.msg || error.message || '网络错误'
+    if (error.response?.status !== 401) {
+      message.error(msg)
+    }
     return Promise.reject(error)
   },
 )
@@ -66,6 +71,7 @@ export async function request<T>(config: Parameters<typeof client.request>[0]): 
   const res = await client.request(config)
   const body = res.data as ApiResult<T>
   if (body.code !== 0) {
+    message.error(body.msg || '请求失败')
     throw new Error(body.msg || '请求失败')
   }
   return body.data
