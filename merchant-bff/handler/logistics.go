@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -10,6 +11,7 @@ import (
 	logisticsv1 "github.com/rermrf/mall/api/proto/gen/logistics/v1"
 	orderv1 "github.com/rermrf/mall/api/proto/gen/order/v1"
 	"github.com/rermrf/mall/pkg/ginx"
+	"github.com/rermrf/mall/pkg/validatorx"
 )
 
 type LogisticsHandler struct {
@@ -48,6 +50,14 @@ type FreightRuleReq struct {
 }
 
 func (h *LogisticsHandler) CreateFreightTemplate(ctx *gin.Context, req CreateFreightTemplateReq) (ginx.Result, error) {
+	v := validatorx.New()
+	for i, r := range req.Rules {
+		v.CheckNonNegative(fmt.Sprintf("rules[%d].first_price", i), r.FirstPrice)
+		v.CheckNonNegative(fmt.Sprintf("rules[%d].additional_price", i), r.AdditionalPrice)
+	}
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
 	tenantId, _ := ctx.Get("tenant_id")
 	rules := make([]*logisticsv1.FreightRule, 0, len(req.Rules))
 	for _, r := range req.Rules {
@@ -79,7 +89,18 @@ type UpdateFreightTemplateReq struct {
 func (h *LogisticsHandler) UpdateFreightTemplate(ctx *gin.Context, req UpdateFreightTemplateReq) (ginx.Result, error) {
 	tenantId, _ := ctx.Get("tenant_id")
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		return ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的运费模板 ID"}, nil
+	}
+	v := validatorx.New()
+	for i, r := range req.Rules {
+		v.CheckNonNegative(fmt.Sprintf("rules[%d].first_price", i), r.FirstPrice)
+		v.CheckNonNegative(fmt.Sprintf("rules[%d].additional_price", i), r.AdditionalPrice)
+	}
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
 	rules := make([]*logisticsv1.FreightRule, 0, len(req.Rules))
 	for _, r := range req.Rules {
 		rules = append(rules, &logisticsv1.FreightRule{
@@ -87,7 +108,7 @@ func (h *LogisticsHandler) UpdateFreightTemplate(ctx *gin.Context, req UpdateFre
 			AdditionalUnit: r.AdditionalUnit, AdditionalPrice: r.AdditionalPrice,
 		})
 	}
-	_, err := h.logisticsClient.UpdateFreightTemplate(ctx.Request.Context(), &logisticsv1.UpdateFreightTemplateRequest{
+	_, err = h.logisticsClient.UpdateFreightTemplate(ctx.Request.Context(), &logisticsv1.UpdateFreightTemplateRequest{
 		Template: &logisticsv1.FreightTemplate{
 			Id: id, TenantId: tenantId.(int64), Name: req.Name,
 			ChargeType: req.ChargeType, FreeThreshold: req.FreeThreshold,

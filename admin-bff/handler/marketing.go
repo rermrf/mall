@@ -84,7 +84,11 @@ func (h *MarketingHandler) ListSeckill(ctx *gin.Context, req AdminListSeckillReq
 
 func (h *MarketingHandler) GetSeckill(ctx *gin.Context) {
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的秒杀活动 ID"})
+		return
+	}
 	resp, err := h.marketingClient.GetSeckillActivity(ctx.Request.Context(), &marketingv1.GetSeckillActivityRequest{Id: id})
 	if err != nil {
 		h.l.Error("查询秒杀活动详情失败", logger.Error(err))

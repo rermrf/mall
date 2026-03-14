@@ -62,8 +62,11 @@ type AdminUpdateCategoryReq struct {
 
 func (h *ProductHandler) UpdateCategory(ctx *gin.Context, req AdminUpdateCategoryReq) (ginx.Result, error) {
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
-	_, err := h.productClient.UpdateCategory(ctx.Request.Context(), &productv1.UpdateCategoryRequest{
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		return ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的分类 ID"}, nil
+	}
+	_, err = h.productClient.UpdateCategory(ctx.Request.Context(), &productv1.UpdateCategoryRequest{
 		Category: &productv1.Category{
 			Id:       id,
 			TenantId: 0,
@@ -124,8 +127,11 @@ type AdminUpdateBrandReq struct {
 
 func (h *ProductHandler) UpdateBrand(ctx *gin.Context, req AdminUpdateBrandReq) (ginx.Result, error) {
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
-	_, err := h.productClient.UpdateBrand(ctx.Request.Context(), &productv1.UpdateBrandRequest{
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		return ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的品牌 ID"}, nil
+	}
+	_, err = h.productClient.UpdateBrand(ctx.Request.Context(), &productv1.UpdateBrandRequest{
 		Brand: &productv1.Brand{
 			Id:       id,
 			TenantId: 0,

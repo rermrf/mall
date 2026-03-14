@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/rermrf/emo/logger"
 	"github.com/rermrf/mall/inventory/domain"
@@ -34,6 +35,9 @@ func NewInventoryService(
 }
 
 func (s *inventoryService) SetStock(ctx context.Context, tenantId, skuId int64, total, alertThreshold int32) error {
+	if total < 0 {
+		return fmt.Errorf("库存总量不能为负数")
+	}
 	inv := domain.Inventory{
 		TenantID:       tenantId,
 		SKUID:          skuId,
@@ -54,6 +58,11 @@ func (s *inventoryService) BatchGetStock(ctx context.Context, skuIds []int64) ([
 
 // Deduct 预扣库存：Redis Lua 原子预扣 → 存 Redis Hash → 发 go-delay 延迟消息
 func (s *inventoryService) Deduct(ctx context.Context, orderId, tenantId int64, items []domain.DeductItem) (bool, string, error) {
+	for _, item := range items {
+		if item.Quantity <= 0 {
+			return false, fmt.Sprintf("SKU %d 的扣减数量必须大于0", item.SKUID), nil
+		}
+	}
 	itemMap := make(map[int64]int32, len(items))
 	for _, item := range items {
 		itemMap[item.SKUID] = item.Quantity

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/rermrf/emo/logger"
 	productv1 "github.com/rermrf/mall/api/proto/gen/product/v1"
 	"github.com/rermrf/mall/pkg/ginx"
+	"github.com/rermrf/mall/pkg/validatorx"
 )
 
 type ProductHandler struct {
@@ -54,6 +56,14 @@ type ProductSpecReq struct {
 }
 
 func (h *ProductHandler) CreateProduct(ctx *gin.Context, req CreateProductReq) (ginx.Result, error) {
+	v := validatorx.New()
+	for i, s := range req.Skus {
+		field := fmt.Sprintf("skus[%d].price", i)
+		v.CheckPositive(field, s.Price)
+	}
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
 	tenantId, _ := ctx.Get("tenant_id")
 	skus := make([]*productv1.ProductSKU, 0, len(req.Skus))
 	for _, s := range req.Skus {
@@ -110,7 +120,18 @@ type UpdateProductReq struct {
 func (h *ProductHandler) UpdateProduct(ctx *gin.Context, req UpdateProductReq) (ginx.Result, error) {
 	tenantId, _ := ctx.Get("tenant_id")
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		return ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的商品 ID"}, nil
+	}
+	v := validatorx.New()
+	for i, s := range req.Skus {
+		field := fmt.Sprintf("skus[%d].price", i)
+		v.CheckPositive(field, s.Price)
+	}
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
 	skus := make([]*productv1.ProductSKU, 0, len(req.Skus))
 	for _, s := range req.Skus {
 		skus = append(skus, &productv1.ProductSKU{
@@ -130,7 +151,7 @@ func (h *ProductHandler) UpdateProduct(ctx *gin.Context, req UpdateProductReq) (
 			Values: s.Values,
 		})
 	}
-	_, err := h.productClient.UpdateProduct(ctx.Request.Context(), &productv1.UpdateProductRequest{
+	_, err = h.productClient.UpdateProduct(ctx.Request.Context(), &productv1.UpdateProductRequest{
 		Product: &productv1.Product{
 			Id:          id,
 			TenantId:    tenantId.(int64),
@@ -153,7 +174,11 @@ func (h *ProductHandler) UpdateProduct(ctx *gin.Context, req UpdateProductReq) (
 
 func (h *ProductHandler) GetProduct(ctx *gin.Context) {
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的商品 ID"})
+		return
+	}
 	resp, err := h.productClient.GetProduct(ctx.Request.Context(), &productv1.GetProductRequest{Id: id})
 	if err != nil {
 		h.l.Error("查询商品详情失败", logger.Error(err))
@@ -196,8 +221,11 @@ type UpdateProductStatusReq struct {
 func (h *ProductHandler) UpdateProductStatus(ctx *gin.Context, req UpdateProductStatusReq) (ginx.Result, error) {
 	tenantId, _ := ctx.Get("tenant_id")
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
-	_, err := h.productClient.UpdateProductStatus(ctx.Request.Context(), &productv1.UpdateProductStatusRequest{
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		return ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的商品 ID"}, nil
+	}
+	_, err = h.productClient.UpdateProductStatus(ctx.Request.Context(), &productv1.UpdateProductStatusRequest{
 		Id:       id,
 		TenantId: tenantId.(int64),
 		Status:   req.Status,
@@ -250,8 +278,11 @@ type UpdateCategoryReq struct {
 func (h *ProductHandler) UpdateCategory(ctx *gin.Context, req UpdateCategoryReq) (ginx.Result, error) {
 	tenantId, _ := ctx.Get("tenant_id")
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
-	_, err := h.productClient.UpdateCategory(ctx.Request.Context(), &productv1.UpdateCategoryRequest{
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		return ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的分类 ID"}, nil
+	}
+	_, err = h.productClient.UpdateCategory(ctx.Request.Context(), &productv1.UpdateCategoryRequest{
 		Category: &productv1.Category{
 			Id:       id,
 			TenantId: tenantId.(int64),
@@ -315,8 +346,11 @@ type UpdateBrandReq struct {
 func (h *ProductHandler) UpdateBrand(ctx *gin.Context, req UpdateBrandReq) (ginx.Result, error) {
 	tenantId, _ := ctx.Get("tenant_id")
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
-	_, err := h.productClient.UpdateBrand(ctx.Request.Context(), &productv1.UpdateBrandRequest{
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		return ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的品牌 ID"}, nil
+	}
+	_, err = h.productClient.UpdateBrand(ctx.Request.Context(), &productv1.UpdateBrandRequest{
 		Brand: &productv1.Brand{
 			Id:       id,
 			TenantId: tenantId.(int64),

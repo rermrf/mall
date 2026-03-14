@@ -65,6 +65,9 @@ func (h *CartHandler) UpdateItem(ctx *gin.Context, req UpdateCartItemReq) (ginx.
 	if err != nil {
 		return ginx.Result{Code: 4, Msg: "无效的 SKU ID"}, nil
 	}
+	if req.Quantity != 0 && req.Quantity < 1 {
+		return ginx.Result{Code: ginx.CodeInvalidQuantity, Msg: "数量必须大于等于1"}, nil
+	}
 	_, err = h.cartClient.UpdateItem(ctx.Request.Context(), &cartv1.UpdateItemRequest{
 		UserId:         uid.(int64),
 		SkuId:          skuId,

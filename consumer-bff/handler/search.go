@@ -41,6 +41,9 @@ func (h *SearchHandler) Search(ctx *gin.Context, req SearchReq) (ginx.Result, er
 	if req.PageSize <= 0 {
 		req.PageSize = 20
 	}
+	if req.PriceMin > 0 && req.PriceMax > 0 && req.PriceMin > req.PriceMax {
+		return ginx.Result{Code: ginx.CodeInvalidPrice, Msg: "最低价不能大于最高价"}, nil
+	}
 	tenantId, _ := ctx.Get("tenant_id")
 	resp, err := h.searchClient.SearchProducts(ctx.Request.Context(), &searchv1.SearchProductsRequest{
 		Keyword:    req.Keyword,

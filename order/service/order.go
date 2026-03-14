@@ -92,6 +92,12 @@ func NewOrderService(
 }
 
 func (s *orderService) CreateOrder(ctx context.Context, req CreateOrderReq) (string, int64, error) {
+	// 0. 参数防御性校验
+	for _, item := range req.Items {
+		if item.Quantity <= 0 {
+			return "", 0, fmt.Errorf("商品数量必须大于0")
+		}
+	}
 	// 1. 布隆过滤器防重
 	itemsHash := s.computeItemsHash(req.BuyerID, req.Items)
 	bloomKey := fmt.Sprintf("order:create:%d:%s", req.BuyerID, itemsHash)

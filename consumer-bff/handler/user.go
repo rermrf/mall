@@ -9,6 +9,7 @@ import (
 	userv1 "github.com/rermrf/mall/api/proto/gen/user/v1"
 	"github.com/rermrf/mall/pkg/ginx"
 	"github.com/rermrf/mall/pkg/tenantx"
+	"github.com/rermrf/mall/pkg/validatorx"
 )
 
 type UserHandler struct {
@@ -29,6 +30,20 @@ type SignupReq struct {
 }
 
 func (h *UserHandler) Signup(ctx *gin.Context, req SignupReq) (ginx.Result, error) {
+	v := validatorx.New()
+	if req.Phone == "" && req.Email == "" {
+		v.Add("phone", "手机号和邮箱至少填写一项")
+	}
+	if req.Phone != "" {
+		v.CheckPhone("phone", req.Phone)
+	}
+	if req.Email != "" {
+		v.CheckEmail("email", req.Email)
+	}
+	v.CheckLength("password", req.Password, 8, 64)
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
 	tenantId := tenantx.GetTenantID(ctx.Request.Context())
 	resp, err := h.userClient.Signup(ctx.Request.Context(), &userv1.SignupRequest{
 		TenantId: tenantId,
@@ -50,6 +65,11 @@ type SendSmsCodeReq struct {
 }
 
 func (h *UserHandler) SendSmsCode(ctx *gin.Context, req SendSmsCodeReq) (ginx.Result, error) {
+	v := validatorx.New()
+	v.CheckPhone("phone", req.Phone)
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
 	tenantId := tenantx.GetTenantID(ctx.Request.Context())
 	_, err := h.userClient.SendSmsCode(ctx.Request.Context(), &userv1.SendSmsCodeRequest{
 		TenantId: tenantId,
@@ -109,6 +129,17 @@ type CreateAddressReq struct {
 }
 
 func (h *UserHandler) CreateAddress(ctx *gin.Context, req CreateAddressReq) (ginx.Result, error) {
+	v := validatorx.New()
+	v.CheckNotBlank("name", req.Name)
+	v.CheckNotBlank("phone", req.Phone)
+	v.CheckPhone("phone", req.Phone)
+	v.CheckNotBlank("province", req.Province)
+	v.CheckNotBlank("city", req.City)
+	v.CheckNotBlank("district", req.District)
+	v.CheckNotBlank("detail", req.Detail)
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
 	uid, _ := ctx.Get("uid")
 	resp, err := h.userClient.CreateAddress(ctx.Request.Context(), &userv1.CreateAddressRequest{
 		Address: &userv1.UserAddress{
@@ -157,6 +188,13 @@ func (h *UserHandler) UpdateAddress(ctx *gin.Context, req UpdateAddressReq) (gin
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		return ginx.Result{Code: 4, Msg: "无效的地址 ID"}, nil
+	}
+	if req.Phone != "" {
+		v := validatorx.New()
+		v.CheckPhone("phone", req.Phone)
+		if v.HasErrors() {
+			return v.ToResult(), nil
+		}
 	}
 	uid, _ := ctx.Get("uid")
 	_, err = h.userClient.UpdateAddress(ctx.Request.Context(), &userv1.UpdateAddressRequest{

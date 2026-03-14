@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/rermrf/emo/logger"
 	marketingv1 "github.com/rermrf/mall/api/proto/gen/marketing/v1"
 	"github.com/rermrf/mall/pkg/ginx"
+	"github.com/rermrf/mall/pkg/validatorx"
 )
 
 type MarketingHandler struct {
@@ -40,6 +42,12 @@ type CreateCouponReq struct {
 }
 
 func (h *MarketingHandler) CreateCoupon(ctx *gin.Context, req CreateCouponReq) (ginx.Result, error) {
+	v := validatorx.New()
+	v.CheckPositive("discount_value", req.DiscountValue)
+	v.CheckTimeRange("start_time", "end_time", req.StartTime, req.EndTime)
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
 	tenantId, _ := ctx.Get("tenant_id")
 	resp, err := h.marketingClient.CreateCoupon(ctx.Request.Context(), &marketingv1.CreateCouponRequest{
 		Coupon: &marketingv1.Coupon{
@@ -80,8 +88,21 @@ type UpdateCouponReq struct {
 func (h *MarketingHandler) UpdateCoupon(ctx *gin.Context, req UpdateCouponReq) (ginx.Result, error) {
 	tenantId, _ := ctx.Get("tenant_id")
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
-	_, err := h.marketingClient.UpdateCoupon(ctx.Request.Context(), &marketingv1.UpdateCouponRequest{
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		return ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的优惠券 ID"}, nil
+	}
+	v := validatorx.New()
+	if req.DiscountValue != 0 {
+		v.CheckPositive("discount_value", req.DiscountValue)
+	}
+	if req.StartTime != 0 && req.EndTime != 0 {
+		v.CheckTimeRange("start_time", "end_time", req.StartTime, req.EndTime)
+	}
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
+	_, err = h.marketingClient.UpdateCoupon(ctx.Request.Context(), &marketingv1.UpdateCouponRequest{
 		Coupon: &marketingv1.Coupon{
 			Id:            id,
 			TenantId:      tenantId.(int64),
@@ -145,6 +166,15 @@ type CreateSeckillItem struct {
 }
 
 func (h *MarketingHandler) CreateSeckill(ctx *gin.Context, req CreateSeckillReq) (ginx.Result, error) {
+	v := validatorx.New()
+	v.CheckTimeRange("start_time", "end_time", req.StartTime, req.EndTime)
+	for i, item := range req.Items {
+		v.CheckPositive(fmt.Sprintf("items[%d].seckill_price", i), item.SeckillPrice)
+		v.CheckPositiveInt32(fmt.Sprintf("items[%d].seckill_stock", i), item.SeckillStock)
+	}
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
 	tenantId, _ := ctx.Get("tenant_id")
 	items := make([]*marketingv1.SeckillItem, 0, len(req.Items))
 	for _, item := range req.Items {
@@ -182,7 +212,25 @@ type UpdateSeckillReq struct {
 func (h *MarketingHandler) UpdateSeckill(ctx *gin.Context, req UpdateSeckillReq) (ginx.Result, error) {
 	tenantId, _ := ctx.Get("tenant_id")
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		return ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的秒杀活动 ID"}, nil
+	}
+	v := validatorx.New()
+	if req.StartTime != 0 && req.EndTime != 0 {
+		v.CheckTimeRange("start_time", "end_time", req.StartTime, req.EndTime)
+	}
+	for i, item := range req.Items {
+		if item.SeckillPrice != 0 {
+			v.CheckPositive(fmt.Sprintf("items[%d].seckill_price", i), item.SeckillPrice)
+		}
+		if item.SeckillStock != 0 {
+			v.CheckPositiveInt32(fmt.Sprintf("items[%d].seckill_stock", i), item.SeckillStock)
+		}
+	}
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
 	items := make([]*marketingv1.SeckillItem, 0, len(req.Items))
 	for _, item := range req.Items {
 		items = append(items, &marketingv1.SeckillItem{
@@ -192,7 +240,7 @@ func (h *MarketingHandler) UpdateSeckill(ctx *gin.Context, req UpdateSeckillReq)
 			PerLimit:     item.PerLimit,
 		})
 	}
-	_, err := h.marketingClient.UpdateSeckillActivity(ctx.Request.Context(), &marketingv1.UpdateSeckillActivityRequest{
+	_, err = h.marketingClient.UpdateSeckillActivity(ctx.Request.Context(), &marketingv1.UpdateSeckillActivityRequest{
 		Activity: &marketingv1.SeckillActivity{
 			Id:        id,
 			TenantId:  tenantId.(int64),
@@ -234,7 +282,11 @@ func (h *MarketingHandler) ListSeckill(ctx *gin.Context, req ListSeckillReq) (gi
 
 func (h *MarketingHandler) GetSeckill(ctx *gin.Context) {
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的秒杀活动 ID"})
+		return
+	}
 	resp, err := h.marketingClient.GetSeckillActivity(ctx.Request.Context(), &marketingv1.GetSeckillActivityRequest{Id: id})
 	if err != nil {
 		h.l.Error("查询秒杀活动详情失败", logger.Error(err))
@@ -258,6 +310,12 @@ type CreatePromotionReq struct {
 }
 
 func (h *MarketingHandler) CreatePromotion(ctx *gin.Context, req CreatePromotionReq) (ginx.Result, error) {
+	v := validatorx.New()
+	v.CheckPositive("discount_value", req.DiscountValue)
+	v.CheckTimeRange("start_time", "end_time", req.StartTime, req.EndTime)
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
 	tenantId, _ := ctx.Get("tenant_id")
 	resp, err := h.marketingClient.CreatePromotionRule(ctx.Request.Context(), &marketingv1.CreatePromotionRuleRequest{
 		Rule: &marketingv1.PromotionRule{
@@ -290,8 +348,21 @@ type UpdatePromotionReq struct {
 func (h *MarketingHandler) UpdatePromotion(ctx *gin.Context, req UpdatePromotionReq) (ginx.Result, error) {
 	tenantId, _ := ctx.Get("tenant_id")
 	idStr := ctx.Param("id")
-	id, _ := strconv.ParseInt(idStr, 10, 64)
-	_, err := h.marketingClient.UpdatePromotionRule(ctx.Request.Context(), &marketingv1.UpdatePromotionRuleRequest{
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		return ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的满减规则 ID"}, nil
+	}
+	v := validatorx.New()
+	if req.DiscountValue != 0 {
+		v.CheckPositive("discount_value", req.DiscountValue)
+	}
+	if req.StartTime != 0 && req.EndTime != 0 {
+		v.CheckTimeRange("start_time", "end_time", req.StartTime, req.EndTime)
+	}
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
+	_, err = h.marketingClient.UpdatePromotionRule(ctx.Request.Context(), &marketingv1.UpdatePromotionRuleRequest{
 		Rule: &marketingv1.PromotionRule{
 			Id:            id,
 			TenantId:      tenantId.(int64),

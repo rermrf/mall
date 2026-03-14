@@ -49,6 +49,14 @@ const (
 	CodeRefundExceedAmt  = 422002
 	CodeCategoryHasChild = 422003
 	CodeBrandHasProduct  = 422004
+
+	// 422 - 通用参数校验
+	CodeValidation       = 422010 // 通用校验失败
+	CodeInvalidPhone     = 422011
+	CodeInvalidEmail     = 422012
+	CodeInvalidPrice     = 422013
+	CodeInvalidTimeRange = 422014
+	CodeInvalidQuantity  = 422015
 )
 
 // ErrMapping 定义 gRPC 错误消息到前端错误码的映射

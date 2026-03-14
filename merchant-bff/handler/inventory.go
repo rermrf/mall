@@ -46,8 +46,8 @@ func (h *InventoryHandler) SetStock(ctx *gin.Context, req SetStockReq) (ginx.Res
 func (h *InventoryHandler) GetStock(ctx *gin.Context) {
 	skuIdStr := ctx.Param("skuId")
 	skuId, err := strconv.ParseInt(skuIdStr, 10, 64)
-	if err != nil {
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 4, Msg: "无效的 skuId"})
+	if err != nil || skuId <= 0 {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的 skuId"})
 		return
 	}
 	resp, err := h.inventoryClient.GetStock(ctx.Request.Context(), &inventoryv1.GetStockRequest{

@@ -9,6 +9,7 @@ import (
 	"github.com/rermrf/emo/logger"
 	userv1 "github.com/rermrf/mall/api/proto/gen/user/v1"
 	"github.com/rermrf/mall/pkg/ginx"
+	"github.com/rermrf/mall/pkg/validatorx"
 )
 
 type UserHandler struct {
@@ -93,6 +94,12 @@ type CreateRoleReq struct {
 }
 
 func (h *UserHandler) CreateRole(ctx *gin.Context, req CreateRoleReq) (ginx.Result, error) {
+	v := validatorx.New()
+	v.CheckNotBlank("name", req.Name)
+	v.CheckNotBlank("code", req.Code)
+	if v.HasErrors() {
+		return v.ToResult(), nil
+	}
 	tenantId, _ := ctx.Get("tenant_id")
 	resp, err := h.userClient.CreateRole(ctx.Request.Context(), &userv1.CreateRoleRequest{
 		Role: &userv1.Role{

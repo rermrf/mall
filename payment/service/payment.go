@@ -66,6 +66,9 @@ func (s *paymentService) getChannel(ch string) (channel.Channel, error) {
 }
 
 func (s *paymentService) CreatePayment(ctx context.Context, tenantId int64, orderId int64, orderNo, ch string, amount int64) (string, string, error) {
+	if amount <= 0 {
+		return "", "", fmt.Errorf("支付金额必须大于0")
+	}
 	c, err := s.getChannel(ch)
 	if err != nil {
 		return "", "", err
@@ -173,6 +176,9 @@ func (s *paymentService) ClosePayment(ctx context.Context, paymentNo string) err
 }
 
 func (s *paymentService) Refund(ctx context.Context, paymentNo string, amount int64, reason string) (string, error) {
+	if amount <= 0 {
+		return "", fmt.Errorf("退款金额必须大于0")
+	}
 	payment, err := s.repo.FindByPaymentNo(ctx, paymentNo)
 	if err != nil {
 		return "", fmt.Errorf("支付单不存在: %w", err)
