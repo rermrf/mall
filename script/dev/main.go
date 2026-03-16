@@ -178,12 +178,12 @@ func cmdStart(names []string) {
 			continue
 		}
 
-		args := []string{"run", "./" + name + "/"}
+		args := []string{"run", "."}
 		if configFile != "" {
 			args = append(args, "--config", configFile)
 		}
 		cmd := exec.Command("go", args...)
-		cmd.Dir = root
+		cmd.Dir = filepath.Join(root, name)
 		cmd.Stdout = lf
 		cmd.Stderr = lf
 
