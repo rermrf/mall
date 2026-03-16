@@ -4,6 +4,11 @@
   padding-bottom: 70px;
 }
 
+.swiper {
+  width: 100%;
+  aspect-ratio: 1;
+}
+
 .image {
   width: 100%;
   aspect-ratio: 1;
@@ -25,10 +30,22 @@
   margin-bottom: 8px;
 }
 
+.subtitle {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
 .priceRow {
   display: flex;
   align-items: baseline;
   gap: 8px;
+}
+
+.sales {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-left: 12px;
 }
 
 .description {
@@ -57,6 +74,20 @@
 
 .stockLow {
   color: var(--color-danger);
+}
+
+.quantitySection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--adm-color-background);
+  margin-top: 10px;
+}
+
+.quantityLabel {
+  font-size: 14px;
+  color: var(--color-text);
 }
 
 .footer {
