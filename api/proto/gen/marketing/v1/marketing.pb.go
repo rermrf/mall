@@ -944,6 +944,94 @@ func (x *ListCouponsResponse) GetTotal() int64 {
 	return 0
 }
 
+type GetCouponRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCouponRequest) Reset() {
+	*x = GetCouponRequest{}
+	mi := &file_marketing_v1_marketing_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCouponRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCouponRequest) ProtoMessage() {}
+
+func (x *GetCouponRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_marketing_v1_marketing_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCouponRequest.ProtoReflect.Descriptor instead.
+func (*GetCouponRequest) Descriptor() ([]byte, []int) {
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetCouponRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type GetCouponResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Coupon        *Coupon                `protobuf:"bytes,1,opt,name=coupon,proto3" json:"coupon,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCouponResponse) Reset() {
+	*x = GetCouponResponse{}
+	mi := &file_marketing_v1_marketing_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCouponResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCouponResponse) ProtoMessage() {}
+
+func (x *GetCouponResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_marketing_v1_marketing_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCouponResponse.ProtoReflect.Descriptor instead.
+func (*GetCouponResponse) Descriptor() ([]byte, []int) {
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *GetCouponResponse) GetCoupon() *Coupon {
+	if x != nil {
+		return x.Coupon
+	}
+	return nil
+}
+
 type ReceiveCouponRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -954,7 +1042,7 @@ type ReceiveCouponRequest struct {
 
 func (x *ReceiveCouponRequest) Reset() {
 	*x = ReceiveCouponRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[12]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -966,7 +1054,7 @@ func (x *ReceiveCouponRequest) String() string {
 func (*ReceiveCouponRequest) ProtoMessage() {}
 
 func (x *ReceiveCouponRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[12]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -979,7 +1067,7 @@ func (x *ReceiveCouponRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReceiveCouponRequest.ProtoReflect.Descriptor instead.
 func (*ReceiveCouponRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{12}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ReceiveCouponRequest) GetUserId() int64 {
@@ -1004,7 +1092,7 @@ type ReceiveCouponResponse struct {
 
 func (x *ReceiveCouponResponse) Reset() {
 	*x = ReceiveCouponResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[13]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1016,7 +1104,7 @@ func (x *ReceiveCouponResponse) String() string {
 func (*ReceiveCouponResponse) ProtoMessage() {}
 
 func (x *ReceiveCouponResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[13]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1029,7 +1117,7 @@ func (x *ReceiveCouponResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReceiveCouponResponse.ProtoReflect.Descriptor instead.
 func (*ReceiveCouponResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{13}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{15}
 }
 
 type ListUserCouponsRequest struct {
@@ -1043,7 +1131,7 @@ type ListUserCouponsRequest struct {
 
 func (x *ListUserCouponsRequest) Reset() {
 	*x = ListUserCouponsRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[14]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1055,7 +1143,7 @@ func (x *ListUserCouponsRequest) String() string {
 func (*ListUserCouponsRequest) ProtoMessage() {}
 
 func (x *ListUserCouponsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[14]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1068,7 +1156,7 @@ func (x *ListUserCouponsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserCouponsRequest.ProtoReflect.Descriptor instead.
 func (*ListUserCouponsRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{14}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListUserCouponsRequest) GetUserId() int64 {
@@ -1101,7 +1189,7 @@ type ListUserCouponsResponse struct {
 
 func (x *ListUserCouponsResponse) Reset() {
 	*x = ListUserCouponsResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[15]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1113,7 +1201,7 @@ func (x *ListUserCouponsResponse) String() string {
 func (*ListUserCouponsResponse) ProtoMessage() {}
 
 func (x *ListUserCouponsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[15]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1126,7 +1214,7 @@ func (x *ListUserCouponsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUserCouponsResponse.ProtoReflect.Descriptor instead.
 func (*ListUserCouponsResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{15}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ListUserCouponsResponse) GetCoupons() []*UserCoupon {
@@ -1146,7 +1234,7 @@ type UseCouponRequest struct {
 
 func (x *UseCouponRequest) Reset() {
 	*x = UseCouponRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[16]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1158,7 +1246,7 @@ func (x *UseCouponRequest) String() string {
 func (*UseCouponRequest) ProtoMessage() {}
 
 func (x *UseCouponRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[16]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1171,7 +1259,7 @@ func (x *UseCouponRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UseCouponRequest.ProtoReflect.Descriptor instead.
 func (*UseCouponRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{16}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *UseCouponRequest) GetUserCouponId() int64 {
@@ -1196,7 +1284,7 @@ type UseCouponResponse struct {
 
 func (x *UseCouponResponse) Reset() {
 	*x = UseCouponResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[17]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1208,7 +1296,7 @@ func (x *UseCouponResponse) String() string {
 func (*UseCouponResponse) ProtoMessage() {}
 
 func (x *UseCouponResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[17]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1221,7 +1309,7 @@ func (x *UseCouponResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UseCouponResponse.ProtoReflect.Descriptor instead.
 func (*UseCouponResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{17}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{19}
 }
 
 type ReleaseCouponRequest struct {
@@ -1233,7 +1321,7 @@ type ReleaseCouponRequest struct {
 
 func (x *ReleaseCouponRequest) Reset() {
 	*x = ReleaseCouponRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[18]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1245,7 +1333,7 @@ func (x *ReleaseCouponRequest) String() string {
 func (*ReleaseCouponRequest) ProtoMessage() {}
 
 func (x *ReleaseCouponRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[18]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1258,7 +1346,7 @@ func (x *ReleaseCouponRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReleaseCouponRequest.ProtoReflect.Descriptor instead.
 func (*ReleaseCouponRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{18}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ReleaseCouponRequest) GetUserCouponId() int64 {
@@ -1276,7 +1364,7 @@ type ReleaseCouponResponse struct {
 
 func (x *ReleaseCouponResponse) Reset() {
 	*x = ReleaseCouponResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[19]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1288,7 +1376,7 @@ func (x *ReleaseCouponResponse) String() string {
 func (*ReleaseCouponResponse) ProtoMessage() {}
 
 func (x *ReleaseCouponResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[19]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1301,7 +1389,7 @@ func (x *ReleaseCouponResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReleaseCouponResponse.ProtoReflect.Descriptor instead.
 func (*ReleaseCouponResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{19}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{21}
 }
 
 // 优惠计算
@@ -1318,7 +1406,7 @@ type CalculateDiscountRequest struct {
 
 func (x *CalculateDiscountRequest) Reset() {
 	*x = CalculateDiscountRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[20]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1330,7 +1418,7 @@ func (x *CalculateDiscountRequest) String() string {
 func (*CalculateDiscountRequest) ProtoMessage() {}
 
 func (x *CalculateDiscountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[20]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1343,7 +1431,7 @@ func (x *CalculateDiscountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CalculateDiscountRequest.ProtoReflect.Descriptor instead.
 func (*CalculateDiscountRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{20}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *CalculateDiscountRequest) GetTenantId() int64 {
@@ -1390,7 +1478,7 @@ type CalculateDiscountResponse struct {
 
 func (x *CalculateDiscountResponse) Reset() {
 	*x = CalculateDiscountResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[21]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1402,7 +1490,7 @@ func (x *CalculateDiscountResponse) String() string {
 func (*CalculateDiscountResponse) ProtoMessage() {}
 
 func (x *CalculateDiscountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[21]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1415,7 +1503,7 @@ func (x *CalculateDiscountResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CalculateDiscountResponse.ProtoReflect.Descriptor instead.
 func (*CalculateDiscountResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{21}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *CalculateDiscountResponse) GetResult() *DiscountResult {
@@ -1435,7 +1523,7 @@ type CreateSeckillActivityRequest struct {
 
 func (x *CreateSeckillActivityRequest) Reset() {
 	*x = CreateSeckillActivityRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[22]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1447,7 +1535,7 @@ func (x *CreateSeckillActivityRequest) String() string {
 func (*CreateSeckillActivityRequest) ProtoMessage() {}
 
 func (x *CreateSeckillActivityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[22]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1460,7 +1548,7 @@ func (x *CreateSeckillActivityRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSeckillActivityRequest.ProtoReflect.Descriptor instead.
 func (*CreateSeckillActivityRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{22}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *CreateSeckillActivityRequest) GetActivity() *SeckillActivity {
@@ -1479,7 +1567,7 @@ type CreateSeckillActivityResponse struct {
 
 func (x *CreateSeckillActivityResponse) Reset() {
 	*x = CreateSeckillActivityResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[23]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1491,7 +1579,7 @@ func (x *CreateSeckillActivityResponse) String() string {
 func (*CreateSeckillActivityResponse) ProtoMessage() {}
 
 func (x *CreateSeckillActivityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[23]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1504,7 +1592,7 @@ func (x *CreateSeckillActivityResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSeckillActivityResponse.ProtoReflect.Descriptor instead.
 func (*CreateSeckillActivityResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{23}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *CreateSeckillActivityResponse) GetId() int64 {
@@ -1523,7 +1611,7 @@ type UpdateSeckillActivityRequest struct {
 
 func (x *UpdateSeckillActivityRequest) Reset() {
 	*x = UpdateSeckillActivityRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[24]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1535,7 +1623,7 @@ func (x *UpdateSeckillActivityRequest) String() string {
 func (*UpdateSeckillActivityRequest) ProtoMessage() {}
 
 func (x *UpdateSeckillActivityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[24]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1548,7 +1636,7 @@ func (x *UpdateSeckillActivityRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSeckillActivityRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSeckillActivityRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{24}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *UpdateSeckillActivityRequest) GetActivity() *SeckillActivity {
@@ -1566,7 +1654,7 @@ type UpdateSeckillActivityResponse struct {
 
 func (x *UpdateSeckillActivityResponse) Reset() {
 	*x = UpdateSeckillActivityResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[25]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1578,7 +1666,7 @@ func (x *UpdateSeckillActivityResponse) String() string {
 func (*UpdateSeckillActivityResponse) ProtoMessage() {}
 
 func (x *UpdateSeckillActivityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[25]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1591,7 +1679,7 @@ func (x *UpdateSeckillActivityResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSeckillActivityResponse.ProtoReflect.Descriptor instead.
 func (*UpdateSeckillActivityResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{25}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{27}
 }
 
 type ListSeckillActivitiesRequest struct {
@@ -1606,7 +1694,7 @@ type ListSeckillActivitiesRequest struct {
 
 func (x *ListSeckillActivitiesRequest) Reset() {
 	*x = ListSeckillActivitiesRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[26]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1618,7 +1706,7 @@ func (x *ListSeckillActivitiesRequest) String() string {
 func (*ListSeckillActivitiesRequest) ProtoMessage() {}
 
 func (x *ListSeckillActivitiesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[26]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1631,7 +1719,7 @@ func (x *ListSeckillActivitiesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSeckillActivitiesRequest.ProtoReflect.Descriptor instead.
 func (*ListSeckillActivitiesRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{26}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *ListSeckillActivitiesRequest) GetTenantId() int64 {
@@ -1672,7 +1760,7 @@ type ListSeckillActivitiesResponse struct {
 
 func (x *ListSeckillActivitiesResponse) Reset() {
 	*x = ListSeckillActivitiesResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[27]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1684,7 +1772,7 @@ func (x *ListSeckillActivitiesResponse) String() string {
 func (*ListSeckillActivitiesResponse) ProtoMessage() {}
 
 func (x *ListSeckillActivitiesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[27]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1697,7 +1785,7 @@ func (x *ListSeckillActivitiesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSeckillActivitiesResponse.ProtoReflect.Descriptor instead.
 func (*ListSeckillActivitiesResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{27}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ListSeckillActivitiesResponse) GetActivities() []*SeckillActivity {
@@ -1723,7 +1811,7 @@ type GetSeckillActivityRequest struct {
 
 func (x *GetSeckillActivityRequest) Reset() {
 	*x = GetSeckillActivityRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[28]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1735,7 +1823,7 @@ func (x *GetSeckillActivityRequest) String() string {
 func (*GetSeckillActivityRequest) ProtoMessage() {}
 
 func (x *GetSeckillActivityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[28]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1748,7 +1836,7 @@ func (x *GetSeckillActivityRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSeckillActivityRequest.ProtoReflect.Descriptor instead.
 func (*GetSeckillActivityRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{28}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *GetSeckillActivityRequest) GetId() int64 {
@@ -1767,7 +1855,7 @@ type GetSeckillActivityResponse struct {
 
 func (x *GetSeckillActivityResponse) Reset() {
 	*x = GetSeckillActivityResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[29]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1779,7 +1867,7 @@ func (x *GetSeckillActivityResponse) String() string {
 func (*GetSeckillActivityResponse) ProtoMessage() {}
 
 func (x *GetSeckillActivityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[29]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1792,7 +1880,7 @@ func (x *GetSeckillActivityResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSeckillActivityResponse.ProtoReflect.Descriptor instead.
 func (*GetSeckillActivityResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{29}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *GetSeckillActivityResponse) GetActivity() *SeckillActivity {
@@ -1813,7 +1901,7 @@ type SeckillRequest struct {
 
 func (x *SeckillRequest) Reset() {
 	*x = SeckillRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[30]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1825,7 +1913,7 @@ func (x *SeckillRequest) String() string {
 func (*SeckillRequest) ProtoMessage() {}
 
 func (x *SeckillRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[30]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1838,7 +1926,7 @@ func (x *SeckillRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SeckillRequest.ProtoReflect.Descriptor instead.
 func (*SeckillRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{30}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *SeckillRequest) GetUserId() int64 {
@@ -1866,7 +1954,7 @@ type SeckillResponse struct {
 
 func (x *SeckillResponse) Reset() {
 	*x = SeckillResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[31]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1878,7 +1966,7 @@ func (x *SeckillResponse) String() string {
 func (*SeckillResponse) ProtoMessage() {}
 
 func (x *SeckillResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[31]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1891,7 +1979,7 @@ func (x *SeckillResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SeckillResponse.ProtoReflect.Descriptor instead.
 func (*SeckillResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{31}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *SeckillResponse) GetSuccess() bool {
@@ -1925,7 +2013,7 @@ type CreatePromotionRuleRequest struct {
 
 func (x *CreatePromotionRuleRequest) Reset() {
 	*x = CreatePromotionRuleRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[32]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1937,7 +2025,7 @@ func (x *CreatePromotionRuleRequest) String() string {
 func (*CreatePromotionRuleRequest) ProtoMessage() {}
 
 func (x *CreatePromotionRuleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[32]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1950,7 +2038,7 @@ func (x *CreatePromotionRuleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreatePromotionRuleRequest.ProtoReflect.Descriptor instead.
 func (*CreatePromotionRuleRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{32}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *CreatePromotionRuleRequest) GetRule() *PromotionRule {
@@ -1969,7 +2057,7 @@ type CreatePromotionRuleResponse struct {
 
 func (x *CreatePromotionRuleResponse) Reset() {
 	*x = CreatePromotionRuleResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[33]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1981,7 +2069,7 @@ func (x *CreatePromotionRuleResponse) String() string {
 func (*CreatePromotionRuleResponse) ProtoMessage() {}
 
 func (x *CreatePromotionRuleResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[33]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1994,7 +2082,7 @@ func (x *CreatePromotionRuleResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreatePromotionRuleResponse.ProtoReflect.Descriptor instead.
 func (*CreatePromotionRuleResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{33}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *CreatePromotionRuleResponse) GetId() int64 {
@@ -2013,7 +2101,7 @@ type UpdatePromotionRuleRequest struct {
 
 func (x *UpdatePromotionRuleRequest) Reset() {
 	*x = UpdatePromotionRuleRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[34]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2025,7 +2113,7 @@ func (x *UpdatePromotionRuleRequest) String() string {
 func (*UpdatePromotionRuleRequest) ProtoMessage() {}
 
 func (x *UpdatePromotionRuleRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[34]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2038,7 +2126,7 @@ func (x *UpdatePromotionRuleRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdatePromotionRuleRequest.ProtoReflect.Descriptor instead.
 func (*UpdatePromotionRuleRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{34}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *UpdatePromotionRuleRequest) GetRule() *PromotionRule {
@@ -2056,7 +2144,7 @@ type UpdatePromotionRuleResponse struct {
 
 func (x *UpdatePromotionRuleResponse) Reset() {
 	*x = UpdatePromotionRuleResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[35]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2068,7 +2156,7 @@ func (x *UpdatePromotionRuleResponse) String() string {
 func (*UpdatePromotionRuleResponse) ProtoMessage() {}
 
 func (x *UpdatePromotionRuleResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[35]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2081,7 +2169,7 @@ func (x *UpdatePromotionRuleResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdatePromotionRuleResponse.ProtoReflect.Descriptor instead.
 func (*UpdatePromotionRuleResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{35}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{37}
 }
 
 type ListPromotionRulesRequest struct {
@@ -2094,7 +2182,7 @@ type ListPromotionRulesRequest struct {
 
 func (x *ListPromotionRulesRequest) Reset() {
 	*x = ListPromotionRulesRequest{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[36]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2106,7 +2194,7 @@ func (x *ListPromotionRulesRequest) String() string {
 func (*ListPromotionRulesRequest) ProtoMessage() {}
 
 func (x *ListPromotionRulesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[36]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2119,7 +2207,7 @@ func (x *ListPromotionRulesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPromotionRulesRequest.ProtoReflect.Descriptor instead.
 func (*ListPromotionRulesRequest) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{36}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *ListPromotionRulesRequest) GetTenantId() int64 {
@@ -2145,7 +2233,7 @@ type ListPromotionRulesResponse struct {
 
 func (x *ListPromotionRulesResponse) Reset() {
 	*x = ListPromotionRulesResponse{}
-	mi := &file_marketing_v1_marketing_proto_msgTypes[37]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2157,7 +2245,7 @@ func (x *ListPromotionRulesResponse) String() string {
 func (*ListPromotionRulesResponse) ProtoMessage() {}
 
 func (x *ListPromotionRulesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_marketing_v1_marketing_proto_msgTypes[37]
+	mi := &file_marketing_v1_marketing_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2170,7 +2258,7 @@ func (x *ListPromotionRulesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPromotionRulesResponse.ProtoReflect.Descriptor instead.
 func (*ListPromotionRulesResponse) Descriptor() ([]byte, []int) {
-	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{37}
+	return file_marketing_v1_marketing_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *ListPromotionRulesResponse) GetRules() []*PromotionRule {
@@ -2267,7 +2355,11 @@ const file_marketing_v1_marketing_proto_rawDesc = "" +
 	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"[\n" +
 	"\x13ListCouponsResponse\x12.\n" +
 	"\acoupons\x18\x01 \x03(\v2\x14.marketing.v1.CouponR\acoupons\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x03R\x05total\"L\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\"\n" +
+	"\x10GetCouponRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"A\n" +
+	"\x11GetCouponResponse\x12,\n" +
+	"\x06coupon\x18\x01 \x01(\v2\x14.marketing.v1.CouponR\x06coupon\"L\n" +
 	"\x14ReceiveCouponRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x1b\n" +
 	"\tcoupon_id\x18\x02 \x01(\x03R\bcouponId\"\x17\n" +
@@ -2332,11 +2424,12 @@ const file_marketing_v1_marketing_proto_rawDesc = "" +
 	"\ttenant_id\x18\x01 \x01(\x03R\btenantId\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\x05R\x06status\"O\n" +
 	"\x1aListPromotionRulesResponse\x121\n" +
-	"\x05rules\x18\x01 \x03(\v2\x1b.marketing.v1.PromotionRuleR\x05rules2\xa4\f\n" +
+	"\x05rules\x18\x01 \x03(\v2\x1b.marketing.v1.PromotionRuleR\x05rules2\xf2\f\n" +
 	"\x10MarketingService\x12U\n" +
 	"\fCreateCoupon\x12!.marketing.v1.CreateCouponRequest\x1a\".marketing.v1.CreateCouponResponse\x12U\n" +
 	"\fUpdateCoupon\x12!.marketing.v1.UpdateCouponRequest\x1a\".marketing.v1.UpdateCouponResponse\x12R\n" +
-	"\vListCoupons\x12 .marketing.v1.ListCouponsRequest\x1a!.marketing.v1.ListCouponsResponse\x12X\n" +
+	"\vListCoupons\x12 .marketing.v1.ListCouponsRequest\x1a!.marketing.v1.ListCouponsResponse\x12L\n" +
+	"\tGetCoupon\x12\x1e.marketing.v1.GetCouponRequest\x1a\x1f.marketing.v1.GetCouponResponse\x12X\n" +
 	"\rReceiveCoupon\x12\".marketing.v1.ReceiveCouponRequest\x1a#.marketing.v1.ReceiveCouponResponse\x12^\n" +
 	"\x0fListUserCoupons\x12$.marketing.v1.ListUserCouponsRequest\x1a%.marketing.v1.ListUserCouponsResponse\x12L\n" +
 	"\tUseCoupon\x12\x1e.marketing.v1.UseCouponRequest\x1a\x1f.marketing.v1.UseCouponResponse\x12X\n" +
@@ -2364,7 +2457,7 @@ func file_marketing_v1_marketing_proto_rawDescGZIP() []byte {
 	return file_marketing_v1_marketing_proto_rawDescData
 }
 
-var file_marketing_v1_marketing_proto_msgTypes = make([]protoimpl.MessageInfo, 38)
+var file_marketing_v1_marketing_proto_msgTypes = make([]protoimpl.MessageInfo, 40)
 var file_marketing_v1_marketing_proto_goTypes = []any{
 	(*Coupon)(nil),                        // 0: marketing.v1.Coupon
 	(*UserCoupon)(nil),                    // 1: marketing.v1.UserCoupon
@@ -2378,87 +2471,92 @@ var file_marketing_v1_marketing_proto_goTypes = []any{
 	(*UpdateCouponResponse)(nil),          // 9: marketing.v1.UpdateCouponResponse
 	(*ListCouponsRequest)(nil),            // 10: marketing.v1.ListCouponsRequest
 	(*ListCouponsResponse)(nil),           // 11: marketing.v1.ListCouponsResponse
-	(*ReceiveCouponRequest)(nil),          // 12: marketing.v1.ReceiveCouponRequest
-	(*ReceiveCouponResponse)(nil),         // 13: marketing.v1.ReceiveCouponResponse
-	(*ListUserCouponsRequest)(nil),        // 14: marketing.v1.ListUserCouponsRequest
-	(*ListUserCouponsResponse)(nil),       // 15: marketing.v1.ListUserCouponsResponse
-	(*UseCouponRequest)(nil),              // 16: marketing.v1.UseCouponRequest
-	(*UseCouponResponse)(nil),             // 17: marketing.v1.UseCouponResponse
-	(*ReleaseCouponRequest)(nil),          // 18: marketing.v1.ReleaseCouponRequest
-	(*ReleaseCouponResponse)(nil),         // 19: marketing.v1.ReleaseCouponResponse
-	(*CalculateDiscountRequest)(nil),      // 20: marketing.v1.CalculateDiscountRequest
-	(*CalculateDiscountResponse)(nil),     // 21: marketing.v1.CalculateDiscountResponse
-	(*CreateSeckillActivityRequest)(nil),  // 22: marketing.v1.CreateSeckillActivityRequest
-	(*CreateSeckillActivityResponse)(nil), // 23: marketing.v1.CreateSeckillActivityResponse
-	(*UpdateSeckillActivityRequest)(nil),  // 24: marketing.v1.UpdateSeckillActivityRequest
-	(*UpdateSeckillActivityResponse)(nil), // 25: marketing.v1.UpdateSeckillActivityResponse
-	(*ListSeckillActivitiesRequest)(nil),  // 26: marketing.v1.ListSeckillActivitiesRequest
-	(*ListSeckillActivitiesResponse)(nil), // 27: marketing.v1.ListSeckillActivitiesResponse
-	(*GetSeckillActivityRequest)(nil),     // 28: marketing.v1.GetSeckillActivityRequest
-	(*GetSeckillActivityResponse)(nil),    // 29: marketing.v1.GetSeckillActivityResponse
-	(*SeckillRequest)(nil),                // 30: marketing.v1.SeckillRequest
-	(*SeckillResponse)(nil),               // 31: marketing.v1.SeckillResponse
-	(*CreatePromotionRuleRequest)(nil),    // 32: marketing.v1.CreatePromotionRuleRequest
-	(*CreatePromotionRuleResponse)(nil),   // 33: marketing.v1.CreatePromotionRuleResponse
-	(*UpdatePromotionRuleRequest)(nil),    // 34: marketing.v1.UpdatePromotionRuleRequest
-	(*UpdatePromotionRuleResponse)(nil),   // 35: marketing.v1.UpdatePromotionRuleResponse
-	(*ListPromotionRulesRequest)(nil),     // 36: marketing.v1.ListPromotionRulesRequest
-	(*ListPromotionRulesResponse)(nil),    // 37: marketing.v1.ListPromotionRulesResponse
-	(*timestamppb.Timestamp)(nil),         // 38: google.protobuf.Timestamp
+	(*GetCouponRequest)(nil),              // 12: marketing.v1.GetCouponRequest
+	(*GetCouponResponse)(nil),             // 13: marketing.v1.GetCouponResponse
+	(*ReceiveCouponRequest)(nil),          // 14: marketing.v1.ReceiveCouponRequest
+	(*ReceiveCouponResponse)(nil),         // 15: marketing.v1.ReceiveCouponResponse
+	(*ListUserCouponsRequest)(nil),        // 16: marketing.v1.ListUserCouponsRequest
+	(*ListUserCouponsResponse)(nil),       // 17: marketing.v1.ListUserCouponsResponse
+	(*UseCouponRequest)(nil),              // 18: marketing.v1.UseCouponRequest
+	(*UseCouponResponse)(nil),             // 19: marketing.v1.UseCouponResponse
+	(*ReleaseCouponRequest)(nil),          // 20: marketing.v1.ReleaseCouponRequest
+	(*ReleaseCouponResponse)(nil),         // 21: marketing.v1.ReleaseCouponResponse
+	(*CalculateDiscountRequest)(nil),      // 22: marketing.v1.CalculateDiscountRequest
+	(*CalculateDiscountResponse)(nil),     // 23: marketing.v1.CalculateDiscountResponse
+	(*CreateSeckillActivityRequest)(nil),  // 24: marketing.v1.CreateSeckillActivityRequest
+	(*CreateSeckillActivityResponse)(nil), // 25: marketing.v1.CreateSeckillActivityResponse
+	(*UpdateSeckillActivityRequest)(nil),  // 26: marketing.v1.UpdateSeckillActivityRequest
+	(*UpdateSeckillActivityResponse)(nil), // 27: marketing.v1.UpdateSeckillActivityResponse
+	(*ListSeckillActivitiesRequest)(nil),  // 28: marketing.v1.ListSeckillActivitiesRequest
+	(*ListSeckillActivitiesResponse)(nil), // 29: marketing.v1.ListSeckillActivitiesResponse
+	(*GetSeckillActivityRequest)(nil),     // 30: marketing.v1.GetSeckillActivityRequest
+	(*GetSeckillActivityResponse)(nil),    // 31: marketing.v1.GetSeckillActivityResponse
+	(*SeckillRequest)(nil),                // 32: marketing.v1.SeckillRequest
+	(*SeckillResponse)(nil),               // 33: marketing.v1.SeckillResponse
+	(*CreatePromotionRuleRequest)(nil),    // 34: marketing.v1.CreatePromotionRuleRequest
+	(*CreatePromotionRuleResponse)(nil),   // 35: marketing.v1.CreatePromotionRuleResponse
+	(*UpdatePromotionRuleRequest)(nil),    // 36: marketing.v1.UpdatePromotionRuleRequest
+	(*UpdatePromotionRuleResponse)(nil),   // 37: marketing.v1.UpdatePromotionRuleResponse
+	(*ListPromotionRulesRequest)(nil),     // 38: marketing.v1.ListPromotionRulesRequest
+	(*ListPromotionRulesResponse)(nil),    // 39: marketing.v1.ListPromotionRulesResponse
+	(*timestamppb.Timestamp)(nil),         // 40: google.protobuf.Timestamp
 }
 var file_marketing_v1_marketing_proto_depIdxs = []int32{
-	38, // 0: marketing.v1.Coupon.ctime:type_name -> google.protobuf.Timestamp
+	40, // 0: marketing.v1.Coupon.ctime:type_name -> google.protobuf.Timestamp
 	0,  // 1: marketing.v1.UserCoupon.coupon:type_name -> marketing.v1.Coupon
 	3,  // 2: marketing.v1.SeckillActivity.items:type_name -> marketing.v1.SeckillItem
 	0,  // 3: marketing.v1.CreateCouponRequest.coupon:type_name -> marketing.v1.Coupon
 	0,  // 4: marketing.v1.UpdateCouponRequest.coupon:type_name -> marketing.v1.Coupon
 	0,  // 5: marketing.v1.ListCouponsResponse.coupons:type_name -> marketing.v1.Coupon
-	1,  // 6: marketing.v1.ListUserCouponsResponse.coupons:type_name -> marketing.v1.UserCoupon
-	5,  // 7: marketing.v1.CalculateDiscountResponse.result:type_name -> marketing.v1.DiscountResult
-	2,  // 8: marketing.v1.CreateSeckillActivityRequest.activity:type_name -> marketing.v1.SeckillActivity
-	2,  // 9: marketing.v1.UpdateSeckillActivityRequest.activity:type_name -> marketing.v1.SeckillActivity
-	2,  // 10: marketing.v1.ListSeckillActivitiesResponse.activities:type_name -> marketing.v1.SeckillActivity
-	2,  // 11: marketing.v1.GetSeckillActivityResponse.activity:type_name -> marketing.v1.SeckillActivity
-	4,  // 12: marketing.v1.CreatePromotionRuleRequest.rule:type_name -> marketing.v1.PromotionRule
-	4,  // 13: marketing.v1.UpdatePromotionRuleRequest.rule:type_name -> marketing.v1.PromotionRule
-	4,  // 14: marketing.v1.ListPromotionRulesResponse.rules:type_name -> marketing.v1.PromotionRule
-	6,  // 15: marketing.v1.MarketingService.CreateCoupon:input_type -> marketing.v1.CreateCouponRequest
-	8,  // 16: marketing.v1.MarketingService.UpdateCoupon:input_type -> marketing.v1.UpdateCouponRequest
-	10, // 17: marketing.v1.MarketingService.ListCoupons:input_type -> marketing.v1.ListCouponsRequest
-	12, // 18: marketing.v1.MarketingService.ReceiveCoupon:input_type -> marketing.v1.ReceiveCouponRequest
-	14, // 19: marketing.v1.MarketingService.ListUserCoupons:input_type -> marketing.v1.ListUserCouponsRequest
-	16, // 20: marketing.v1.MarketingService.UseCoupon:input_type -> marketing.v1.UseCouponRequest
-	18, // 21: marketing.v1.MarketingService.ReleaseCoupon:input_type -> marketing.v1.ReleaseCouponRequest
-	20, // 22: marketing.v1.MarketingService.CalculateDiscount:input_type -> marketing.v1.CalculateDiscountRequest
-	22, // 23: marketing.v1.MarketingService.CreateSeckillActivity:input_type -> marketing.v1.CreateSeckillActivityRequest
-	24, // 24: marketing.v1.MarketingService.UpdateSeckillActivity:input_type -> marketing.v1.UpdateSeckillActivityRequest
-	26, // 25: marketing.v1.MarketingService.ListSeckillActivities:input_type -> marketing.v1.ListSeckillActivitiesRequest
-	28, // 26: marketing.v1.MarketingService.GetSeckillActivity:input_type -> marketing.v1.GetSeckillActivityRequest
-	30, // 27: marketing.v1.MarketingService.Seckill:input_type -> marketing.v1.SeckillRequest
-	32, // 28: marketing.v1.MarketingService.CreatePromotionRule:input_type -> marketing.v1.CreatePromotionRuleRequest
-	34, // 29: marketing.v1.MarketingService.UpdatePromotionRule:input_type -> marketing.v1.UpdatePromotionRuleRequest
-	36, // 30: marketing.v1.MarketingService.ListPromotionRules:input_type -> marketing.v1.ListPromotionRulesRequest
-	7,  // 31: marketing.v1.MarketingService.CreateCoupon:output_type -> marketing.v1.CreateCouponResponse
-	9,  // 32: marketing.v1.MarketingService.UpdateCoupon:output_type -> marketing.v1.UpdateCouponResponse
-	11, // 33: marketing.v1.MarketingService.ListCoupons:output_type -> marketing.v1.ListCouponsResponse
-	13, // 34: marketing.v1.MarketingService.ReceiveCoupon:output_type -> marketing.v1.ReceiveCouponResponse
-	15, // 35: marketing.v1.MarketingService.ListUserCoupons:output_type -> marketing.v1.ListUserCouponsResponse
-	17, // 36: marketing.v1.MarketingService.UseCoupon:output_type -> marketing.v1.UseCouponResponse
-	19, // 37: marketing.v1.MarketingService.ReleaseCoupon:output_type -> marketing.v1.ReleaseCouponResponse
-	21, // 38: marketing.v1.MarketingService.CalculateDiscount:output_type -> marketing.v1.CalculateDiscountResponse
-	23, // 39: marketing.v1.MarketingService.CreateSeckillActivity:output_type -> marketing.v1.CreateSeckillActivityResponse
-	25, // 40: marketing.v1.MarketingService.UpdateSeckillActivity:output_type -> marketing.v1.UpdateSeckillActivityResponse
-	27, // 41: marketing.v1.MarketingService.ListSeckillActivities:output_type -> marketing.v1.ListSeckillActivitiesResponse
-	29, // 42: marketing.v1.MarketingService.GetSeckillActivity:output_type -> marketing.v1.GetSeckillActivityResponse
-	31, // 43: marketing.v1.MarketingService.Seckill:output_type -> marketing.v1.SeckillResponse
-	33, // 44: marketing.v1.MarketingService.CreatePromotionRule:output_type -> marketing.v1.CreatePromotionRuleResponse
-	35, // 45: marketing.v1.MarketingService.UpdatePromotionRule:output_type -> marketing.v1.UpdatePromotionRuleResponse
-	37, // 46: marketing.v1.MarketingService.ListPromotionRules:output_type -> marketing.v1.ListPromotionRulesResponse
-	31, // [31:47] is the sub-list for method output_type
-	15, // [15:31] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	0,  // 6: marketing.v1.GetCouponResponse.coupon:type_name -> marketing.v1.Coupon
+	1,  // 7: marketing.v1.ListUserCouponsResponse.coupons:type_name -> marketing.v1.UserCoupon
+	5,  // 8: marketing.v1.CalculateDiscountResponse.result:type_name -> marketing.v1.DiscountResult
+	2,  // 9: marketing.v1.CreateSeckillActivityRequest.activity:type_name -> marketing.v1.SeckillActivity
+	2,  // 10: marketing.v1.UpdateSeckillActivityRequest.activity:type_name -> marketing.v1.SeckillActivity
+	2,  // 11: marketing.v1.ListSeckillActivitiesResponse.activities:type_name -> marketing.v1.SeckillActivity
+	2,  // 12: marketing.v1.GetSeckillActivityResponse.activity:type_name -> marketing.v1.SeckillActivity
+	4,  // 13: marketing.v1.CreatePromotionRuleRequest.rule:type_name -> marketing.v1.PromotionRule
+	4,  // 14: marketing.v1.UpdatePromotionRuleRequest.rule:type_name -> marketing.v1.PromotionRule
+	4,  // 15: marketing.v1.ListPromotionRulesResponse.rules:type_name -> marketing.v1.PromotionRule
+	6,  // 16: marketing.v1.MarketingService.CreateCoupon:input_type -> marketing.v1.CreateCouponRequest
+	8,  // 17: marketing.v1.MarketingService.UpdateCoupon:input_type -> marketing.v1.UpdateCouponRequest
+	10, // 18: marketing.v1.MarketingService.ListCoupons:input_type -> marketing.v1.ListCouponsRequest
+	12, // 19: marketing.v1.MarketingService.GetCoupon:input_type -> marketing.v1.GetCouponRequest
+	14, // 20: marketing.v1.MarketingService.ReceiveCoupon:input_type -> marketing.v1.ReceiveCouponRequest
+	16, // 21: marketing.v1.MarketingService.ListUserCoupons:input_type -> marketing.v1.ListUserCouponsRequest
+	18, // 22: marketing.v1.MarketingService.UseCoupon:input_type -> marketing.v1.UseCouponRequest
+	20, // 23: marketing.v1.MarketingService.ReleaseCoupon:input_type -> marketing.v1.ReleaseCouponRequest
+	22, // 24: marketing.v1.MarketingService.CalculateDiscount:input_type -> marketing.v1.CalculateDiscountRequest
+	24, // 25: marketing.v1.MarketingService.CreateSeckillActivity:input_type -> marketing.v1.CreateSeckillActivityRequest
+	26, // 26: marketing.v1.MarketingService.UpdateSeckillActivity:input_type -> marketing.v1.UpdateSeckillActivityRequest
+	28, // 27: marketing.v1.MarketingService.ListSeckillActivities:input_type -> marketing.v1.ListSeckillActivitiesRequest
+	30, // 28: marketing.v1.MarketingService.GetSeckillActivity:input_type -> marketing.v1.GetSeckillActivityRequest
+	32, // 29: marketing.v1.MarketingService.Seckill:input_type -> marketing.v1.SeckillRequest
+	34, // 30: marketing.v1.MarketingService.CreatePromotionRule:input_type -> marketing.v1.CreatePromotionRuleRequest
+	36, // 31: marketing.v1.MarketingService.UpdatePromotionRule:input_type -> marketing.v1.UpdatePromotionRuleRequest
+	38, // 32: marketing.v1.MarketingService.ListPromotionRules:input_type -> marketing.v1.ListPromotionRulesRequest
+	7,  // 33: marketing.v1.MarketingService.CreateCoupon:output_type -> marketing.v1.CreateCouponResponse
+	9,  // 34: marketing.v1.MarketingService.UpdateCoupon:output_type -> marketing.v1.UpdateCouponResponse
+	11, // 35: marketing.v1.MarketingService.ListCoupons:output_type -> marketing.v1.ListCouponsResponse
+	13, // 36: marketing.v1.MarketingService.GetCoupon:output_type -> marketing.v1.GetCouponResponse
+	15, // 37: marketing.v1.MarketingService.ReceiveCoupon:output_type -> marketing.v1.ReceiveCouponResponse
+	17, // 38: marketing.v1.MarketingService.ListUserCoupons:output_type -> marketing.v1.ListUserCouponsResponse
+	19, // 39: marketing.v1.MarketingService.UseCoupon:output_type -> marketing.v1.UseCouponResponse
+	21, // 40: marketing.v1.MarketingService.ReleaseCoupon:output_type -> marketing.v1.ReleaseCouponResponse
+	23, // 41: marketing.v1.MarketingService.CalculateDiscount:output_type -> marketing.v1.CalculateDiscountResponse
+	25, // 42: marketing.v1.MarketingService.CreateSeckillActivity:output_type -> marketing.v1.CreateSeckillActivityResponse
+	27, // 43: marketing.v1.MarketingService.UpdateSeckillActivity:output_type -> marketing.v1.UpdateSeckillActivityResponse
+	29, // 44: marketing.v1.MarketingService.ListSeckillActivities:output_type -> marketing.v1.ListSeckillActivitiesResponse
+	31, // 45: marketing.v1.MarketingService.GetSeckillActivity:output_type -> marketing.v1.GetSeckillActivityResponse
+	33, // 46: marketing.v1.MarketingService.Seckill:output_type -> marketing.v1.SeckillResponse
+	35, // 47: marketing.v1.MarketingService.CreatePromotionRule:output_type -> marketing.v1.CreatePromotionRuleResponse
+	37, // 48: marketing.v1.MarketingService.UpdatePromotionRule:output_type -> marketing.v1.UpdatePromotionRuleResponse
+	39, // 49: marketing.v1.MarketingService.ListPromotionRules:output_type -> marketing.v1.ListPromotionRulesResponse
+	33, // [33:50] is the sub-list for method output_type
+	16, // [16:33] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_marketing_v1_marketing_proto_init() }
@@ -2472,7 +2570,7 @@ func file_marketing_v1_marketing_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_marketing_v1_marketing_proto_rawDesc), len(file_marketing_v1_marketing_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   38,
+			NumMessages:   40,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

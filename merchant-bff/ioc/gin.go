@@ -91,6 +91,7 @@ func InitGinServer(
 		// 营销管理 - 优惠券
 		auth.POST("/coupons", ginx.WrapBody[handler.CreateCouponReq](l, marketingHandler.CreateCoupon))
 		auth.PUT("/coupons/:id", ginx.WrapBody[handler.UpdateCouponReq](l, marketingHandler.UpdateCoupon))
+		auth.GET("/coupons/:id", marketingHandler.GetCoupon)
 		auth.GET("/coupons", ginx.WrapQuery[handler.ListCouponsReq](l, marketingHandler.ListCoupons))
 		// 营销管理 - 秒杀
 		auth.POST("/seckill", ginx.WrapBody[handler.CreateSeckillReq](l, marketingHandler.CreateSeckill))

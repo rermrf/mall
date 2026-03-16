@@ -10,6 +10,7 @@ import (
 	"github.com/rermrf/emo/logger"
 	logisticsv1 "github.com/rermrf/mall/api/proto/gen/logistics/v1"
 	orderv1 "github.com/rermrf/mall/api/proto/gen/order/v1"
+	"github.com/rermrf/mall/merchant-bff/domain"
 	"github.com/rermrf/mall/pkg/ginx"
 	"github.com/rermrf/mall/pkg/validatorx"
 )
@@ -58,7 +59,10 @@ func (h *LogisticsHandler) CreateFreightTemplate(ctx *gin.Context, req CreateFre
 	if v.HasErrors() {
 		return v.ToResult(), nil
 	}
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	rules := make([]*logisticsv1.FreightRule, 0, len(req.Rules))
 	for _, r := range req.Rules {
 		rules = append(rules, &logisticsv1.FreightRule{
@@ -68,7 +72,7 @@ func (h *LogisticsHandler) CreateFreightTemplate(ctx *gin.Context, req CreateFre
 	}
 	resp, err := h.logisticsClient.CreateFreightTemplate(ctx.Request.Context(), &logisticsv1.CreateFreightTemplateRequest{
 		Template: &logisticsv1.FreightTemplate{
-			TenantId: tenantId.(int64), Name: req.Name,
+			TenantId: tenantId, Name: req.Name,
 			ChargeType: req.ChargeType, FreeThreshold: req.FreeThreshold,
 			Rules: rules,
 		},
@@ -87,7 +91,10 @@ type UpdateFreightTemplateReq struct {
 }
 
 func (h *LogisticsHandler) UpdateFreightTemplate(ctx *gin.Context, req UpdateFreightTemplateReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil || id <= 0 {
@@ -110,7 +117,7 @@ func (h *LogisticsHandler) UpdateFreightTemplate(ctx *gin.Context, req UpdateFre
 	}
 	_, err = h.logisticsClient.UpdateFreightTemplate(ctx.Request.Context(), &logisticsv1.UpdateFreightTemplateRequest{
 		Template: &logisticsv1.FreightTemplate{
-			Id: id, TenantId: tenantId.(int64), Name: req.Name,
+			Id: id, TenantId: tenantId, Name: req.Name,
 			ChargeType: req.ChargeType, FreeThreshold: req.FreeThreshold,
 			Rules: rules,
 		},
@@ -135,9 +142,13 @@ func (h *LogisticsHandler) GetFreightTemplate(ctx *gin.Context) {
 }
 
 func (h *LogisticsHandler) ListFreightTemplates(ctx *gin.Context) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, err := ginx.GetTenantID(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeForbidden, Msg: "需要商家身份"})
+		return
+	}
 	resp, err := h.logisticsClient.ListFreightTemplates(ctx.Request.Context(), &logisticsv1.ListFreightTemplatesRequest{
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 	})
 	if err != nil {
 		h.l.Error("查询运费模板列表失败", logger.Error(err))
@@ -149,11 +160,15 @@ func (h *LogisticsHandler) ListFreightTemplates(ctx *gin.Context) {
 }
 
 func (h *LogisticsHandler) DeleteFreightTemplate(ctx *gin.Context) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, err := ginx.GetTenantID(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeForbidden, Msg: "需要商家身份"})
+		return
+	}
 	idStr := ctx.Param("id")
 	id, _ := strconv.ParseInt(idStr, 10, 64)
-	_, err := h.logisticsClient.DeleteFreightTemplate(ctx.Request.Context(), &logisticsv1.DeleteFreightTemplateRequest{
-		Id: id, TenantId: tenantId.(int64),
+	_, err = h.logisticsClient.DeleteFreightTemplate(ctx.Request.Context(), &logisticsv1.DeleteFreightTemplateRequest{
+		Id: id, TenantId: tenantId,
 	})
 	if err != nil {
 		h.l.Error("删除运费模板失败", logger.Error(err))
@@ -173,8 +188,14 @@ type ShipOrderReq struct {
 }
 
 func (h *LogisticsHandler) ShipOrder(ctx *gin.Context, req ShipOrderReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
-	uid, _ := ctx.Get("uid")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
+	uid, errResult := ginx.MustGetUID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	orderNo := ctx.Param("orderNo")
 
 	// 1. 通过 order-svc 获取订单信息（取 order_id）
@@ -185,7 +206,7 @@ func (h *LogisticsHandler) ShipOrder(ctx *gin.Context, req ShipOrderReq) (ginx.R
 
 	// 2. 创建物流单
 	_, err = h.logisticsClient.CreateShipment(ctx.Request.Context(), &logisticsv1.CreateShipmentRequest{
-		TenantId:    tenantId.(int64),
+		TenantId:    tenantId,
 		OrderId:     orderResp.GetOrder().GetId(),
 		CarrierCode: req.CarrierCode,
 		CarrierName: req.CarrierName,
@@ -198,9 +219,9 @@ func (h *LogisticsHandler) ShipOrder(ctx *gin.Context, req ShipOrderReq) (ginx.R
 	// 3. 更新订单状态为已发货
 	_, err = h.orderClient.UpdateOrderStatus(ctx.Request.Context(), &orderv1.UpdateOrderStatusRequest{
 		OrderNo:      orderNo,
-		Status:       3, // shipped
-		OperatorId:   uid.(int64),
-		OperatorType: 2, // 商家
+		Status:       int32(domain.OrderStatusShipped),
+		OperatorId:   uid,
+		OperatorType: int32(domain.OperatorTypeMerchant),
 		Remark:       "商家发货",
 	})
 	if err != nil {

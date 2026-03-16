@@ -24,6 +24,7 @@ type MarketingService interface {
 	CreateCoupon(ctx context.Context, c domain.Coupon) (domain.Coupon, error)
 	UpdateCoupon(ctx context.Context, c domain.Coupon) error
 	ListCoupons(ctx context.Context, tenantId int64, status int32, page, pageSize int32) ([]domain.Coupon, int64, error)
+	GetCoupon(ctx context.Context, id int64) (domain.Coupon, error)
 	ReceiveCoupon(ctx context.Context, userId, couponId int64) error
 	ListUserCoupons(ctx context.Context, userId, tenantId int64, status int32) ([]domain.UserCoupon, error)
 	UseCoupon(ctx context.Context, userCouponId, orderId int64) error
@@ -63,6 +64,10 @@ func (s *marketingService) UpdateCoupon(ctx context.Context, c domain.Coupon) er
 
 func (s *marketingService) ListCoupons(ctx context.Context, tenantId int64, status int32, page, pageSize int32) ([]domain.Coupon, int64, error) {
 	return s.repo.ListCoupons(ctx, tenantId, status, page, pageSize)
+}
+
+func (s *marketingService) GetCoupon(ctx context.Context, id int64) (domain.Coupon, error) {
+	return s.repo.FindCouponById(ctx, id)
 }
 
 func (s *marketingService) ReceiveCoupon(ctx context.Context, userId, couponId int64) error {

@@ -8,6 +8,7 @@ import {
   GiftOutlined,
 } from '@ant-design/icons'
 import { listOrders, listRefunds } from '@/api/order'
+import { silentApiError } from '@/utils/error'
 
 const { Title } = Typography
 
@@ -20,13 +21,13 @@ export default function Dashboard() {
   useEffect(() => {
     listOrders({ status: 2, page: 1, pageSize: 1 }).then((r) => {
       setPendingShip(r?.total ?? 0)
-    }).catch(() => {})
+    }).catch(silentApiError('dashboard:pendingShip'))
     listRefunds({ status: 1, page: 1, pageSize: 1 }).then((r) => {
       setPendingRefund(r?.total ?? 0)
-    }).catch(() => {})
+    }).catch(silentApiError('dashboard:pendingRefund'))
     listOrders({ page: 1, pageSize: 1 }).then((r) => {
       setTodayOrders(r?.total ?? 0)
-    }).catch(() => {})
+    }).catch(silentApiError('dashboard:todayOrders'))
   }, [])
 
   const shortcuts = [

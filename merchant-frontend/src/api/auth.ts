@@ -1,6 +1,7 @@
 import { client } from './client'
 
 export interface LoginParams {
+  tenant_id: number
   phone: string
   password: string
 }

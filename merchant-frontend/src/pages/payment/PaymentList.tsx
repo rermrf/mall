@@ -4,14 +4,8 @@ import { Tag } from 'antd'
 import { ProTable } from '@ant-design/pro-components'
 import type { ActionType, ProColumns } from '@ant-design/pro-components'
 import { listPayments } from '@/api/payment'
+import { PAYMENT_STATUS_MAP, formatPrice } from '@/constants'
 import type { Payment } from '@/types/payment'
-
-const statusMap: Record<number, { text: string; color: string }> = {
-  0: { text: '待支付', color: 'orange' },
-  1: { text: '已支付', color: 'green' },
-  2: { text: '已退款', color: 'red' },
-  3: { text: '已关闭', color: 'default' },
-}
 
 export default function PaymentList() {
   const navigate = useNavigate()
@@ -24,14 +18,14 @@ export default function PaymentList() {
       title: '金额',
       dataIndex: 'amount',
       search: false,
-      render: (_, r) => `¥${((r.amount ?? 0) / 100).toFixed(2)}`,
+      render: (_, r) => formatPrice(r.amount),
     },
     {
       title: '状态',
       dataIndex: 'status',
-      valueEnum: Object.fromEntries(Object.entries(statusMap).map(([k, v]) => [k, { text: v.text }])),
+      valueEnum: Object.fromEntries(Object.entries(PAYMENT_STATUS_MAP).map(([k, v]) => [k, { text: v.text }])),
       render: (_, r) => {
-        const s = statusMap[r.status] ?? { text: '未知', color: 'default' }
+        const s = PAYMENT_STATUS_MAP[r.status] ?? { text: '未知', color: 'default' }
         return <Tag color={s.color}>{s.text}</Tag>
       },
     },

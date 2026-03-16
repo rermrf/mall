@@ -22,6 +22,7 @@ const (
 	MarketingService_CreateCoupon_FullMethodName          = "/marketing.v1.MarketingService/CreateCoupon"
 	MarketingService_UpdateCoupon_FullMethodName          = "/marketing.v1.MarketingService/UpdateCoupon"
 	MarketingService_ListCoupons_FullMethodName           = "/marketing.v1.MarketingService/ListCoupons"
+	MarketingService_GetCoupon_FullMethodName             = "/marketing.v1.MarketingService/GetCoupon"
 	MarketingService_ReceiveCoupon_FullMethodName         = "/marketing.v1.MarketingService/ReceiveCoupon"
 	MarketingService_ListUserCoupons_FullMethodName       = "/marketing.v1.MarketingService/ListUserCoupons"
 	MarketingService_UseCoupon_FullMethodName             = "/marketing.v1.MarketingService/UseCoupon"
@@ -45,6 +46,7 @@ type MarketingServiceClient interface {
 	CreateCoupon(ctx context.Context, in *CreateCouponRequest, opts ...grpc.CallOption) (*CreateCouponResponse, error)
 	UpdateCoupon(ctx context.Context, in *UpdateCouponRequest, opts ...grpc.CallOption) (*UpdateCouponResponse, error)
 	ListCoupons(ctx context.Context, in *ListCouponsRequest, opts ...grpc.CallOption) (*ListCouponsResponse, error)
+	GetCoupon(ctx context.Context, in *GetCouponRequest, opts ...grpc.CallOption) (*GetCouponResponse, error)
 	ReceiveCoupon(ctx context.Context, in *ReceiveCouponRequest, opts ...grpc.CallOption) (*ReceiveCouponResponse, error)
 	ListUserCoupons(ctx context.Context, in *ListUserCouponsRequest, opts ...grpc.CallOption) (*ListUserCouponsResponse, error)
 	// 锁定/释放优惠券（下单/取消时）
@@ -97,6 +99,16 @@ func (c *marketingServiceClient) ListCoupons(ctx context.Context, in *ListCoupon
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListCouponsResponse)
 	err := c.cc.Invoke(ctx, MarketingService_ListCoupons_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *marketingServiceClient) GetCoupon(ctx context.Context, in *GetCouponRequest, opts ...grpc.CallOption) (*GetCouponResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCouponResponse)
+	err := c.cc.Invoke(ctx, MarketingService_GetCoupon_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -241,6 +253,7 @@ type MarketingServiceServer interface {
 	CreateCoupon(context.Context, *CreateCouponRequest) (*CreateCouponResponse, error)
 	UpdateCoupon(context.Context, *UpdateCouponRequest) (*UpdateCouponResponse, error)
 	ListCoupons(context.Context, *ListCouponsRequest) (*ListCouponsResponse, error)
+	GetCoupon(context.Context, *GetCouponRequest) (*GetCouponResponse, error)
 	ReceiveCoupon(context.Context, *ReceiveCouponRequest) (*ReceiveCouponResponse, error)
 	ListUserCoupons(context.Context, *ListUserCouponsRequest) (*ListUserCouponsResponse, error)
 	// 锁定/释放优惠券（下单/取消时）
@@ -276,6 +289,9 @@ func (UnimplementedMarketingServiceServer) UpdateCoupon(context.Context, *Update
 }
 func (UnimplementedMarketingServiceServer) ListCoupons(context.Context, *ListCouponsRequest) (*ListCouponsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListCoupons not implemented")
+}
+func (UnimplementedMarketingServiceServer) GetCoupon(context.Context, *GetCouponRequest) (*GetCouponResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCoupon not implemented")
 }
 func (UnimplementedMarketingServiceServer) ReceiveCoupon(context.Context, *ReceiveCouponRequest) (*ReceiveCouponResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ReceiveCoupon not implemented")
@@ -386,6 +402,24 @@ func _MarketingService_ListCoupons_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MarketingServiceServer).ListCoupons(ctx, req.(*ListCouponsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MarketingService_GetCoupon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCouponRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MarketingServiceServer).GetCoupon(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MarketingService_GetCoupon_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MarketingServiceServer).GetCoupon(ctx, req.(*GetCouponRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -642,6 +676,10 @@ var MarketingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListCoupons",
 			Handler:    _MarketingService_ListCoupons_Handler,
+		},
+		{
+			MethodName: "GetCoupon",
+			Handler:    _MarketingService_GetCoupon_Handler,
 		},
 		{
 			MethodName: "ReceiveCoupon",

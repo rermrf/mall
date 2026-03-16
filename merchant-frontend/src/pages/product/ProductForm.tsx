@@ -5,6 +5,18 @@ import { ProForm, ProFormText, ProFormTextArea, ProFormDigit, ProFormSelect, Pro
 import type { ProColumns } from '@ant-design/pro-components'
 import { createProduct, updateProduct, getProduct, listCategories, listBrands } from '@/api/product'
 import type { Category, Brand, CreateProductReq, CreateSKUReq, ProductSpec } from '@/types/product'
+import { silentApiError } from '@/utils/error'
+
+interface BasicFormValues {
+  name: string
+  subtitle?: string
+  category_id: number
+  brand_id?: number
+  main_image?: string
+  description?: string
+  price?: number
+  original_price?: number
+}
 
 export default function ProductForm() {
   const navigate = useNavigate()
@@ -13,14 +25,14 @@ export default function ProductForm() {
 
   const [categories, setCategories] = useState<Category[]>([])
   const [brands, setBrands] = useState<Brand[]>([])
-  const [initialValues, setInitialValues] = useState<Record<string, unknown>>({})
+  const [initialValues, setInitialValues] = useState<Partial<BasicFormValues>>({})
   const [skus, setSkus] = useState<CreateSKUReq[]>([])
   const [specs, setSpecs] = useState<ProductSpec[]>([])
   const [editableKeys, setEditableKeys] = useState<React.Key[]>([])
 
   useEffect(() => {
-    listCategories().then((c) => setCategories(c ?? [])).catch(() => {})
-    listBrands({ page: 1, pageSize: 100 }).then((r) => setBrands(r?.brands ?? [])).catch(() => {})
+    listCategories().then((c) => setCategories(c ?? [])).catch(silentApiError('productForm:listCategories'))
+    listBrands({ page: 1, pageSize: 100 }).then((r) => setBrands(r?.brands ?? [])).catch(silentApiError('productForm:listBrands'))
     if (isEdit) {
       getProduct(Number(id)).then((p) => {
         if (p) {
@@ -43,7 +55,7 @@ export default function ProductForm() {
           })) ?? [])
           setSpecs(p.specs ?? [])
         }
-      }).catch(() => {})
+      }).catch(silentApiError('productForm:getProduct'))
     }
   }, [id, isEdit])
 
@@ -106,20 +118,20 @@ export default function ProductForm() {
     { title: '操作', valueType: 'option' },
   ]
 
-  const handleSubmit = async (values: Record<string, unknown>) => {
+  const handleSubmit = async (values: BasicFormValues) => {
     const data: CreateProductReq = {
-      category_id: values.category_id as number,
-      brand_id: values.brand_id as number,
-      name: values.name as string,
-      subtitle: (values.subtitle as string) || '',
-      main_image: (values.main_image as string) || '',
+      category_id: values.category_id,
+      brand_id: values.brand_id ?? 0,
+      name: values.name,
+      subtitle: values.subtitle || '',
+      main_image: values.main_image || '',
       images: [],
-      description: (values.description as string) || '',
+      description: values.description || '',
       status: 0,
       skus: skus.length > 0 ? skus : [{
         sku_code: 'DEFAULT',
-        price: ((values.price as number) || 0) * 100,
-        original_price: ((values.original_price as number) || 0) * 100,
+        price: (values.price ?? 0) * 100,
+        original_price: (values.original_price ?? 0) * 100,
         cost_price: 0,
         bar_code: '',
         spec_values: '',
@@ -159,10 +171,7 @@ export default function ProductForm() {
             label="商品规格"
             creatorButtonProps={{ creatorButtonText: '添加规格' }}
             initialValue={specs.map((s) => ({ spec_name: s.name, spec_values: s.values.join(',') }))}
-            onAfterChange={(_, rawSpecs) => {
-              handleSpecsChange(rawSpecs as Array<{ spec_name?: string; spec_values?: string }> | undefined)
-            }}
-            actionRender={(_field, action) => [
+            actionRender={(_field: { name: number }, action: { remove: (index: number) => void }) => [
               <Button key="delete" type="link" danger onClick={() => action.remove(_field.name)}>
                 删除
               </Button>,

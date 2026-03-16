@@ -4,12 +4,13 @@ import { Card, message } from 'antd'
 import { ProForm, ProFormText, ProFormSelect, ProFormDateTimePicker, ProFormList, ProFormDigit } from '@ant-design/pro-components'
 import { createSeckill, updateSeckill, getSeckill } from '@/api/marketing'
 import type { CreateSeckillReq, SeckillItem } from '@/types/marketing'
+import { silentApiError } from '@/utils/error'
 
 export default function SeckillForm() {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const isEdit = !!id
-  const [initialValues, setInitialValues] = useState<Record<string, unknown>>()
+  const [initialValues, setInitialValues] = useState<Partial<CreateSeckillReq>>()
 
   useEffect(() => {
     if (isEdit) {
@@ -23,7 +24,7 @@ export default function SeckillForm() {
             items: activity.items ?? [],
           })
         }
-      }).catch(() => {})
+      }).catch(silentApiError('seckillForm:getSeckill'))
     }
   }, [id, isEdit])
 
@@ -33,10 +34,10 @@ export default function SeckillForm() {
 
   return (
     <Card title={isEdit ? '编辑秒杀活动' : '创建秒杀活动'}>
-      <ProForm
+      <ProForm<CreateSeckillReq>
         initialValues={initialValues}
-        onFinish={async (values: Record<string, unknown>) => {
-          const rawItems = (values.items as Array<Record<string, unknown>>) ?? []
+        onFinish={async (values) => {
+          const rawItems = values.items ?? []
           const items: SeckillItem[] = rawItems.map((item) => ({
             sku_id: Number(item.sku_id) || 0,
             seckill_price: Number(item.seckill_price) || 0,
@@ -45,10 +46,10 @@ export default function SeckillForm() {
           }))
 
           const data: CreateSeckillReq = {
-            name: values.name as string,
-            start_time: values.start_time as string,
-            end_time: values.end_time as string,
-            status: values.status as number,
+            name: values.name,
+            start_time: values.start_time,
+            end_time: values.end_time,
+            status: values.status,
             items,
           }
           try {

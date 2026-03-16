@@ -4,18 +4,19 @@ import { Card, message } from 'antd'
 import { ProForm, ProFormText, ProFormDigit, ProFormSelect } from '@ant-design/pro-components'
 import { createFreightTemplate, updateFreightTemplate, getFreightTemplate } from '@/api/logistics'
 import type { CreateFreightTemplateReq } from '@/types/logistics'
+import { silentApiError } from '@/utils/error'
 
 export default function TemplateForm() {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const isEdit = !!id
-  const [initialValues, setInitialValues] = useState<Record<string, unknown>>({})
+  const [initialValues, setInitialValues] = useState<Partial<CreateFreightTemplateReq>>({})
 
   useEffect(() => {
     if (isEdit) {
       getFreightTemplate(Number(id)).then((t) => {
         if (t) setInitialValues({ name: t.name, charge_type: t.charge_type, free_threshold: t.free_threshold })
-      }).catch(() => {})
+      }).catch(silentApiError('templateForm:getTemplate'))
     }
   }, [id, isEdit])
 

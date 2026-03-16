@@ -3,12 +3,13 @@ import { Card, message, Spin } from 'antd'
 import { ProForm, ProFormText } from '@ant-design/pro-components'
 import { getProfile, updateProfile } from '@/api/staff'
 import type { User } from '@/types/user'
+import { silentApiError } from '@/utils/error'
 
 export default function ProfileEdit() {
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    getProfile().then(setUser).catch(() => {})
+    getProfile().then(setUser).catch(silentApiError('profile:getProfile'))
   }, [])
 
   return (

@@ -18,6 +18,7 @@ import (
 	paymentv1 "github.com/rermrf/mall/api/proto/gen/payment/v1"
 	tenantv1 "github.com/rermrf/mall/api/proto/gen/tenant/v1"
 	userv1 "github.com/rermrf/mall/api/proto/gen/user/v1"
+	"github.com/rermrf/mall/pkg/grpcx"
 	"github.com/rermrf/mall/pkg/tenantx"
 )
 
@@ -44,11 +45,14 @@ func initServiceConn(etcdClient *clientv3.Client, serviceName string) *grpc.Clie
 		panic(fmt.Errorf("创建 etcd resolver 失败: %w", err))
 	}
 
-	conn, err := grpc.NewClient(
-		"etcd:///service/"+serviceName,
+	opts := append([]grpc.DialOption{
 		grpc.WithResolvers(etcdResolver),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithUnaryInterceptor(tenantx.GRPCUnaryClientInterceptor()),
+	}, grpcx.DefaultClientDialOptions()...)
+	conn, err := grpc.NewClient(
+		"etcd:///service/"+serviceName,
+		opts...,
 	)
 	if err != nil {
 		panic(fmt.Errorf("连接 gRPC 服务 %s 失败: %w", serviceName, err))

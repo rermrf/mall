@@ -3,12 +3,13 @@ import { Card, message, Spin } from 'antd'
 import { ProForm, ProFormText, ProFormTextArea } from '@ant-design/pro-components'
 import { getShop, updateShop } from '@/api/shop'
 import type { Shop, UpdateShopReq } from '@/types/shop'
+import { silentApiError } from '@/utils/error'
 
 export default function ShopSettings() {
   const [shop, setShop] = useState<Shop | null>(null)
 
   useEffect(() => {
-    getShop().then(setShop).catch(() => {})
+    getShop().then(setShop).catch(silentApiError('shop:getShop'))
   }, [])
 
   return (

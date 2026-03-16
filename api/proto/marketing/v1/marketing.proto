@@ -86,6 +86,7 @@ service MarketingService {
   rpc CreateCoupon(CreateCouponRequest) returns (CreateCouponResponse);
   rpc UpdateCoupon(UpdateCouponRequest) returns (UpdateCouponResponse);
   rpc ListCoupons(ListCouponsRequest) returns (ListCouponsResponse);
+  rpc GetCoupon(GetCouponRequest) returns (GetCouponResponse);
   rpc ReceiveCoupon(ReceiveCouponRequest) returns (ReceiveCouponResponse);
   rpc ListUserCoupons(ListUserCouponsRequest) returns (ListUserCouponsResponse);
   // 锁定/释放优惠券（下单/取消时）
@@ -133,6 +134,13 @@ message ListCouponsRequest {
 message ListCouponsResponse {
   repeated Coupon coupons = 1;
   int64 total = 2;
+}
+
+message GetCouponRequest {
+  int64 id = 1;
+}
+message GetCouponResponse {
+  Coupon coupon = 1;
 }
 
 message ReceiveCouponRequest {

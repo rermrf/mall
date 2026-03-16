@@ -64,7 +64,10 @@ func (h *ProductHandler) CreateProduct(ctx *gin.Context, req CreateProductReq) (
 	if v.HasErrors() {
 		return v.ToResult(), nil
 	}
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	skus := make([]*productv1.ProductSKU, 0, len(req.Skus))
 	for _, s := range req.Skus {
 		skus = append(skus, &productv1.ProductSKU{
@@ -86,7 +89,7 @@ func (h *ProductHandler) CreateProduct(ctx *gin.Context, req CreateProductReq) (
 	}
 	resp, err := h.productClient.CreateProduct(ctx.Request.Context(), &productv1.CreateProductRequest{
 		Product: &productv1.Product{
-			TenantId:    tenantId.(int64),
+			TenantId:    tenantId,
 			CategoryId:  req.CategoryId,
 			BrandId:     req.BrandId,
 			Name:        req.Name,
@@ -118,7 +121,10 @@ type UpdateProductReq struct {
 }
 
 func (h *ProductHandler) UpdateProduct(ctx *gin.Context, req UpdateProductReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil || id <= 0 {
@@ -154,7 +160,7 @@ func (h *ProductHandler) UpdateProduct(ctx *gin.Context, req UpdateProductReq) (
 	_, err = h.productClient.UpdateProduct(ctx.Request.Context(), &productv1.UpdateProductRequest{
 		Product: &productv1.Product{
 			Id:          id,
-			TenantId:    tenantId.(int64),
+			TenantId:    tenantId,
 			CategoryId:  req.CategoryId,
 			BrandId:     req.BrandId,
 			Name:        req.Name,
@@ -197,9 +203,12 @@ type ListProductsReq struct {
 }
 
 func (h *ProductHandler) ListProducts(ctx *gin.Context, req ListProductsReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.productClient.ListProducts(ctx.Request.Context(), &productv1.ListProductsRequest{
-		TenantId:   tenantId.(int64),
+		TenantId:   tenantId,
 		CategoryId: req.CategoryId,
 		Status:     req.Status,
 		Page:       req.Page,
@@ -219,7 +228,10 @@ type UpdateProductStatusReq struct {
 }
 
 func (h *ProductHandler) UpdateProductStatus(ctx *gin.Context, req UpdateProductStatusReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil || id <= 0 {
@@ -227,7 +239,7 @@ func (h *ProductHandler) UpdateProductStatus(ctx *gin.Context, req UpdateProduct
 	}
 	_, err = h.productClient.UpdateProductStatus(ctx.Request.Context(), &productv1.UpdateProductStatusRequest{
 		Id:       id,
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 		Status:   req.Status,
 	})
 	if err != nil {
@@ -248,10 +260,13 @@ type CreateCategoryReq struct {
 }
 
 func (h *ProductHandler) CreateCategory(ctx *gin.Context, req CreateCategoryReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.productClient.CreateCategory(ctx.Request.Context(), &productv1.CreateCategoryRequest{
 		Category: &productv1.Category{
-			TenantId: tenantId.(int64),
+			TenantId: tenantId,
 			ParentId: req.ParentId,
 			Name:     req.Name,
 			Level:    req.Level,
@@ -276,7 +291,10 @@ type UpdateCategoryReq struct {
 }
 
 func (h *ProductHandler) UpdateCategory(ctx *gin.Context, req UpdateCategoryReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil || id <= 0 {
@@ -285,7 +303,7 @@ func (h *ProductHandler) UpdateCategory(ctx *gin.Context, req UpdateCategoryReq)
 	_, err = h.productClient.UpdateCategory(ctx.Request.Context(), &productv1.UpdateCategoryRequest{
 		Category: &productv1.Category{
 			Id:       id,
-			TenantId: tenantId.(int64),
+			TenantId: tenantId,
 			ParentId: req.ParentId,
 			Name:     req.Name,
 			Level:    req.Level,
@@ -303,9 +321,12 @@ func (h *ProductHandler) UpdateCategory(ctx *gin.Context, req UpdateCategoryReq)
 type ListCategoriesReq struct{}
 
 func (h *ProductHandler) ListCategories(ctx *gin.Context, _ ListCategoriesReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.productClient.ListCategories(ctx.Request.Context(), &productv1.ListCategoriesRequest{
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 	})
 	if err != nil {
 		return ginx.HandleGRPCError(err, "查询分类列表失败", ginx.ProductErrMappings...)
@@ -322,10 +343,13 @@ type CreateBrandReq struct {
 }
 
 func (h *ProductHandler) CreateBrand(ctx *gin.Context, req CreateBrandReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.productClient.CreateBrand(ctx.Request.Context(), &productv1.CreateBrandRequest{
 		Brand: &productv1.Brand{
-			TenantId: tenantId.(int64),
+			TenantId: tenantId,
 			Name:     req.Name,
 			Logo:     req.Logo,
 			Status:   req.Status,
@@ -344,7 +368,10 @@ type UpdateBrandReq struct {
 }
 
 func (h *ProductHandler) UpdateBrand(ctx *gin.Context, req UpdateBrandReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil || id <= 0 {
@@ -353,7 +380,7 @@ func (h *ProductHandler) UpdateBrand(ctx *gin.Context, req UpdateBrandReq) (ginx
 	_, err = h.productClient.UpdateBrand(ctx.Request.Context(), &productv1.UpdateBrandRequest{
 		Brand: &productv1.Brand{
 			Id:       id,
-			TenantId: tenantId.(int64),
+			TenantId: tenantId,
 			Name:     req.Name,
 			Logo:     req.Logo,
 			Status:   req.Status,
@@ -371,9 +398,12 @@ type ListBrandsReq struct {
 }
 
 func (h *ProductHandler) ListBrands(ctx *gin.Context, req ListBrandsReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.productClient.ListBrands(ctx.Request.Context(), &productv1.ListBrandsRequest{
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 		Page:     req.Page,
 		PageSize: req.PageSize,
 	})

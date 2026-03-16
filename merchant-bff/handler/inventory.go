@@ -30,9 +30,12 @@ type SetStockReq struct {
 }
 
 func (h *InventoryHandler) SetStock(ctx *gin.Context, req SetStockReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	_, err := h.inventoryClient.SetStock(ctx.Request.Context(), &inventoryv1.SetStockRequest{
-		TenantId:       tenantId.(int64),
+		TenantId:       tenantId,
 		SkuId:          req.SkuId,
 		Total:          req.Total,
 		AlertThreshold: req.AlertThreshold,
@@ -83,9 +86,12 @@ type ListLogsReq struct {
 }
 
 func (h *InventoryHandler) ListLogs(ctx *gin.Context, req ListLogsReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.inventoryClient.ListLogs(ctx.Request.Context(), &inventoryv1.ListLogsRequest{
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 		SkuId:    req.SkuId,
 		Page:     req.Page,
 		PageSize: req.PageSize,

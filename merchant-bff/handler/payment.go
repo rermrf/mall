@@ -29,9 +29,12 @@ type ListPaymentsReq struct {
 }
 
 func (h *PaymentHandler) ListPayments(ctx *gin.Context, req ListPaymentsReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.paymentClient.ListPayments(ctx.Request.Context(), &paymentv1.ListPaymentsRequest{
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 		Status:   req.Status,
 		Page:     req.Page,
 		PageSize: req.PageSize,
@@ -48,7 +51,7 @@ func (h *PaymentHandler) ListPayments(ctx *gin.Context, req ListPaymentsReq) (gi
 func (h *PaymentHandler) GetPayment(ctx *gin.Context) {
 	paymentNo := ctx.Param("paymentNo")
 	if paymentNo == "" {
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 4, Msg: "无效的支付单号"})
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的支付单号"})
 		return
 	}
 	resp, err := h.paymentClient.GetPayment(ctx.Request.Context(), &paymentv1.GetPaymentRequest{
@@ -86,7 +89,7 @@ func (h *PaymentHandler) Refund(ctx *gin.Context, req RefundReq) (ginx.Result, e
 func (h *PaymentHandler) GetRefund(ctx *gin.Context) {
 	refundNo := ctx.Param("refundNo")
 	if refundNo == "" {
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 4, Msg: "无效的退款单号"})
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的退款单号"})
 		return
 	}
 	resp, err := h.paymentClient.GetRefund(ctx.Request.Context(), &paymentv1.GetRefundRequest{

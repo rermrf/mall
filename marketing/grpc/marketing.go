@@ -69,6 +69,14 @@ func (s *MarketingGRPCServer) ListCoupons(ctx context.Context, req *marketingv1.
 	return &marketingv1.ListCouponsResponse{Coupons: pbCoupons, Total: total}, nil
 }
 
+func (s *MarketingGRPCServer) GetCoupon(ctx context.Context, req *marketingv1.GetCouponRequest) (*marketingv1.GetCouponResponse, error) {
+	coupon, err := s.svc.GetCoupon(ctx, req.GetId())
+	if err != nil {
+		return nil, err
+	}
+	return &marketingv1.GetCouponResponse{Coupon: toCouponDTO(coupon)}, nil
+}
+
 func (s *MarketingGRPCServer) ReceiveCoupon(ctx context.Context, req *marketingv1.ReceiveCouponRequest) (*marketingv1.ReceiveCouponResponse, error) {
 	err := s.svc.ReceiveCoupon(ctx, req.GetUserId(), req.GetCouponId())
 	if err != nil {

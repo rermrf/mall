@@ -2,14 +2,9 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Card, Descriptions, Tag, Button, Space, Modal, InputNumber, Input, message, Spin } from 'antd'
 import { getPayment, refundPayment } from '@/api/payment'
+import { PAYMENT_STATUS_MAP, PAYMENT_STATUS, formatPrice } from '@/constants'
+import { silentApiError } from '@/utils/error'
 import type { Payment } from '@/types/payment'
-
-const statusMap: Record<number, { text: string; color: string }> = {
-  0: { text: '待支付', color: 'orange' },
-  1: { text: '已支付', color: 'green' },
-  2: { text: '已退款', color: 'red' },
-  3: { text: '已关闭', color: 'default' },
-}
 
 export default function PaymentDetail() {
   const { paymentNo } = useParams<{ paymentNo: string }>()
@@ -26,7 +21,7 @@ export default function PaymentDetail() {
       setLoading(true)
       getPayment(paymentNo)
         .then(setPayment)
-        .catch(() => {})
+        .catch(silentApiError('paymentDetail:getPayment'))
         .finally(() => setLoading(false))
     }
   }, [paymentNo])
@@ -43,7 +38,7 @@ export default function PaymentDetail() {
       setRefundModal(false)
       setRefundAmount(null)
       setRefundReason('')
-      getPayment(paymentNo).then(setPayment).catch(() => {})
+      getPayment(paymentNo).then(setPayment).catch(silentApiError('paymentDetail:refreshPayment'))
     } catch (e: unknown) {
       message.error((e as Error).message)
     } finally {
@@ -57,7 +52,7 @@ export default function PaymentDetail() {
 
   if (!payment) return null
 
-  const status = statusMap[payment.status] ?? { text: '未知', color: 'default' }
+  const status = PAYMENT_STATUS_MAP[payment.status] ?? { text: '未知', color: 'default' }
 
   return (
     <div>
@@ -65,7 +60,7 @@ export default function PaymentDetail() {
         title="支付详情"
         extra={
           <Space>
-            {payment.status === 1 && (
+            {payment.status === PAYMENT_STATUS.PAID && (
               <Button type="primary" danger onClick={() => setRefundModal(true)}>退款</Button>
             )}
             <Button onClick={() => navigate(-1)}>返回</Button>
@@ -75,7 +70,7 @@ export default function PaymentDetail() {
         <Descriptions column={2}>
           <Descriptions.Item label="支付单号">{payment.payment_no}</Descriptions.Item>
           <Descriptions.Item label="订单号">{payment.order_no}</Descriptions.Item>
-          <Descriptions.Item label="金额">¥{((payment.amount ?? 0) / 100).toFixed(2)}</Descriptions.Item>
+          <Descriptions.Item label="金额">{formatPrice(payment.amount)}</Descriptions.Item>
           <Descriptions.Item label="状态"><Tag color={status.color}>{status.text}</Tag></Descriptions.Item>
           <Descriptions.Item label="支付渠道">{payment.channel}</Descriptions.Item>
           <Descriptions.Item label="创建时间">{payment.created_at}</Descriptions.Item>

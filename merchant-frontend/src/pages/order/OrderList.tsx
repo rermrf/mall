@@ -4,16 +4,8 @@ import { Tag } from 'antd'
 import { ProTable } from '@ant-design/pro-components'
 import type { ActionType, ProColumns } from '@ant-design/pro-components'
 import { listOrders } from '@/api/order'
+import { ORDER_STATUS_MAP, formatPrice } from '@/constants'
 import type { Order } from '@/types/order'
-
-const statusMap: Record<number, { text: string; color: string }> = {
-  0: { text: '已取消', color: 'default' },
-  1: { text: '待付款', color: 'orange' },
-  2: { text: '待发货', color: 'blue' },
-  3: { text: '已发货', color: 'cyan' },
-  4: { text: '已完成', color: 'green' },
-  5: { text: '退款中', color: 'red' },
-}
 
 export default function OrderList() {
   const navigate = useNavigate()
@@ -25,15 +17,15 @@ export default function OrderList() {
       title: '金额',
       dataIndex: 'pay_amount',
       search: false,
-      render: (_, r) => `¥${((r.pay_amount ?? 0) / 100).toFixed(2)}`,
+      render: (_, r) => formatPrice(r.pay_amount),
     },
     { title: '收货人', dataIndex: 'receiver_name', search: false },
     {
       title: '状态',
       dataIndex: 'status',
-      valueEnum: Object.fromEntries(Object.entries(statusMap).map(([k, v]) => [k, { text: v.text }])),
+      valueEnum: Object.fromEntries(Object.entries(ORDER_STATUS_MAP).map(([k, v]) => [k, { text: v.text }])),
       render: (_, r) => {
-        const s = statusMap[r.status] ?? { text: '未知', color: 'default' }
+        const s = ORDER_STATUS_MAP[r.status] ?? { text: '未知', color: 'default' }
         return <Tag color={s.color}>{s.text}</Tag>
       },
     },

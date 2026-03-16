@@ -2,19 +2,20 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Card, message } from 'antd'
 import { ProForm, ProFormText, ProFormDigit, ProFormSelect, ProFormDateTimePicker, ProFormDependency } from '@ant-design/pro-components'
-import { createCoupon, updateCoupon, listCoupons } from '@/api/marketing'
+import { createCoupon, updateCoupon, getCoupon } from '@/api/marketing'
 import type { CreateCouponReq } from '@/types/marketing'
+import { COUPON_TYPE_OPTIONS, COUPON_SCOPE_OPTIONS, COUPON_SCOPE } from '@/constants'
+import { silentApiError } from '@/utils/error'
 
 export default function CouponForm() {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const isEdit = !!id
-  const [initialValues, setInitialValues] = useState<Record<string, unknown>>()
+  const [initialValues, setInitialValues] = useState<Partial<CreateCouponReq & { scope_ids_str: string }>>()
 
   useEffect(() => {
     if (isEdit) {
-      listCoupons({ page: 1, pageSize: 100 }).then((res) => {
-        const coupon = (res?.coupons ?? []).find((c) => c.id === Number(id))
+      getCoupon(Number(id)).then((coupon) => {
         if (coupon) {
           setInitialValues({
             name: coupon.name,
@@ -26,11 +27,11 @@ export default function CouponForm() {
             start_time: coupon.start_time,
             end_time: coupon.end_time,
             scope_type: coupon.scope_type,
-            scope_ids: coupon.scope_ids?.length ? coupon.scope_ids.join(',') : '',
+            scope_ids_str: coupon.scope_ids?.length ? coupon.scope_ids.join(',') : '',
             status: coupon.status,
           })
         }
-      }).catch(() => {})
+      }).catch(silentApiError('couponForm:getCoupon'))
     }
   }, [id, isEdit])
 
@@ -40,19 +41,27 @@ export default function CouponForm() {
 
   return (
     <Card title={isEdit ? '编辑优惠券' : '创建优惠券'}>
-      <ProForm<CreateCouponReq>
+      <ProForm<CreateCouponReq & { scope_ids_str?: string }>
         initialValues={initialValues}
         onFinish={async (values) => {
-          const scopeType = (values.scope_type as number) ?? 0
-          const rawScopeIds = (values as unknown as Record<string, unknown>).scope_ids as string | undefined
-          const scopeIds: number[] = scopeType > 0 && rawScopeIds
+          const scopeType = values.scope_type ?? COUPON_SCOPE.ALL
+          const rawScopeIds = values.scope_ids_str
+          const scopeIds: number[] = scopeType > COUPON_SCOPE.ALL && rawScopeIds
             ? rawScopeIds.split(',').map((s) => Number(s.trim())).filter((n) => !isNaN(n) && n > 0)
             : []
 
           const data: CreateCouponReq = {
-            ...values,
+            name: values.name,
+            type: values.type,
+            threshold: values.threshold,
+            discount_value: values.discount_value,
+            total_count: values.total_count,
+            per_limit: values.per_limit,
+            start_time: values.start_time,
+            end_time: values.end_time,
             scope_type: scopeType,
             scope_ids: scopeIds,
+            status: values.status,
           }
 
           try {
@@ -70,11 +79,7 @@ export default function CouponForm() {
         }}
       >
         <ProFormText name="name" label="名称" rules={[{ required: true }]} />
-        <ProFormSelect name="type" label="类型" rules={[{ required: true }]} options={[
-          { label: '满减', value: 1 },
-          { label: '折扣', value: 2 },
-          { label: '固定金额', value: 3 },
-        ]} />
+        <ProFormSelect name="type" label="类型" rules={[{ required: true }]} options={COUPON_TYPE_OPTIONS} />
         <ProFormDigit name="threshold" label="使用门槛（分）" rules={[{ required: true }]} min={0} />
         <ProFormDigit name="discount_value" label="优惠值（分）" rules={[{ required: true }]} min={0} />
         <ProFormDigit name="total_count" label="发放总量" rules={[{ required: true }]} min={1} />
@@ -84,21 +89,17 @@ export default function CouponForm() {
         <ProFormSelect
           name="scope_type"
           label="适用范围"
-          initialValue={0}
+          initialValue={COUPON_SCOPE.ALL}
           rules={[{ required: true }]}
-          options={[
-            { label: '全场', value: 0 },
-            { label: '指定商品', value: 1 },
-            { label: '指定分类', value: 2 },
-          ]}
+          options={COUPON_SCOPE_OPTIONS}
         />
         <ProFormDependency name={['scope_type']}>
           {({ scope_type }) => {
-            if (scope_type && scope_type > 0) {
+            if (scope_type && scope_type > COUPON_SCOPE.ALL) {
               return (
                 <ProFormText
-                  name="scope_ids"
-                  label={scope_type === 1 ? '商品ID（逗号分隔）' : '分类ID（逗号分隔）'}
+                  name="scope_ids_str"
+                  label={scope_type === COUPON_SCOPE.PRODUCT ? '商品ID（逗号分隔）' : '分类ID（逗号分隔）'}
                   placeholder="例如：1,2,3"
                   rules={[{ required: true, message: '请输入ID' }]}
                 />

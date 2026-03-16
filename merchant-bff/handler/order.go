@@ -7,6 +7,7 @@ import (
 
 	"github.com/rermrf/emo/logger"
 	orderv1 "github.com/rermrf/mall/api/proto/gen/order/v1"
+	"github.com/rermrf/mall/merchant-bff/domain"
 	"github.com/rermrf/mall/pkg/ginx"
 )
 
@@ -29,9 +30,12 @@ type ListOrdersReq struct {
 }
 
 func (h *OrderHandler) ListOrders(ctx *gin.Context, req ListOrdersReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.orderClient.ListOrders(ctx.Request.Context(), &orderv1.ListOrdersRequest{
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 		Status:   req.Status,
 		Page:     req.Page,
 		PageSize: req.PageSize,
@@ -48,7 +52,7 @@ func (h *OrderHandler) ListOrders(ctx *gin.Context, req ListOrdersReq) (ginx.Res
 func (h *OrderHandler) GetOrder(ctx *gin.Context) {
 	orderNo := ctx.Param("orderNo")
 	if orderNo == "" {
-		ctx.JSON(http.StatusOK, ginx.Result{Code: 4, Msg: "无效的订单号"})
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的订单号"})
 		return
 	}
 	resp, err := h.orderClient.GetOrder(ctx.Request.Context(), &orderv1.GetOrderRequest{
@@ -65,16 +69,18 @@ func (h *OrderHandler) GetOrder(ctx *gin.Context) {
 
 func (h *OrderHandler) ShipOrder(ctx *gin.Context) {
 	orderNo := ctx.Param("orderNo")
-	tenantId, _ := ctx.Get("tenant_id")
-	uid, _ := ctx.Get("uid")
-	_, err := h.orderClient.UpdateOrderStatus(ctx.Request.Context(), &orderv1.UpdateOrderStatusRequest{
+	uid, err := ginx.GetUID(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeUnauthorized, Msg: "未授权"})
+		return
+	}
+	_, err = h.orderClient.UpdateOrderStatus(ctx.Request.Context(), &orderv1.UpdateOrderStatusRequest{
 		OrderNo:      orderNo,
-		Status:       3, // shipped
-		OperatorId:   uid.(int64),
-		OperatorType: 2, // 商家
+		Status:       int32(domain.OrderStatusShipped),
+		OperatorId:   uid,
+		OperatorType: int32(domain.OperatorTypeMerchant),
 		Remark:       "商家发货",
 	})
-	_ = tenantId // tenant_id 通过 gRPC interceptor 传递
 	if err != nil {
 		h.l.Error("发货失败", logger.Error(err))
 		result, _ := ginx.HandleRawError(err, ginx.OrderErrMappings...)
@@ -91,10 +97,13 @@ type HandleRefundReq struct {
 }
 
 func (h *OrderHandler) HandleRefund(ctx *gin.Context, req HandleRefundReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	_, err := h.orderClient.HandleRefund(ctx.Request.Context(), &orderv1.HandleRefundRequest{
 		RefundNo: req.RefundNo,
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 		Approved: req.Approved,
 		Reason:   req.Reason,
 	})
@@ -111,9 +120,12 @@ type ListRefundsReq struct {
 }
 
 func (h *OrderHandler) ListRefundOrders(ctx *gin.Context, req ListRefundsReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.orderClient.ListRefundOrders(ctx.Request.Context(), &orderv1.ListRefundOrdersRequest{
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 		Status:   req.Status,
 		Page:     req.Page,
 		PageSize: req.PageSize,

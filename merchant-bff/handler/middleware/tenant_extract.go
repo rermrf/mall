@@ -11,19 +11,14 @@ import (
 
 func TenantExtract() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		tenantId, exists := ctx.Get("tenant_id")
-		if !exists {
-			ctx.AbortWithStatusJSON(http.StatusForbidden, ginx.Result{
-				Code: 403001,
-				Msg:  "需要商家身份",
-			})
+		tid, errResult := ginx.MustGetTenantID(ctx)
+		if errResult != nil {
+			ctx.AbortWithStatusJSON(http.StatusForbidden, *errResult)
 			return
 		}
-
-		tid, ok := tenantId.(int64)
-		if !ok || tid <= 0 {
+		if tid <= 0 {
 			ctx.AbortWithStatusJSON(http.StatusForbidden, ginx.Result{
-				Code: 403001,
+				Code: ginx.CodeForbidden,
 				Msg:  "需要商家身份",
 			})
 			return

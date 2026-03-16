@@ -48,10 +48,13 @@ func (h *MarketingHandler) CreateCoupon(ctx *gin.Context, req CreateCouponReq) (
 	if v.HasErrors() {
 		return v.ToResult(), nil
 	}
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.marketingClient.CreateCoupon(ctx.Request.Context(), &marketingv1.CreateCouponRequest{
 		Coupon: &marketingv1.Coupon{
-			TenantId:      tenantId.(int64),
+			TenantId:      tenantId,
 			Name:          req.Name,
 			Type:          req.Type,
 			Threshold:     req.Threshold,
@@ -86,7 +89,10 @@ type UpdateCouponReq struct {
 }
 
 func (h *MarketingHandler) UpdateCoupon(ctx *gin.Context, req UpdateCouponReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil || id <= 0 {
@@ -105,7 +111,7 @@ func (h *MarketingHandler) UpdateCoupon(ctx *gin.Context, req UpdateCouponReq) (
 	_, err = h.marketingClient.UpdateCoupon(ctx.Request.Context(), &marketingv1.UpdateCouponRequest{
 		Coupon: &marketingv1.Coupon{
 			Id:            id,
-			TenantId:      tenantId.(int64),
+			TenantId:      tenantId,
 			Name:          req.Name,
 			Type:          req.Type,
 			Threshold:     req.Threshold,
@@ -132,9 +138,12 @@ type ListCouponsReq struct {
 }
 
 func (h *MarketingHandler) ListCoupons(ctx *gin.Context, req ListCouponsReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.marketingClient.ListCoupons(ctx.Request.Context(), &marketingv1.ListCouponsRequest{
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 		Status:   req.Status,
 		Page:     req.Page,
 		PageSize: req.PageSize,
@@ -146,6 +155,23 @@ func (h *MarketingHandler) ListCoupons(ctx *gin.Context, req ListCouponsReq) (gi
 		"coupons": resp.GetCoupons(),
 		"total":   resp.GetTotal(),
 	}}, nil
+}
+
+func (h *MarketingHandler) GetCoupon(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil || id <= 0 {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的优惠券 ID"})
+		return
+	}
+	resp, err := h.marketingClient.GetCoupon(ctx.Request.Context(), &marketingv1.GetCouponRequest{Id: id})
+	if err != nil {
+		h.l.Error("查询优惠券详情失败", logger.Error(err))
+		result, _ := ginx.HandleRawError(err, ginx.MarketingErrMappings...)
+		ctx.JSON(http.StatusOK, result)
+		return
+	}
+	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetCoupon()})
 }
 
 // ==================== 秒杀 ====================
@@ -175,7 +201,10 @@ func (h *MarketingHandler) CreateSeckill(ctx *gin.Context, req CreateSeckillReq)
 	if v.HasErrors() {
 		return v.ToResult(), nil
 	}
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	items := make([]*marketingv1.SeckillItem, 0, len(req.Items))
 	for _, item := range req.Items {
 		items = append(items, &marketingv1.SeckillItem{
@@ -187,7 +216,7 @@ func (h *MarketingHandler) CreateSeckill(ctx *gin.Context, req CreateSeckillReq)
 	}
 	resp, err := h.marketingClient.CreateSeckillActivity(ctx.Request.Context(), &marketingv1.CreateSeckillActivityRequest{
 		Activity: &marketingv1.SeckillActivity{
-			TenantId:  tenantId.(int64),
+			TenantId:  tenantId,
 			Name:      req.Name,
 			StartTime: req.StartTime,
 			EndTime:   req.EndTime,
@@ -210,7 +239,10 @@ type UpdateSeckillReq struct {
 }
 
 func (h *MarketingHandler) UpdateSeckill(ctx *gin.Context, req UpdateSeckillReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil || id <= 0 {
@@ -243,7 +275,7 @@ func (h *MarketingHandler) UpdateSeckill(ctx *gin.Context, req UpdateSeckillReq)
 	_, err = h.marketingClient.UpdateSeckillActivity(ctx.Request.Context(), &marketingv1.UpdateSeckillActivityRequest{
 		Activity: &marketingv1.SeckillActivity{
 			Id:        id,
-			TenantId:  tenantId.(int64),
+			TenantId:  tenantId,
 			Name:      req.Name,
 			StartTime: req.StartTime,
 			EndTime:   req.EndTime,
@@ -264,9 +296,12 @@ type ListSeckillReq struct {
 }
 
 func (h *MarketingHandler) ListSeckill(ctx *gin.Context, req ListSeckillReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.marketingClient.ListSeckillActivities(ctx.Request.Context(), &marketingv1.ListSeckillActivitiesRequest{
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 		Status:   req.Status,
 		Page:     req.Page,
 		PageSize: req.PageSize,
@@ -316,10 +351,13 @@ func (h *MarketingHandler) CreatePromotion(ctx *gin.Context, req CreatePromotion
 	if v.HasErrors() {
 		return v.ToResult(), nil
 	}
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.marketingClient.CreatePromotionRule(ctx.Request.Context(), &marketingv1.CreatePromotionRuleRequest{
 		Rule: &marketingv1.PromotionRule{
-			TenantId:      tenantId.(int64),
+			TenantId:      tenantId,
 			Name:          req.Name,
 			Type:          req.Type,
 			Threshold:     req.Threshold,
@@ -346,7 +384,10 @@ type UpdatePromotionReq struct {
 }
 
 func (h *MarketingHandler) UpdatePromotion(ctx *gin.Context, req UpdatePromotionReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	idStr := ctx.Param("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil || id <= 0 {
@@ -365,7 +406,7 @@ func (h *MarketingHandler) UpdatePromotion(ctx *gin.Context, req UpdatePromotion
 	_, err = h.marketingClient.UpdatePromotionRule(ctx.Request.Context(), &marketingv1.UpdatePromotionRuleRequest{
 		Rule: &marketingv1.PromotionRule{
 			Id:            id,
-			TenantId:      tenantId.(int64),
+			TenantId:      tenantId,
 			Name:          req.Name,
 			Type:          req.Type,
 			Threshold:     req.Threshold,
@@ -386,9 +427,12 @@ type ListPromotionsReq struct {
 }
 
 func (h *MarketingHandler) ListPromotions(ctx *gin.Context, req ListPromotionsReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	resp, err := h.marketingClient.ListPromotionRules(ctx.Request.Context(), &marketingv1.ListPromotionRulesRequest{
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 		Status:   req.Status,
 	})
 	if err != nil {

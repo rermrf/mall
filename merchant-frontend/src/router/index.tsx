@@ -3,6 +3,7 @@ import { createBrowserRouter } from 'react-router-dom'
 import { Spin } from 'antd'
 import MainLayout from '@/components/layout/MainLayout'
 import AuthGuard from '@/components/AuthGuard'
+import ErrorBoundary from '@/components/ErrorBoundary'
 
 const LoginPage = lazy(() => import('@/pages/login'))
 const Dashboard = lazy(() => import('@/pages/dashboard'))
@@ -42,6 +43,7 @@ export const router = createBrowserRouter([
   { path: '/login', element: <L><LoginPage /></L> },
   {
     element: <AuthGuard><MainLayout /></AuthGuard>,
+    errorElement: <ErrorBoundary><div /></ErrorBoundary>,
     children: [
       { path: '/', element: <L><Dashboard /></L> },
       { path: '/product/list', element: <L><ProductList /></L> },

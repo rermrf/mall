@@ -20,6 +20,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useNotificationStore } from '@/stores/notification'
 import { logout } from '@/api/auth'
 import { getProfile } from '@/api/staff'
+import { silentApiError } from '@/utils/error'
 
 const menuRoutes = {
   path: '/',
@@ -102,7 +103,7 @@ export default function MainLayout() {
 
   useEffect(() => {
     fetchUnreadCount()
-    getProfile().then((u) => { if (u?.nickname) setNickname(u.nickname) }).catch(() => {})
+    getProfile().then((u) => { if (u?.nickname) setNickname(u.nickname) }).catch(silentApiError('layout:getProfile'))
   }, [fetchUnreadCount])
 
   const handleLogout = async () => {

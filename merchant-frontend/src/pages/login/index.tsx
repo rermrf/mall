@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Form, Input, Button, Card, message } from 'antd'
-import { ShopOutlined, PhoneOutlined, LockOutlined } from '@ant-design/icons'
+import { ShopOutlined, PhoneOutlined, LockOutlined, ShoppingOutlined } from '@ant-design/icons'
 import { login } from '@/api/auth'
 import { useAuthStore } from '@/stores/auth'
 
@@ -12,10 +12,10 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const redirect = searchParams.get('redirect') || '/'
 
-  const onFinish = async (values: { phone: string; password: string }) => {
+  const onFinish = async (values: { phone: string; password: string; tenant_id?: number }) => {
     setLoading(true)
     try {
-      await login(values)
+      await login({ ...values, tenant_id: Number(values.tenant_id) || 1 })
       setLoggedIn(true)
       message.success('登录成功')
       navigate(redirect, { replace: true })
@@ -40,7 +40,10 @@ export default function LoginPage() {
           <h2 style={{ marginTop: 16, marginBottom: 4 }}>商家管理后台</h2>
           <p style={{ color: '#999' }}>登录你的商家账户</p>
         </div>
-        <Form onFinish={onFinish} size="large">
+        <Form onFinish={onFinish} size="large" initialValues={{ tenant_id: 1 }}>
+          <Form.Item name="tenant_id" rules={[{ required: true, message: '请输入商户ID' }]}>
+            <Input prefix={<ShoppingOutlined />} placeholder="商户ID" type="number" />
+          </Form.Item>
           <Form.Item name="phone" rules={[{ required: true, message: '请输入手机号' }]}>
             <Input prefix={<PhoneOutlined />} placeholder="手机号" maxLength={11} />
           </Form.Item>

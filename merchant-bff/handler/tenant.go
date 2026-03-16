@@ -23,9 +23,13 @@ func NewTenantHandler(tenantClient tenantv1.TenantServiceClient, l logger.Logger
 }
 
 func (h *TenantHandler) GetShop(ctx *gin.Context) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, err := ginx.GetTenantID(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeForbidden, Msg: "需要商家身份"})
+		return
+	}
 	resp, err := h.tenantClient.GetShop(ctx.Request.Context(), &tenantv1.GetShopRequest{
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 	})
 	if err != nil {
 		h.l.Error("获取店铺信息失败", logger.Error(err))
@@ -45,10 +49,13 @@ type UpdateShopReq struct {
 }
 
 func (h *TenantHandler) UpdateShop(ctx *gin.Context, req UpdateShopReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
 	_, err := h.tenantClient.UpdateShop(ctx.Request.Context(), &tenantv1.UpdateShopRequest{
 		Shop: &tenantv1.Shop{
-			TenantId:     tenantId.(int64),
+			TenantId:     tenantId,
 			Name:         req.Name,
 			Logo:         req.Logo,
 			Description:  req.Description,
@@ -63,10 +70,14 @@ func (h *TenantHandler) UpdateShop(ctx *gin.Context, req UpdateShopReq) (ginx.Re
 }
 
 func (h *TenantHandler) CheckQuota(ctx *gin.Context) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, err := ginx.GetTenantID(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeForbidden, Msg: "需要商家身份"})
+		return
+	}
 	quotaType := ctx.Param("type")
 	resp, err := h.tenantClient.CheckQuota(ctx.Request.Context(), &tenantv1.CheckQuotaRequest{
-		TenantId:  tenantId.(int64),
+		TenantId:  tenantId,
 		QuotaType: quotaType,
 	})
 	if err != nil {

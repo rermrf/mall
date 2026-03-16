@@ -25,7 +25,7 @@ func (b *LoginJWTBuilder) Build() gin.HandlerFunc {
 		authHeader := ctx.GetHeader("Authorization")
 		if authHeader == "" {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, ginx.Result{
-				Code: 401001,
+				Code: ginx.CodeUnauthorized,
 				Msg:  "未登录",
 			})
 			return
@@ -34,7 +34,7 @@ func (b *LoginJWTBuilder) Build() gin.HandlerFunc {
 		parts := strings.SplitN(authHeader, " ", 2)
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, ginx.Result{
-				Code: 401001,
+				Code: ginx.CodeUnauthorized,
 				Msg:  "token 格式错误",
 			})
 			return
@@ -44,7 +44,7 @@ func (b *LoginJWTBuilder) Build() gin.HandlerFunc {
 		claims, err := b.jwtHandler.ParseAccessToken(tokenStr)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, ginx.Result{
-				Code: 401001,
+				Code: ginx.CodeUnauthorized,
 				Msg:  "token 无效或已过期",
 			})
 			return
@@ -52,7 +52,7 @@ func (b *LoginJWTBuilder) Build() gin.HandlerFunc {
 
 		if claims.ID != "" && b.jwtHandler.IsTokenBlacklisted(ctx.Request.Context(), claims.ID) {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, ginx.Result{
-				Code: 401002,
+				Code: ginx.CodeInvalidCredentials,
 				Msg:  "token 已失效，请重新登录",
 			})
 			return

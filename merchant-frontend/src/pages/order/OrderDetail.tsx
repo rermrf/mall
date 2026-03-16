@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Card, Descriptions, Table, Tag, Button, Space, message, Modal, Input, Spin } from 'antd'
 import { getOrder } from '@/api/order'
 import { shipOrder, getOrderLogistics } from '@/api/logistics'
+import { ORDER_STATUS_MAP, ORDER_STATUS, formatPrice } from '@/constants'
+import { silentApiError } from '@/utils/error'
 import type { Order } from '@/types/order'
 import type { Shipment, ShipOrderReq } from '@/types/logistics'
 
@@ -15,19 +17,10 @@ export default function OrderDetail() {
   const [shipForm, setShipForm] = useState<ShipOrderReq>({ carrier_code: '', carrier_name: '', tracking_no: '' })
   const [loading, setLoading] = useState(false)
 
-  const statusMap: Record<number, { text: string; color: string }> = {
-    0: { text: '已取消', color: 'default' },
-    1: { text: '待付款', color: 'orange' },
-    2: { text: '待发货', color: 'blue' },
-    3: { text: '已发货', color: 'cyan' },
-    4: { text: '已完成', color: 'green' },
-    5: { text: '退款中', color: 'red' },
-  }
-
   useEffect(() => {
     if (orderNo) {
-      getOrder(orderNo).then(setOrder).catch(() => {})
-      getOrderLogistics(orderNo).then(setLogistics).catch(() => {})
+      getOrder(orderNo).then(setOrder).catch(silentApiError('orderDetail:getOrder'))
+      getOrderLogistics(orderNo).then(setLogistics).catch(silentApiError('orderDetail:getLogistics'))
     }
   }, [orderNo])
 
@@ -41,7 +34,7 @@ export default function OrderDetail() {
       await shipOrder(orderNo, shipForm)
       message.success('发货成功')
       setShipModal(false)
-      getOrder(orderNo).then(setOrder).catch(() => {})
+      getOrder(orderNo).then(setOrder).catch(silentApiError('orderDetail:refreshOrder'))
     } catch (e: unknown) {
       message.error((e as Error).message)
     } finally {
@@ -56,9 +49,9 @@ export default function OrderDetail() {
       <Card title="订单信息" extra={<Button onClick={() => navigate(-1)}>返回</Button>}>
         <Descriptions column={2}>
           <Descriptions.Item label="订单号">{order.order_no}</Descriptions.Item>
-          <Descriptions.Item label="状态"><Tag color={statusMap[order.status]?.color}>{statusMap[order.status]?.text ?? '未知'}</Tag></Descriptions.Item>
-          <Descriptions.Item label="支付金额">¥{((order.pay_amount ?? 0) / 100).toFixed(2)}</Descriptions.Item>
-          <Descriptions.Item label="运费">¥{((order.freight_amount ?? 0) / 100).toFixed(2)}</Descriptions.Item>
+          <Descriptions.Item label="状态"><Tag color={ORDER_STATUS_MAP[order.status]?.color}>{ORDER_STATUS_MAP[order.status]?.text ?? '未知'}</Tag></Descriptions.Item>
+          <Descriptions.Item label="支付金额">{formatPrice(order.pay_amount)}</Descriptions.Item>
+          <Descriptions.Item label="运费">{formatPrice(order.freight_amount)}</Descriptions.Item>
           <Descriptions.Item label="收货人">{order.receiver_name}</Descriptions.Item>
           <Descriptions.Item label="联系电话">{order.receiver_phone}</Descriptions.Item>
           <Descriptions.Item label="收货地址" span={2}>{order.receiver_address}</Descriptions.Item>
@@ -75,7 +68,7 @@ export default function OrderDetail() {
           columns={[
             { title: '商品', dataIndex: 'product_name' },
             { title: '规格', dataIndex: 'spec_values' },
-            { title: '单价', dataIndex: 'price', render: (v: number) => `¥${((v ?? 0) / 100).toFixed(2)}` },
+            { title: '单价', dataIndex: 'price', render: (v: number) => formatPrice(v) },
             { title: '数量', dataIndex: 'quantity' },
           ]}
         />
@@ -90,7 +83,7 @@ export default function OrderDetail() {
         </Card>
       )}
 
-      {order.status === 2 && (
+      {order.status === ORDER_STATUS.PAID && (
         <Card style={{ marginTop: 16 }}>
           <Space>
             <Button type="primary" onClick={() => setShipModal(true)}>发货</Button>

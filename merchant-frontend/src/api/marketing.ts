@@ -13,6 +13,10 @@ export async function listCoupons(params: { status?: number; page?: number; page
   return request<{ coupons: Coupon[]; total: number }>({ method: 'GET', url: '/coupons', params })
 }
 
+export async function getCoupon(id: number) {
+  return request<Coupon>({ method: 'GET', url: `/coupons/${id}` })
+}
+
 export async function createSeckill(data: CreateSeckillReq) {
   return request<{ id: number }>({ method: 'POST', url: '/seckill', data })
 }

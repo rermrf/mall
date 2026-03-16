@@ -4,13 +4,14 @@ import { ProTable } from '@ant-design/pro-components'
 import type { ActionType, ProColumns } from '@ant-design/pro-components'
 import { listStaff, assignRole, listRoles } from '@/api/staff'
 import type { User, Role } from '@/types/user'
+import { silentApiError } from '@/utils/error'
 
 export default function StaffList() {
   const actionRef = useRef<ActionType>(null)
   const [roles, setRoles] = useState<Role[]>([])
 
   useEffect(() => {
-    listRoles().then((r) => setRoles(r ?? [])).catch(() => {})
+    listRoles().then((r) => setRoles(r ?? [])).catch(silentApiError('staffList:listRoles'))
   }, [])
 
   const handleAssignRole = async (userId: number, roleId: number) => {
