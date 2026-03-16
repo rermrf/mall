@@ -136,6 +136,11 @@ func logOK(msg string)    { fmt.Printf("%s    %s\n", c(colorGreen, "[OK]"), msg)
 func logWarn(msg string)  { fmt.Printf("%s  %s\n", c(colorYellow, "[WARN]"), msg) }
 func logErr(msg string)   { fmt.Printf("%s   %s\n", c(colorRed, "[ERR]"), msg) }
 
+// --------------- global config ---------------
+
+// configFile holds the --config flag value (empty = use service default).
+var configFile string
+
 // --------------- commands ---------------
 
 func cmdStart(names []string) {
@@ -148,6 +153,9 @@ func cmdStart(names []string) {
 	}
 
 	logInfo(fmt.Sprintf("启动 %d 个服务...", len(names)))
+	if configFile != "" {
+		logInfo("配置文件: " + configFile)
+	}
 	fmt.Println()
 
 	root := rootDir()
@@ -170,7 +178,11 @@ func cmdStart(names []string) {
 			continue
 		}
 
-		cmd := exec.Command("go", "run", "./"+name+"/")
+		args := []string{"run", "./" + name + "/"}
+		if configFile != "" {
+			args = append(args, "--config", configFile)
+		}
+		cmd := exec.Command("go", args...)
 		cmd.Dir = root
 		cmd.Stdout = lf
 		cmd.Stderr = lf
@@ -361,8 +373,26 @@ func validateNames(names []string) error {
 	return nil
 }
 
+// extractConfig scans args for --config <path> or --config=<path>,
+// sets configFile, and returns remaining positional args.
+func extractConfig(args []string) []string {
+	var rest []string
+	for i := 0; i < len(args); i++ {
+		switch {
+		case args[i] == "--config" && i+1 < len(args):
+			configFile = args[i+1]
+			i++ // skip next
+		case strings.HasPrefix(args[i], "--config="):
+			configFile = strings.TrimPrefix(args[i], "--config=")
+		default:
+			rest = append(rest, args[i])
+		}
+	}
+	return rest
+}
+
 func printHelp() {
-	fmt.Println(`用法: go run ./script/dev <command> [service...]
+	fmt.Println(`用法: go run ./script/dev <command> [service...] [--config <path>]
 
 Commands:
   start [service]   启动服务 (不指定=全部)
@@ -371,21 +401,25 @@ Commands:
   status            查看运行状态
   logs [service]    tail 日志
 
+Options:
+  --config <path>   指定配置文件 (默认: config/dev.yaml)
+
 Services:
   ` + strings.Join(serviceNames(), " ") + `
 
 Examples:
-  go run ./script/dev start              # 启动全部
+  go run ./script/dev start              # 启动全部 (默认配置)
   go run ./script/dev start order        # 只启动 order
-  go run ./script/dev start order payment # 启动 order + payment
+  go run ./script/dev start --config config/example.yaml  # 使用本地配置
   go run ./script/dev stop               # 停止全部
-  go run ./script/dev logs order          # 查看 order 日志
+  go run ./script/dev logs order         # 查看 order 日志
 
 Makefile shortcuts:
-  make dev-run-all      # 启动全部
-  make dev-run-order    # 启动 order
-  make dev-stop-all     # 停止全部
-  make dev-status       # 查看状态`)
+  make dev-run-all                        # 启动全部
+  make dev-run-order                      # 启动 order
+  make dev-run-all CONF=config/example.yaml  # 使用本地配置
+  make dev-stop-all                       # 停止全部
+  make dev-status                         # 查看状态`)
 }
 
 // --------------- main ---------------
@@ -399,7 +433,7 @@ func main() {
 	}
 
 	cmd := os.Args[1]
-	args := os.Args[2:]
+	args := extractConfig(os.Args[2:])
 
 	switch cmd {
 	case "start":

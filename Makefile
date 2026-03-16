@@ -49,11 +49,15 @@ seed-reset:
 SERVICES := user tenant product inventory order payment cart search \
             marketing logistics notification consumer-bff merchant-bff admin-bff
 
+# 配置文件: make dev-run-all CONF=config/example.yaml
+CONF ?=
+CONF_FLAG = $(if $(CONF),--config $(CONF),)
+
 .PHONY: dev-run-all dev-stop-all dev-status dev-run-logs $(addprefix dev-run-,$(SERVICES)) $(addprefix dev-stop-,$(SERVICES))
 
-# 启动全部后端服务 (go run, 连接远程基础设施)
+# 启动全部后端服务 (go run, 默认连接远程基础设施)
 dev-run-all:
-	@go run ./script/dev start
+	@go run ./script/dev start $(CONF_FLAG)
 
 # 停止全部后端服务
 dev-stop-all:
@@ -69,7 +73,7 @@ dev-run-logs:
 
 # 单独启动某个服务: make dev-run-order, make dev-run-consumer-bff, ...
 $(addprefix dev-run-,$(SERVICES)):
-	@go run ./script/dev start $(subst dev-run-,,$@)
+	@go run ./script/dev start $(subst dev-run-,,$@) $(CONF_FLAG)
 
 # 单独停止某个服务: make dev-stop-order, make dev-stop-consumer-bff, ...
 $(addprefix dev-stop-,$(SERVICES)):
