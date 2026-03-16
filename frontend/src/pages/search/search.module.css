@@ -116,3 +116,50 @@
 .suggestionItem + .suggestionItem {
   border-top: 1px solid var(--color-border);
 }
+
+.sortBar {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 16px;
+  border-bottom: 1px solid var(--adm-border-color);
+  background: var(--adm-color-background);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.sortItem {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.sortItemActive {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+.filterPanel {
+  padding: 0;
+}
+.filterTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.filterSection {
+  margin-bottom: 20px;
+}
+.filterLabel {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+.filterRow {
+  display: flex;
+  align-items: center;
+}
+.filterActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
