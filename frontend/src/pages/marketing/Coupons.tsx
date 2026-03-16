@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { NavBar, Tabs, Button, Toast } from 'antd-mobile'
+import { NavBar, Tabs, Button, Toast, Skeleton } from 'antd-mobile'
 import { listAvailableCoupons, receiveCoupon, listMyCoupons, type Coupon, type UserCoupon } from '@/api/marketing'
 import { useAuthStore } from '@/stores/auth'
 import styles from './coupons.module.css'
@@ -15,13 +15,30 @@ export default function CouponsPage() {
   const [activeTab, setActiveTab] = useState('available')
   const [available, setAvailable] = useState<Coupon[]>([])
   const [mine, setMine] = useState<UserCoupon[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    listAvailableCoupons().then((v) => setAvailable(v ?? [])).catch(() => {})
+    const promises: Promise<void>[] = [
+      listAvailableCoupons().then((v) => setAvailable(v ?? [])).catch(() => {}),
+    ]
     if (isLoggedIn) {
-      listMyCoupons().then((v) => setMine(v ?? [])).catch(() => {})
+      promises.push(listMyCoupons().then((v) => setMine(v ?? [])).catch(() => {}))
     }
+    Promise.all(promises).finally(() => setLoading(false))
   }, [isLoggedIn])
+
+  if (loading) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.navBar}>
+          <NavBar onBack={() => navigate(-1)}>优惠券</NavBar>
+        </div>
+        <div style={{ padding: 16 }}>
+          <Skeleton.Paragraph lineCount={4} animated />
+        </div>
+      </div>
+    )
+  }
 
   const handleReceive = async (id: number) => {
     if (!isLoggedIn) {

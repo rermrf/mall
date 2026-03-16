@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { NavBar, InfiniteScroll } from 'antd-mobile'
+import { NavBar, InfiniteScroll, Skeleton } from 'antd-mobile'
 import { listRefunds, type RefundOrder } from '@/api/order'
 import Price from '@/components/Price'
 import styles from './refundList.module.css'
@@ -14,6 +14,7 @@ export default function RefundListPage() {
   const [refunds, setRefunds] = useState<RefundOrder[]>([])
   const [hasMore, setHasMore] = useState(true)
   const [page, setPage] = useState(1)
+  const [initialLoading, setInitialLoading] = useState(true)
 
   const loadMore = useCallback(async () => {
     const res = await listRefunds({ page, pageSize: 10 })
@@ -21,6 +22,7 @@ export default function RefundListPage() {
     setRefunds((prev) => (page === 1 ? list : [...prev, ...list]))
     setHasMore(list.length >= 10)
     setPage((p) => p + 1)
+    setInitialLoading(false)
   }, [page])
 
   return (
@@ -29,31 +31,39 @@ export default function RefundListPage() {
         <NavBar onBack={() => navigate(-1)}>我的退款</NavBar>
       </div>
 
-      {refunds.map((r) => (
-        <div
-          key={r.refundNo}
-          className={styles.refundCard}
-          onClick={() => navigate(`/refunds/${r.refundNo}`)}
-        >
-          <div className={styles.cardHeader}>
-            <span className={styles.refundNo}>{r.refundNo}</span>
-            <span className={styles.statusTag}>{REFUND_STATUS[r.status] || '未知'}</span>
-          </div>
-          <div className={styles.amount}>
-            <Price value={r.refundAmount} size="md" />
-          </div>
-          <div className={styles.reason}>原因: {r.reason}</div>
-          <div className={styles.time}>{new Date(r.ctime).toLocaleString('zh-CN')}</div>
+      {initialLoading && refunds.length === 0 ? (
+        <div style={{ padding: 16 }}>
+          <Skeleton.Paragraph lineCount={4} animated />
         </div>
-      ))}
+      ) : (
+        <>
+          {refunds.map((r) => (
+            <div
+              key={r.refundNo}
+              className={styles.refundCard}
+              onClick={() => navigate(`/refunds/${r.refundNo}`)}
+            >
+              <div className={styles.cardHeader}>
+                <span className={styles.refundNo}>{r.refundNo}</span>
+                <span className={styles.statusTag}>{REFUND_STATUS[r.status] || '未知'}</span>
+              </div>
+              <div className={styles.amount}>
+                <Price value={r.refundAmount} size="md" />
+              </div>
+              <div className={styles.reason}>原因: {r.reason}</div>
+              <div className={styles.time}>{new Date(r.ctime).toLocaleString('zh-CN')}</div>
+            </div>
+          ))}
 
-      {refunds.length === 0 && !hasMore && (
-        <div className={styles.empty}>暂无退款记录</div>
+          {refunds.length === 0 && !hasMore && (
+            <div className={styles.empty}>暂无退款记录</div>
+          )}
+
+          <div className={styles.loadMore}>
+            <InfiniteScroll loadMore={loadMore} hasMore={hasMore} />
+          </div>
+        </>
       )}
-
-      <div className={styles.loadMore}>
-        <InfiniteScroll loadMore={loadMore} hasMore={hasMore} />
-      </div>
     </div>
   )
 }

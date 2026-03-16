@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { NavBar, Button, Toast } from 'antd-mobile'
+import { NavBar, Button, Toast, Skeleton } from 'antd-mobile'
 import { listSeckillActivities, seckill, type SeckillActivity } from '@/api/marketing'
 import { useAuthStore } from '@/stores/auth'
 import styles from './seckill.module.css'
@@ -108,10 +108,27 @@ function ActivityCard({ activity }: { activity: SeckillActivity }) {
 export default function SeckillPage() {
   const navigate = useNavigate()
   const [activities, setActivities] = useState<SeckillActivity[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    listSeckillActivities().then((v) => setActivities(v ?? [])).catch(() => {})
+    listSeckillActivities()
+      .then((v) => setActivities(v ?? []))
+      .catch(() => {})
+      .finally(() => setLoading(false))
   }, [])
+
+  if (loading) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.navBar}>
+          <NavBar onBack={() => navigate(-1)}>限时秒杀</NavBar>
+        </div>
+        <div style={{ padding: 16 }}>
+          <Skeleton.Paragraph lineCount={4} animated />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className={styles.page}>

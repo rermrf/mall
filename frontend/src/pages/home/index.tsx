@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Skeleton } from 'antd-mobile'
 import { getShop, type Shop } from '@/api/shop'
 import {
   listSeckillActivities,
@@ -14,14 +15,26 @@ export default function HomePage() {
   const [shop, setShop] = useState<Shop | null>(null)
   const [seckills, setSeckills] = useState<SeckillActivity[]>([])
   const [coupons, setCoupons] = useState<Coupon[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getShop().then(setShop).catch(() => {})
-    listSeckillActivities().then((v) => setSeckills(v ?? [])).catch(() => {})
-    listAvailableCoupons().then((v) => setCoupons(v ?? [])).catch(() => {})
+    Promise.all([
+      getShop().then(setShop).catch(() => {}),
+      listSeckillActivities().then((v) => setSeckills(v ?? [])).catch(() => {}),
+      listAvailableCoupons().then((v) => setCoupons(v ?? [])).catch(() => {}),
+    ]).finally(() => setLoading(false))
   }, [])
 
   const allSeckillItems = seckills.flatMap((s) => s.items || [])
+
+  if (loading) {
+    return (
+      <div className={styles.page}>
+        <Skeleton.Title animated />
+        <Skeleton.Paragraph lineCount={5} animated />
+      </div>
+    )
+  }
 
   return (
     <div className={styles.page}>
