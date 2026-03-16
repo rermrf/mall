@@ -18,8 +18,8 @@ export default function SeckillList() {
       dataIndex: 'status',
       valueEnum: { 0: { text: '未开始' }, 1: { text: '进行中' }, 2: { text: '已结束' } },
     },
-    { title: '开始时间', dataIndex: 'start_time', valueType: 'dateTime', search: false },
-    { title: '结束时间', dataIndex: 'end_time', valueType: 'dateTime', search: false },
+    { title: '开始时间', dataIndex: 'startTime', valueType: 'dateTime', search: false },
+    { title: '结束时间', dataIndex: 'endTime', valueType: 'dateTime', search: false },
     {
       title: '操作',
       search: false,

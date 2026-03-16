@@ -16,9 +16,9 @@ export default function PromotionList() {
     { title: '名称', dataIndex: 'name' },
     { title: '类型', dataIndex: 'type', render: (_, r) => <Tag>{r.type === 1 ? '满减' : '满赠'}</Tag> },
     { title: '门槛(分)', dataIndex: 'threshold' },
-    { title: '优惠值(分)', dataIndex: 'discount_value' },
-    { title: '开始时间', dataIndex: 'start_time', valueType: 'dateTime' },
-    { title: '结束时间', dataIndex: 'end_time', valueType: 'dateTime' },
+    { title: '优惠值(分)', dataIndex: 'discountValue' },
+    { title: '开始时间', dataIndex: 'startTime', valueType: 'dateTime' },
+    { title: '结束时间', dataIndex: 'endTime', valueType: 'dateTime' },
     {
       title: '状态',
       dataIndex: 'status',
@@ -53,9 +53,9 @@ export default function PromotionList() {
             <ProFormText name="name" label="名称" rules={[{ required: true }]} />
             <ProFormSelect name="type" label="类型" rules={[{ required: true }]} options={[{ label: '满减', value: 1 }, { label: '满赠', value: 2 }]} />
             <ProFormDigit name="threshold" label="门槛(分)" rules={[{ required: true }]} min={0} />
-            <ProFormDigit name="discount_value" label="优惠值(分)" rules={[{ required: true }]} min={0} />
-            <ProFormDateTimePicker name="start_time" label="开始时间" rules={[{ required: true }]} />
-            <ProFormDateTimePicker name="end_time" label="结束时间" rules={[{ required: true }]} />
+            <ProFormDigit name="discountValue" label="优惠值(分)" rules={[{ required: true }]} min={0} />
+            <ProFormDateTimePicker name="startTime" label="开始时间" rules={[{ required: true }]} />
+            <ProFormDateTimePicker name="endTime" label="结束时间" rules={[{ required: true }]} />
             <ProFormSelect name="status" label="状态" initialValue={1} options={[{ label: '启用', value: 1 }, { label: '禁用', value: 0 }]} />
           </ModalForm>,
         ]}
@@ -82,9 +82,9 @@ export default function PromotionList() {
         <ProFormText name="name" label="名称" rules={[{ required: true }]} />
         <ProFormSelect name="type" label="类型" options={[{ label: '满减', value: 1 }, { label: '满赠', value: 2 }]} />
         <ProFormDigit name="threshold" label="门槛(分)" min={0} />
-        <ProFormDigit name="discount_value" label="优惠值(分)" min={0} />
-        <ProFormDateTimePicker name="start_time" label="开始时间" />
-        <ProFormDateTimePicker name="end_time" label="结束时间" />
+        <ProFormDigit name="discountValue" label="优惠值(分)" min={0} />
+        <ProFormDateTimePicker name="startTime" label="开始时间" />
+        <ProFormDateTimePicker name="endTime" label="结束时间" />
         <ProFormSelect name="status" label="状态" options={[{ label: '启用', value: 1 }, { label: '禁用', value: 0 }]} />
       </ModalForm>
     </>

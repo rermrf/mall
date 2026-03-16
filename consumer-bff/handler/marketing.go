@@ -118,6 +118,6 @@ func (h *MarketingHandler) Seckill(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"message":  resp.GetMessage(),
-		"order_no": resp.GetOrderNo(),
+		"orderNo": resp.GetOrderNo(),
 	}})
 }

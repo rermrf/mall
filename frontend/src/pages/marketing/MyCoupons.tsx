@@ -49,11 +49,11 @@ export default function MyCouponsPage() {
               <div className={styles.couponValue}>
                 {c.type === 1 ? `¥${(c.value / 100).toFixed(0)}` : `${c.value / 10}折`}
               </div>
-              <div className={styles.couponCondition}>满{(c.min_spend / 100).toFixed(0)}可用</div>
+              <div className={styles.couponCondition}>满{(c.minSpend / 100).toFixed(0)}可用</div>
             </div>
             <div className={styles.couponRight}>
               <div className={styles.couponName}>{c.name}</div>
-              <div className={styles.couponTime}>{formatDate(c.start_time)} - {formatDate(c.end_time)}</div>
+              <div className={styles.couponTime}>{formatDate(c.startTime)} - {formatDate(c.endTime)}</div>
               <span className={styles.statusTag}>{STATUS_LABEL[c.status] || '未知'}</span>
             </div>
           </div>

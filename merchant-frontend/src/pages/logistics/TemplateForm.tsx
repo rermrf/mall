@@ -15,7 +15,7 @@ export default function TemplateForm() {
   useEffect(() => {
     if (isEdit) {
       getFreightTemplate(Number(id)).then((t) => {
-        if (t) setInitialValues({ name: t.name, charge_type: t.charge_type, free_threshold: t.free_threshold })
+        if (t) setInitialValues({ name: t.name, chargeType: t.chargeType, freeThreshold: t.freeThreshold })
       }).catch(silentApiError('templateForm:getTemplate'))
     }
   }, [id, isEdit])
@@ -41,11 +41,11 @@ export default function TemplateForm() {
         }}
       >
         <ProFormText name="name" label="模板名称" rules={[{ required: true }]} />
-        <ProFormSelect name="charge_type" label="计费方式" rules={[{ required: true }]} options={[
+        <ProFormSelect name="chargeType" label="计费方式" rules={[{ required: true }]} options={[
           { label: '按重量', value: 1 },
           { label: '按件数', value: 2 },
         ]} />
-        <ProFormDigit name="free_threshold" label="免邮门槛（分）" initialValue={0} min={0} />
+        <ProFormDigit name="freeThreshold" label="免邮门槛（分）" initialValue={0} min={0} />
       </ProForm>
     </Card>
   )

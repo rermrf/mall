@@ -14,5 +14,5 @@ export async function handleRefund(orderNo: string, data: HandleRefundReq) {
 }
 
 export async function listRefunds(params: { status?: number; page?: number; pageSize?: number }) {
-  return request<{ refund_orders: RefundOrder[]; total: number }>({ method: 'GET', url: '/refunds', params })
+  return request<{ refundOrders: RefundOrder[]; total: number }>({ method: 'GET', url: '/refunds', params })
 }

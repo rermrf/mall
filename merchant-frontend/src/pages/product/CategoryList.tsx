@@ -53,7 +53,7 @@ export default function CategoryList() {
           >
             <ProFormText name="name" label="名称" rules={[{ required: true }]} />
             <ProFormDigit name="sort" label="排序" initialValue={0} />
-            <ProFormDigit name="parent_id" label="父级ID" initialValue={0} />
+            <ProFormDigit name="parentId" label="父级ID" initialValue={0} />
             <ProFormDigit name="level" label="层级" initialValue={1} />
             <ProFormText name="icon" label="图标" />
             <ProFormSelect name="status" label="状态" initialValue={1} options={[{ label: '启用', value: 1 }, { label: '禁用', value: 0 }]} />
@@ -81,7 +81,7 @@ export default function CategoryList() {
       >
         <ProFormText name="name" label="名称" rules={[{ required: true }]} />
         <ProFormDigit name="sort" label="排序" />
-        <ProFormDigit name="parent_id" label="父级ID" />
+        <ProFormDigit name="parentId" label="父级ID" />
         <ProFormDigit name="level" label="层级" />
         <ProFormText name="icon" label="图标" />
         <ProFormSelect name="status" label="状态" options={[{ label: '启用', value: 1 }, { label: '禁用', value: 0 }]} />

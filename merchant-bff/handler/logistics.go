@@ -37,17 +37,17 @@ func NewLogisticsHandler(
 
 type CreateFreightTemplateReq struct {
 	Name          string           `json:"name" binding:"required"`
-	ChargeType    int32            `json:"charge_type" binding:"required"`
-	FreeThreshold int64            `json:"free_threshold"`
+	ChargeType    int32            `json:"chargeType" binding:"required"`
+	FreeThreshold int64            `json:"freeThreshold"`
 	Rules         []FreightRuleReq `json:"rules" binding:"required,min=1"`
 }
 
 type FreightRuleReq struct {
 	Regions         string `json:"regions" binding:"required"`
-	FirstUnit       int32  `json:"first_unit" binding:"required"`
-	FirstPrice      int64  `json:"first_price" binding:"required"`
-	AdditionalUnit  int32  `json:"additional_unit" binding:"required"`
-	AdditionalPrice int64  `json:"additional_price" binding:"required"`
+	FirstUnit       int32  `json:"firstUnit" binding:"required"`
+	FirstPrice      int64  `json:"firstPrice" binding:"required"`
+	AdditionalUnit  int32  `json:"additionalUnit" binding:"required"`
+	AdditionalPrice int64  `json:"additionalPrice" binding:"required"`
 }
 
 func (h *LogisticsHandler) CreateFreightTemplate(ctx *gin.Context, req CreateFreightTemplateReq) (ginx.Result, error) {
@@ -85,8 +85,8 @@ func (h *LogisticsHandler) CreateFreightTemplate(ctx *gin.Context, req CreateFre
 
 type UpdateFreightTemplateReq struct {
 	Name          string           `json:"name"`
-	ChargeType    int32            `json:"charge_type"`
-	FreeThreshold int64            `json:"free_threshold"`
+	ChargeType    int32            `json:"chargeType"`
+	FreeThreshold int64            `json:"freeThreshold"`
 	Rules         []FreightRuleReq `json:"rules"`
 }
 
@@ -182,9 +182,9 @@ func (h *LogisticsHandler) DeleteFreightTemplate(ctx *gin.Context) {
 // ==================== 发货（聚合端点） ====================
 
 type ShipOrderReq struct {
-	CarrierCode string `json:"carrier_code" binding:"required"`
-	CarrierName string `json:"carrier_name" binding:"required"`
-	TrackingNo  string `json:"tracking_no" binding:"required"`
+	CarrierCode string `json:"carrierCode" binding:"required"`
+	CarrierName string `json:"carrierName" binding:"required"`
+	TrackingNo  string `json:"trackingNo" binding:"required"`
 }
 
 func (h *LogisticsHandler) ShipOrder(ctx *gin.Context, req ShipOrderReq) (ginx.Result, error) {

@@ -16,7 +16,7 @@ export default function RefundListPage() {
   const [page, setPage] = useState(1)
 
   const loadMore = useCallback(async () => {
-    const res = await listRefunds({ page, page_size: 10 })
+    const res = await listRefunds({ page, pageSize: 10 })
     const list = res.list || []
     setRefunds((prev) => (page === 1 ? list : [...prev, ...list]))
     setHasMore(list.length >= 10)
@@ -31,16 +31,16 @@ export default function RefundListPage() {
 
       {refunds.map((r) => (
         <div
-          key={r.refund_no}
+          key={r.refundNo}
           className={styles.refundCard}
-          onClick={() => navigate(`/refunds/${r.refund_no}`)}
+          onClick={() => navigate(`/refunds/${r.refundNo}`)}
         >
           <div className={styles.cardHeader}>
-            <span className={styles.refundNo}>{r.refund_no}</span>
+            <span className={styles.refundNo}>{r.refundNo}</span>
             <span className={styles.statusTag}>{REFUND_STATUS[r.status] || '未知'}</span>
           </div>
           <div className={styles.amount}>
-            <Price value={r.refund_amount} size="md" />
+            <Price value={r.refundAmount} size="md" />
           </div>
           <div className={styles.reason}>原因: {r.reason}</div>
           <div className={styles.time}>{new Date(r.ctime).toLocaleString('zh-CN')}</div>

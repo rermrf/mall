@@ -2,12 +2,12 @@ export interface Product {
   id: number
   name: string
   description: string
-  main_image: string
+  mainImage: string
   images: string[]
   price: number      // lowest SKU price in cents
-  original_price: number
+  originalPrice: number
   sales: number
-  category_id: number
-  brand_id: number
+  categoryId: number
+  brandId: number
   status: number
 }

@@ -12,14 +12,14 @@ export default function OrderList() {
   const actionRef = useRef<ActionType>(null)
 
   const columns: ProColumns<Order>[] = [
-    { title: '订单号', dataIndex: 'order_no', copyable: true },
+    { title: '订单号', dataIndex: 'orderNo', copyable: true },
     {
       title: '金额',
-      dataIndex: 'pay_amount',
+      dataIndex: 'payAmount',
       search: false,
-      render: (_, r) => formatPrice(r.pay_amount),
+      render: (_, r) => formatPrice(r.payAmount),
     },
-    { title: '收货人', dataIndex: 'receiver_name', search: false },
+    { title: '收货人', dataIndex: 'receiverName', search: false },
     {
       title: '状态',
       dataIndex: 'status',
@@ -29,12 +29,12 @@ export default function OrderList() {
         return <Tag color={s.color}>{s.text}</Tag>
       },
     },
-    { title: '下单时间', dataIndex: 'created_at', valueType: 'dateTime', search: false },
+    { title: '下单时间', dataIndex: 'createdAt', valueType: 'dateTime', search: false },
     {
       title: '操作',
       search: false,
       render: (_, r) => (
-        <a onClick={() => navigate(`/order/${r.order_no}`)}>详情</a>
+        <a onClick={() => navigate(`/order/${r.orderNo}`)}>详情</a>
       ),
     },
   ]
@@ -43,7 +43,7 @@ export default function OrderList() {
     <ProTable<Order>
       headerTitle="订单列表"
       actionRef={actionRef}
-      rowKey="order_no"
+      rowKey="orderNo"
       columns={columns}
       request={async (params) => {
         const res = await listOrders({ status: params.status, page: params.current, pageSize: params.pageSize })

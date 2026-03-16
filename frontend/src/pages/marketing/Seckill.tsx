@@ -34,8 +34,8 @@ function useCountdown(endTime: string): string {
 function ActivityCard({ activity }: { activity: SeckillActivity }) {
   const navigate = useNavigate()
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn)
-  const countdown = useCountdown(activity.end_time)
-  const isStarted = new Date(activity.start_time).getTime() <= Date.now()
+  const countdown = useCountdown(activity.endTime)
+  const isStarted = new Date(activity.startTime).getTime() <= Date.now()
   const isEnded = countdown === '已结束'
 
   const handleBuy = async (itemId: number) => {
@@ -45,9 +45,9 @@ function ActivityCard({ activity }: { activity: SeckillActivity }) {
     }
     try {
       const res = await seckill(itemId)
-      if (res.order_no) {
+      if (res.orderNo) {
         Toast.show('抢购成功！')
-        navigate(`/payment/${res.order_no}`)
+        navigate(`/payment/${res.orderNo}`)
       } else {
         Toast.show(res.message || '抢购成功')
       }
@@ -78,25 +78,25 @@ function ActivityCard({ activity }: { activity: SeckillActivity }) {
           <div key={item.id} className={styles.seckillItem}>
             <img
               className={styles.itemImage}
-              src={item.product_image || 'https://via.placeholder.com/80'}
-              alt={item.product_name}
+              src={item.productImage || 'https://via.placeholder.com/80'}
+              alt={item.productName}
             />
             <div className={styles.itemInfo}>
-              <div className={styles.itemName}>{item.product_name}</div>
+              <div className={styles.itemName}>{item.productName}</div>
               <div className={styles.itemPrices}>
-                <span className={styles.seckillPrice}>¥{(item.seckill_price / 100).toFixed(2)}</span>
-                <span className={styles.originalPrice}>¥{(item.original_price / 100).toFixed(2)}</span>
+                <span className={styles.seckillPrice}>¥{(item.seckillPrice / 100).toFixed(2)}</span>
+                <span className={styles.originalPrice}>¥{(item.originalPrice / 100).toFixed(2)}</span>
               </div>
-              <div className={styles.itemStock}>剩余 {item.available_stock} 件</div>
+              <div className={styles.itemStock}>剩余 {item.availableStock} 件</div>
             </div>
             <Button
               size="mini"
               color="danger"
               className={styles.buyBtn}
-              disabled={isEnded || !isStarted || item.available_stock <= 0}
+              disabled={isEnded || !isStarted || item.availableStock <= 0}
               onClick={() => handleBuy(item.id)}
             >
-              {item.available_stock <= 0 ? '已抢光' : !isStarted ? '未开始' : '抢购'}
+              {item.availableStock <= 0 ? '已抢光' : !isStarted ? '未开始' : '抢购'}
             </Button>
           </div>
         ))}

@@ -42,16 +42,16 @@ export default function HomePage() {
               <div key={item.id} className={styles.seckillCard}>
                 <img
                   className={styles.seckillImage}
-                  src={item.product_image || 'https://via.placeholder.com/120'}
-                  alt={item.product_name}
+                  src={item.productImage || 'https://via.placeholder.com/120'}
+                  alt={item.productName}
                 />
                 <div className={styles.seckillInfo}>
-                  <div className={styles.seckillName}>{item.product_name}</div>
+                  <div className={styles.seckillName}>{item.productName}</div>
                   <div className={styles.seckillPrice}>
-                    ¥{(item.seckill_price / 100).toFixed(2)}
+                    ¥{(item.seckillPrice / 100).toFixed(2)}
                   </div>
                   <div className={styles.seckillOriginal}>
-                    ¥{(item.original_price / 100).toFixed(2)}
+                    ¥{(item.originalPrice / 100).toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -71,7 +71,7 @@ export default function HomePage() {
                 </div>
                 <div className={styles.couponName}>{c.name}</div>
                 <div className={styles.couponCondition}>
-                  满¥{(c.min_spend / 100).toFixed(0)}可用
+                  满¥{(c.minSpend / 100).toFixed(0)}可用
                 </div>
               </div>
             ))}

@@ -1,38 +1,38 @@
 export interface FreightTemplate {
   id: number
   name: string
-  charge_type: number
-  free_threshold: number
+  chargeType: number
+  freeThreshold: number
   rules: FreightRule[]
-  created_at: string
+  createdAt: string
 }
 
 export interface FreightRule {
   regions: string[]
-  first_unit: number
-  first_price: number
-  additional_unit: number
-  additional_price: number
+  firstUnit: number
+  firstPrice: number
+  additionalUnit: number
+  additionalPrice: number
 }
 
 export interface CreateFreightTemplateReq {
   name: string
-  charge_type: number
-  free_threshold: number
+  chargeType: number
+  freeThreshold: number
   rules: FreightRule[]
 }
 
 export interface Shipment {
-  order_no: string
-  carrier_code: string
-  carrier_name: string
-  tracking_no: string
+  orderNo: string
+  carrierCode: string
+  carrierName: string
+  trackingNo: string
   status: number
-  created_at: string
+  createdAt: string
 }
 
 export interface ShipOrderReq {
-  carrier_code: string
-  carrier_name: string
-  tracking_no: string
+  carrierCode: string
+  carrierName: string
+  trackingNo: string
 }

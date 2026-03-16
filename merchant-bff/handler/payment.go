@@ -25,7 +25,7 @@ func NewPaymentHandler(paymentClient paymentv1.PaymentServiceClient, l logger.Lo
 type ListPaymentsReq struct {
 	Status   int32 `form:"status"`
 	Page     int32 `form:"page" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=1,max=100"`
+	PageSize int32 `form:"pageSize" binding:"required,min=1,max=100"`
 }
 
 func (h *PaymentHandler) ListPayments(ctx *gin.Context, req ListPaymentsReq) (ginx.Result, error) {
@@ -82,7 +82,7 @@ func (h *PaymentHandler) Refund(ctx *gin.Context, req RefundReq) (ginx.Result, e
 		return ginx.HandleGRPCError(err, "发起退款失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
-		"refund_no": resp.GetRefundNo(),
+		"refundNo": resp.GetRefundNo(),
 	}}, nil
 }
 

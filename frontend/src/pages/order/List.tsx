@@ -26,7 +26,7 @@ export default function OrderListPage() {
 
   const loadMore = useCallback(async () => {
     const status = activeTab === '0' ? undefined : Number(activeTab)
-    const res = await listOrders({ status, page, page_size: 10 })
+    const res = await listOrders({ status, page, pageSize: 10 })
     const list = res.list || []
     setOrders((prev) => (page === 1 ? list : [...prev, ...list]))
     setHasMore(list.length >= 10)
@@ -55,12 +55,12 @@ export default function OrderListPage() {
       <div className={styles.content}>
         {orders.map((order) => (
           <div
-            key={order.order_no}
+            key={order.orderNo}
             className={styles.orderCard}
-            onClick={() => navigate(`/orders/${order.order_no}`)}
+            onClick={() => navigate(`/orders/${order.orderNo}`)}
           >
             <div className={styles.cardHeader}>
-              <span className={styles.orderNo}>订单号: {order.order_no}</span>
+              <span className={styles.orderNo}>订单号: {order.orderNo}</span>
               <span className={styles.statusTag}>{STATUS_MAP[order.status] || '未知'}</span>
             </div>
 
@@ -70,8 +70,8 @@ export default function OrderListPage() {
                   <img
                     key={item.id}
                     className={styles.itemThumb}
-                    src={item.product_image || 'https://via.placeholder.com/60'}
-                    alt={item.product_name}
+                    src={item.productImage || 'https://via.placeholder.com/60'}
+                    alt={item.productName}
                   />
                 ))}
               </div>
@@ -79,7 +79,7 @@ export default function OrderListPage() {
 
             <div className={styles.cardFooter}>
               <span className={styles.payAmount}>
-                实付 <Price value={order.pay_amount} size="sm" />
+                实付 <Price value={order.payAmount} size="sm" />
               </span>
               <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
                 {order.status === 1 && (
@@ -87,7 +87,7 @@ export default function OrderListPage() {
                     size="mini"
                     color="primary"
                     className={styles.actionBtn}
-                    onClick={() => navigate(`/payment/${order.order_no}`)}
+                    onClick={() => navigate(`/payment/${order.orderNo}`)}
                   >
                     去付款
                   </Button>
@@ -97,7 +97,7 @@ export default function OrderListPage() {
                     size="mini"
                     color="primary"
                     className={styles.actionBtn}
-                    onClick={() => navigate(`/orders/${order.order_no}`)}
+                    onClick={() => navigate(`/orders/${order.orderNo}`)}
                   >
                     确认收货
                   </Button>
@@ -105,7 +105,7 @@ export default function OrderListPage() {
                 <Button
                   size="mini"
                   className={styles.actionBtn}
-                  onClick={() => navigate(`/orders/${order.order_no}`)}
+                  onClick={() => navigate(`/orders/${order.orderNo}`)}
                 >
                   查看详情
                 </Button>

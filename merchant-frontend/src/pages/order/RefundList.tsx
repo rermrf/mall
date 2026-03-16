@@ -10,7 +10,7 @@ export default function RefundList() {
 
   const handleAction = async (orderNo: string, refundNo: string, approved: boolean) => {
     try {
-      await handleRefund(orderNo, { refund_no: refundNo, approved, reason: approved ? '同意退款' : '拒绝退款' })
+      await handleRefund(orderNo, { refundNo: refundNo, approved, reason: approved ? '同意退款' : '拒绝退款' })
       message.success(approved ? '已同意退款' : '已拒绝退款')
       actionRef.current?.reload()
     } catch (e: unknown) {
@@ -19,8 +19,8 @@ export default function RefundList() {
   }
 
   const columns: ProColumns<RefundOrder>[] = [
-    { title: '退款单号', dataIndex: 'refund_no', copyable: true },
-    { title: '订单号', dataIndex: 'order_no', copyable: true },
+    { title: '退款单号', dataIndex: 'refundNo', copyable: true },
+    { title: '订单号', dataIndex: 'orderNo', copyable: true },
     { title: '退款金额', dataIndex: 'amount', search: false, render: (_, r) => `¥${((r.amount ?? 0) / 100).toFixed(2)}` },
     { title: '原因', dataIndex: 'reason', search: false, ellipsis: true },
     {
@@ -33,17 +33,17 @@ export default function RefundList() {
         return <Tag color={s.color}>{s.text}</Tag>
       },
     },
-    { title: '申请时间', dataIndex: 'created_at', valueType: 'dateTime', search: false },
+    { title: '申请时间', dataIndex: 'createdAt', valueType: 'dateTime', search: false },
     {
       title: '操作',
       search: false,
       render: (_, r) =>
         r.status === 1 ? (
           <>
-            <Popconfirm title="确认同意退款？" onConfirm={() => handleAction(r.order_no, r.refund_no, true)}>
+            <Popconfirm title="确认同意退款？" onConfirm={() => handleAction(r.orderNo, r.refundNo, true)}>
               <Button type="link" size="small">同意</Button>
             </Popconfirm>
-            <Popconfirm title="确认拒绝退款？" onConfirm={() => handleAction(r.order_no, r.refund_no, false)}>
+            <Popconfirm title="确认拒绝退款？" onConfirm={() => handleAction(r.orderNo, r.refundNo, false)}>
               <Button type="link" size="small" danger>拒绝</Button>
             </Popconfirm>
           </>
@@ -55,11 +55,11 @@ export default function RefundList() {
     <ProTable<RefundOrder>
       headerTitle="退款管理"
       actionRef={actionRef}
-      rowKey="refund_no"
+      rowKey="refundNo"
       columns={columns}
       request={async (params) => {
         const res = await listRefunds({ status: params.status, page: params.current, pageSize: params.pageSize })
-        return { data: res?.refund_orders ?? [], total: res?.total ?? 0, success: true }
+        return { data: res?.refundOrders ?? [], total: res?.total ?? 0, success: true }
       }}
       pagination={{ defaultPageSize: 20 }}
     />

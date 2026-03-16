@@ -43,7 +43,7 @@ func (h *InventoryHandler) GetStock(ctx *gin.Context) {
 }
 
 type BatchGetStockReq struct {
-	SkuIds []int64 `json:"sku_ids" binding:"required,min=1"`
+	SkuIds []int64 `json:"skuIds" binding:"required,min=1"`
 }
 
 func (h *InventoryHandler) BatchGetStock(ctx *gin.Context, req BatchGetStockReq) (ginx.Result, error) {

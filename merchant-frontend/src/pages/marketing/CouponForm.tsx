@@ -11,7 +11,7 @@ export default function CouponForm() {
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const isEdit = !!id
-  const [initialValues, setInitialValues] = useState<Partial<CreateCouponReq & { scope_ids_str: string }>>()
+  const [initialValues, setInitialValues] = useState<Partial<CreateCouponReq & { scopeIdsStr: string }>>()
 
   useEffect(() => {
     if (isEdit) {
@@ -21,13 +21,13 @@ export default function CouponForm() {
             name: coupon.name,
             type: coupon.type,
             threshold: coupon.threshold,
-            discount_value: coupon.discount_value,
-            total_count: coupon.total_count,
-            per_limit: coupon.per_limit,
-            start_time: coupon.start_time,
-            end_time: coupon.end_time,
-            scope_type: coupon.scope_type,
-            scope_ids_str: coupon.scope_ids?.length ? coupon.scope_ids.join(',') : '',
+            discountValue: coupon.discountValue,
+            totalCount: coupon.totalCount,
+            perLimit: coupon.perLimit,
+            startTime: coupon.startTime,
+            endTime: coupon.endTime,
+            scopeType: coupon.scopeType,
+            scopeIdsStr: coupon.scopeIds?.length ? coupon.scopeIds.join(',') : '',
             status: coupon.status,
           })
         }
@@ -41,11 +41,11 @@ export default function CouponForm() {
 
   return (
     <Card title={isEdit ? '编辑优惠券' : '创建优惠券'}>
-      <ProForm<CreateCouponReq & { scope_ids_str?: string }>
+      <ProForm<CreateCouponReq & { scopeIdsStr?: string }>
         initialValues={initialValues}
         onFinish={async (values) => {
-          const scopeType = values.scope_type ?? COUPON_SCOPE.ALL
-          const rawScopeIds = values.scope_ids_str
+          const scopeType = values.scopeType ?? COUPON_SCOPE.ALL
+          const rawScopeIds = values.scopeIdsStr
           const scopeIds: number[] = scopeType > COUPON_SCOPE.ALL && rawScopeIds
             ? rawScopeIds.split(',').map((s) => Number(s.trim())).filter((n) => !isNaN(n) && n > 0)
             : []
@@ -54,13 +54,13 @@ export default function CouponForm() {
             name: values.name,
             type: values.type,
             threshold: values.threshold,
-            discount_value: values.discount_value,
-            total_count: values.total_count,
-            per_limit: values.per_limit,
-            start_time: new Date(values.start_time).getTime(),
-            end_time: new Date(values.end_time).getTime(),
-            scope_type: scopeType,
-            scope_ids: scopeIds.length ? scopeIds.join(',') : '',
+            discountValue: values.discountValue,
+            totalCount: values.totalCount,
+            perLimit: values.perLimit,
+            startTime: new Date(values.startTime).getTime(),
+            endTime: new Date(values.endTime).getTime(),
+            scopeType: scopeType,
+            scopeIds: scopeIds.length ? scopeIds.join(',') : '',
             status: values.status,
           }
 
@@ -81,25 +81,25 @@ export default function CouponForm() {
         <ProFormText name="name" label="名称" rules={[{ required: true }]} />
         <ProFormSelect name="type" label="类型" rules={[{ required: true }]} options={COUPON_TYPE_OPTIONS} />
         <ProFormDigit name="threshold" label="使用门槛（分）" rules={[{ required: true }]} min={0} />
-        <ProFormDigit name="discount_value" label="优惠值（分）" rules={[{ required: true }]} min={0} />
-        <ProFormDigit name="total_count" label="发放总量" rules={[{ required: true }]} min={1} />
-        <ProFormDigit name="per_limit" label="每人限领" initialValue={1} min={1} />
-        <ProFormDateTimePicker name="start_time" label="开始时间" rules={[{ required: true }]} />
-        <ProFormDateTimePicker name="end_time" label="结束时间" rules={[{ required: true }]} />
+        <ProFormDigit name="discountValue" label="优惠值（分）" rules={[{ required: true }]} min={0} />
+        <ProFormDigit name="totalCount" label="发放总量" rules={[{ required: true }]} min={1} />
+        <ProFormDigit name="perLimit" label="每人限领" initialValue={1} min={1} />
+        <ProFormDateTimePicker name="startTime" label="开始时间" rules={[{ required: true }]} />
+        <ProFormDateTimePicker name="endTime" label="结束时间" rules={[{ required: true }]} />
         <ProFormSelect
-          name="scope_type"
+          name="scopeType"
           label="适用范围"
           initialValue={COUPON_SCOPE.ALL}
           rules={[{ required: true }]}
           options={COUPON_SCOPE_OPTIONS}
         />
-        <ProFormDependency name={['scope_type']}>
-          {({ scope_type }) => {
-            if (scope_type && scope_type > COUPON_SCOPE.ALL) {
+        <ProFormDependency name={['scopeType']}>
+          {({ scopeType }) => {
+            if (scopeType && scopeType > COUPON_SCOPE.ALL) {
               return (
                 <ProFormText
-                  name="scope_ids_str"
-                  label={scope_type === COUPON_SCOPE.PRODUCT ? '商品ID（逗号分隔）' : '分类ID（逗号分隔）'}
+                  name="scopeIdsStr"
+                  label={scopeType === COUPON_SCOPE.PRODUCT ? '商品ID（逗号分隔）' : '分类ID（逗号分隔）'}
                   placeholder="例如：1,2,3"
                   rules={[{ required: true, message: '请输入ID' }]}
                 />

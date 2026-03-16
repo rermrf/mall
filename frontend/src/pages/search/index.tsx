@@ -29,7 +29,7 @@ export default function SearchPage() {
   const doSearch = useCallback(async (kw: string, pageNum: number = 1) => {
     setShowSuggestions(false)
     setSuggestions([])
-    const res = await searchProducts({ keyword: kw, page: pageNum, page_size: 20 })
+    const res = await searchProducts({ keyword: kw, page: pageNum, pageSize: 20 })
     if (pageNum === 1) {
       setProducts(res.products || [])
     } else {

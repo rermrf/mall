@@ -10,12 +10,12 @@ import { silentApiError } from '@/utils/error'
 interface BasicFormValues {
   name: string
   subtitle?: string
-  category_id: number
-  brand_id?: number
-  main_image?: string
+  categoryId: number
+  brandId?: number
+  mainImage?: string
   description?: string
   price?: number
-  original_price?: number
+  originalPrice?: number
 }
 
 export default function ProductForm() {
@@ -39,18 +39,18 @@ export default function ProductForm() {
           setInitialValues({
             name: p.name,
             subtitle: p.subtitle,
-            category_id: p.category_id,
-            brand_id: p.brand_id,
-            main_image: p.main_image,
+            categoryId: p.categoryId,
+            brandId: p.brandId,
+            mainImage: p.mainImage,
             description: p.description,
           })
           setSkus(p.skus?.map((s) => ({
-            sku_code: s.sku_code,
+            skuCode: s.skuCode,
             price: s.price,
-            original_price: s.original_price,
-            cost_price: s.cost_price,
-            bar_code: s.bar_code,
-            spec_values: s.spec_values,
+            originalPrice: s.originalPrice,
+            costPrice: s.costPrice,
+            barCode: s.barCode,
+            specValues: s.specValues,
             status: s.status,
           })) ?? [])
           setSpecs(p.specs ?? [])
@@ -81,26 +81,26 @@ export default function ProductForm() {
     const combos = combine(validSpecs.map((s) => s.values))
     return combos.map((combo, idx) => {
       const specValues = combo.join(',')
-      // Try to find an existing SKU with the same spec_values to preserve its data
-      const existing = skus.find((s) => s.spec_values === specValues)
+      // Try to find an existing SKU with the same specValues to preserve its data
+      const existing = skus.find((s) => s.specValues === specValues)
       return {
-        sku_code: existing?.sku_code || `SKU-${idx + 1}`,
+        skuCode: existing?.skuCode || `SKU-${idx + 1}`,
         price: existing?.price ?? 0,
-        original_price: existing?.original_price ?? 0,
-        cost_price: existing?.cost_price ?? 0,
-        bar_code: existing?.bar_code || '',
-        spec_values: specValues,
+        originalPrice: existing?.originalPrice ?? 0,
+        costPrice: existing?.costPrice ?? 0,
+        barCode: existing?.barCode || '',
+        specValues: specValues,
         status: existing?.status ?? 1,
       }
     })
   }, [skus])
 
-  const handleSpecsChange = (rawSpecs: Array<{ spec_name?: string; spec_values?: string }> | undefined) => {
+  const handleSpecsChange = (rawSpecs: Array<{ specName?: string; specValues?: string }> | undefined) => {
     const parsed: ProductSpec[] = (rawSpecs ?? [])
-      .filter((r) => r.spec_name)
+      .filter((r) => r.specName)
       .map((r) => ({
-        name: r.spec_name!,
-        values: (r.spec_values || '').split(',').map((v) => v.trim()).filter(Boolean),
+        name: r.specName!,
+        values: (r.specValues || '').split(',').map((v) => v.trim()).filter(Boolean),
       }))
     setSpecs(parsed)
     const newSkus = generateSkuCombinations(parsed)
@@ -109,32 +109,32 @@ export default function ProductForm() {
   }
 
   const skuColumns: ProColumns<CreateSKUReq & { id?: number }>[] = [
-    { title: '规格值', dataIndex: 'spec_values', editable: false, width: 160 },
+    { title: '规格值', dataIndex: 'specValues', editable: false, width: 160 },
     { title: '价格（分）', dataIndex: 'price', valueType: 'digit', width: 120 },
-    { title: '原价（分）', dataIndex: 'original_price', valueType: 'digit', width: 120 },
-    { title: '成本价（分）', dataIndex: 'cost_price', valueType: 'digit', width: 120 },
-    { title: '条码', dataIndex: 'bar_code', width: 140 },
-    { title: 'SKU编码', dataIndex: 'sku_code', width: 140 },
+    { title: '原价（分）', dataIndex: 'originalPrice', valueType: 'digit', width: 120 },
+    { title: '成本价（分）', dataIndex: 'costPrice', valueType: 'digit', width: 120 },
+    { title: '条码', dataIndex: 'barCode', width: 140 },
+    { title: 'SKU编码', dataIndex: 'skuCode', width: 140 },
     { title: '操作', valueType: 'option' },
   ]
 
   const handleSubmit = async (values: BasicFormValues) => {
     const data: CreateProductReq = {
-      category_id: values.category_id,
-      brand_id: values.brand_id ?? 0,
+      categoryId: values.categoryId,
+      brandId: values.brandId ?? 0,
       name: values.name,
       subtitle: values.subtitle || '',
-      main_image: values.main_image || '',
+      mainImage: values.mainImage || '',
       images: [],
       description: values.description || '',
       status: 0,
       skus: skus.length > 0 ? skus : [{
-        sku_code: 'DEFAULT',
+        skuCode: 'DEFAULT',
         price: (values.price ?? 0) * 100,
-        original_price: (values.original_price ?? 0) * 100,
-        cost_price: 0,
-        bar_code: '',
-        spec_values: '',
+        originalPrice: (values.originalPrice ?? 0) * 100,
+        costPrice: 0,
+        barCode: '',
+        specValues: '',
         status: 1,
       }],
       specs,
@@ -160,17 +160,17 @@ export default function ProductForm() {
         <StepsForm.StepForm name="basic" title="基本信息" initialValues={initialValues}>
           <ProFormText name="name" label="商品名称" rules={[{ required: true }]} />
           <ProFormText name="subtitle" label="副标题" />
-          <ProFormSelect name="category_id" label="分类" rules={[{ required: true }]} options={flatCategories(categories)} />
-          <ProFormSelect name="brand_id" label="品牌" options={brands.map((b) => ({ label: b.name, value: b.id }))} />
-          <ProFormText name="main_image" label="主图URL" />
+          <ProFormSelect name="categoryId" label="分类" rules={[{ required: true }]} options={flatCategories(categories)} />
+          <ProFormSelect name="brandId" label="品牌" options={brands.map((b) => ({ label: b.name, value: b.id }))} />
+          <ProFormText name="mainImage" label="主图URL" />
           <ProFormTextArea name="description" label="商品描述" />
         </StepsForm.StepForm>
         <StepsForm.StepForm name="sku" title="价格库存">
           <ProFormList
-            name="spec_list"
+            name="specList"
             label="商品规格"
             creatorButtonProps={{ creatorButtonText: '添加规格' }}
-            initialValue={specs.map((s) => ({ spec_name: s.name, spec_values: s.values.join(',') }))}
+            initialValue={specs.map((s) => ({ specName: s.name, specValues: s.values.join(',') }))}
             actionRender={(_field: { name: number }, action: { remove: (index: number) => void }) => [
               <Button key="delete" type="link" danger onClick={() => action.remove(_field.name)}>
                 删除
@@ -178,15 +178,15 @@ export default function ProductForm() {
             ]}
           >
             <ProForm.Group key="spec-group">
-              <ProFormText name="spec_name" label="规格名" placeholder="如：颜色" rules={[{ required: true }]} />
-              <ProFormText name="spec_values" label="规格值（逗号分隔）" placeholder="如：红,蓝,绿" rules={[{ required: true }]} />
+              <ProFormText name="specName" label="规格名" placeholder="如：颜色" rules={[{ required: true }]} />
+              <ProFormText name="specValues" label="规格值（逗号分隔）" placeholder="如：红,蓝,绿" rules={[{ required: true }]} />
             </ProForm.Group>
           </ProFormList>
 
           {specs.length > 0 && skus.length > 0 ? (
             <EditableProTable<CreateSKUReq & { id?: number }>
               headerTitle="SKU列表"
-              rowKey="spec_values"
+              rowKey="specValues"
               value={skus.map((s, i) => ({ ...s, id: i }))}
               columns={skuColumns}
               editable={{
@@ -202,7 +202,7 @@ export default function ProductForm() {
           ) : (
             <>
               <ProFormDigit name="price" label="售价（元）" rules={[{ required: true }]} min={0} fieldProps={{ precision: 2 }} />
-              <ProFormDigit name="original_price" label="原价（元）" min={0} fieldProps={{ precision: 2 }} />
+              <ProFormDigit name="originalPrice" label="原价（元）" min={0} fieldProps={{ precision: 2 }} />
             </>
           )}
         </StepsForm.StepForm>

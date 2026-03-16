@@ -125,7 +125,7 @@ type CreateAddressReq struct {
 	City      string `json:"city"`
 	District  string `json:"district"`
 	Detail    string `json:"detail"`
-	IsDefault bool   `json:"is_default"`
+	IsDefault bool   `json:"isDefault"`
 }
 
 func (h *UserHandler) CreateAddress(ctx *gin.Context, req CreateAddressReq) (ginx.Result, error) {
@@ -180,7 +180,7 @@ type UpdateAddressReq struct {
 	City      string `json:"city"`
 	District  string `json:"district"`
 	Detail    string `json:"detail"`
-	IsDefault bool   `json:"is_default"`
+	IsDefault bool   `json:"isDefault"`
 }
 
 func (h *UserHandler) UpdateAddress(ctx *gin.Context, req UpdateAddressReq) (ginx.Result, error) {

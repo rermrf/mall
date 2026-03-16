@@ -41,7 +41,7 @@ export default function StaffList() {
         />
       ),
     },
-    { title: '加入时间', dataIndex: 'created_at', valueType: 'dateTime', search: false },
+    { title: '加入时间', dataIndex: 'createdAt', valueType: 'dateTime', search: false },
   ]
 
   return (

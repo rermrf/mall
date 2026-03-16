@@ -24,9 +24,9 @@ func NewInventoryHandler(inventoryClient inventoryv1.InventoryServiceClient, l l
 }
 
 type SetStockReq struct {
-	SkuId          int64 `json:"sku_id" binding:"required"`
+	SkuId          int64 `json:"skuId" binding:"required"`
 	Total          int32 `json:"total" binding:"required,min=0"`
-	AlertThreshold int32 `json:"alert_threshold" binding:"min=0"`
+	AlertThreshold int32 `json:"alertThreshold" binding:"min=0"`
 }
 
 func (h *InventoryHandler) SetStock(ctx *gin.Context, req SetStockReq) (ginx.Result, error) {
@@ -66,7 +66,7 @@ func (h *InventoryHandler) GetStock(ctx *gin.Context) {
 }
 
 type BatchGetStockReq struct {
-	SkuIds []int64 `json:"sku_ids" binding:"required,min=1"`
+	SkuIds []int64 `json:"skuIds" binding:"required,min=1"`
 }
 
 func (h *InventoryHandler) BatchGetStock(ctx *gin.Context, req BatchGetStockReq) (ginx.Result, error) {
@@ -80,9 +80,9 @@ func (h *InventoryHandler) BatchGetStock(ctx *gin.Context, req BatchGetStockReq)
 }
 
 type ListLogsReq struct {
-	SkuId    int64 `form:"sku_id"`
+	SkuId    int64 `form:"skuId"`
 	Page     int32 `form:"page" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=1,max=100"`
+	PageSize int32 `form:"pageSize" binding:"required,min=1,max=100"`
 }
 
 func (h *InventoryHandler) ListLogs(ctx *gin.Context, req ListLogsReq) (ginx.Result, error) {

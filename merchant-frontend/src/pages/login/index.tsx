@@ -12,10 +12,10 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const redirect = searchParams.get('redirect') || '/'
 
-  const onFinish = async (values: { phone: string; password: string; tenant_id?: number }) => {
+  const onFinish = async (values: { phone: string; password: string; tenantId?: number }) => {
     setLoading(true)
     try {
-      await login({ ...values, tenant_id: Number(values.tenant_id) || 1 })
+      await login({ ...values, tenantId: Number(values.tenantId) || 1 })
       setLoggedIn(true)
       message.success('登录成功')
       navigate(redirect, { replace: true })
@@ -40,8 +40,8 @@ export default function LoginPage() {
           <h2 style={{ marginTop: 16, marginBottom: 4 }}>商家管理后台</h2>
           <p style={{ color: '#999' }}>登录你的商家账户</p>
         </div>
-        <Form onFinish={onFinish} size="large" initialValues={{ tenant_id: 1 }}>
-          <Form.Item name="tenant_id" rules={[{ required: true, message: '请输入商户ID' }]}>
+        <Form onFinish={onFinish} size="large" initialValues={{ tenantId: 1 }}>
+          <Form.Item name="tenantId" rules={[{ required: true, message: '请输入商户ID' }]}>
             <Input prefix={<ShoppingOutlined />} placeholder="商户ID" type="number" />
           </Form.Item>
           <Form.Item name="phone" rules={[{ required: true, message: '请输入手机号' }]}>

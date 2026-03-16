@@ -4,7 +4,7 @@ export interface Shop {
   logo: string
   description: string
   subdomain: string
-  custom_domain: string
+  customDomain: string
   plan: string
   status: number
 }
@@ -14,7 +14,7 @@ export interface UpdateShopReq {
   logo: string
   description: string
   subdomain: string
-  custom_domain: string
+  customDomain: string
 }
 
 export interface QuotaInfo {

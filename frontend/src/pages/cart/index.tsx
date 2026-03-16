@@ -80,34 +80,34 @@ export default function CartPage() {
       ) : (
         items.map((item) => (
           <SwipeAction
-            key={item.sku_id}
+            key={item.skuId}
             rightActions={[{
               key: 'delete',
               text: '删除',
               color: 'danger',
-              onClick: () => remove(item.sku_id),
+              onClick: () => remove(item.skuId),
             }]}
           >
             <div className={styles.item}>
               <Checkbox
                 checked={item.selected}
-                onChange={(v) => toggleSelect(item.sku_id, v)}
+                onChange={(v) => toggleSelect(item.skuId, v)}
               />
-              <img className={styles.itemImage} src={item.product_image || 'https://via.placeholder.com/80'} alt='' />
+              <img className={styles.itemImage} src={item.productImage || 'https://via.placeholder.com/80'} alt='' />
               <div className={styles.itemInfo}>
-                <div className={styles.itemName}>{item.product_name}</div>
-                {item.sku_spec && <div className={styles.itemSpec}>{item.sku_spec}</div>}
+                <div className={styles.itemName}>{item.productName}</div>
+                {item.skuSpec && <div className={styles.itemSpec}>{item.skuSpec}</div>}
                 <div className={styles.itemBottom}>
                   <Price value={item.price} size='sm' />
                   <div className={styles.quantityControl}>
                     <span
                       className={styles.qtyBtn}
-                      onClick={() => item.quantity > 1 && updateQuantity(item.sku_id, item.quantity - 1)}
+                      onClick={() => item.quantity > 1 && updateQuantity(item.skuId, item.quantity - 1)}
                     >-</span>
                     <span className={styles.qtyValue}>{item.quantity}</span>
                     <span
                       className={styles.qtyBtn}
-                      onClick={() => updateQuantity(item.sku_id, item.quantity + 1)}
+                      onClick={() => updateQuantity(item.skuId, item.quantity + 1)}
                     >+</span>
                   </div>
                 </div>

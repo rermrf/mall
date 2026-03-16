@@ -28,11 +28,11 @@ func NewProductHandler(productClient productv1.ProductServiceClient, l logger.Lo
 // ==================== 商品 ====================
 
 type CreateProductReq struct {
-	CategoryId  int64            `json:"category_id" binding:"required"`
-	BrandId     int64            `json:"brand_id"`
+	CategoryId  int64            `json:"categoryId" binding:"required"`
+	BrandId     int64            `json:"brandId"`
 	Name        string           `json:"name" binding:"required"`
 	Subtitle    string           `json:"subtitle"`
-	MainImage   string           `json:"main_image"`
+	MainImage   string           `json:"mainImage"`
 	Images      string           `json:"images"`
 	Description string           `json:"description"`
 	Status      int32            `json:"status"`
@@ -41,12 +41,12 @@ type CreateProductReq struct {
 }
 
 type ProductSKUReq struct {
-	SkuCode       string `json:"sku_code"`
+	SkuCode       string `json:"skuCode"`
 	Price         int64  `json:"price"`
-	OriginalPrice int64  `json:"original_price"`
-	CostPrice     int64  `json:"cost_price"`
-	BarCode       string `json:"bar_code"`
-	SpecValues    string `json:"spec_values"`
+	OriginalPrice int64  `json:"originalPrice"`
+	CostPrice     int64  `json:"costPrice"`
+	BarCode       string `json:"barCode"`
+	SpecValues    string `json:"specValues"`
 	Status        int32  `json:"status"`
 }
 
@@ -109,11 +109,11 @@ func (h *ProductHandler) CreateProduct(ctx *gin.Context, req CreateProductReq) (
 }
 
 type UpdateProductReq struct {
-	CategoryId  int64            `json:"category_id"`
-	BrandId     int64            `json:"brand_id"`
+	CategoryId  int64            `json:"categoryId"`
+	BrandId     int64            `json:"brandId"`
 	Name        string           `json:"name"`
 	Subtitle    string           `json:"subtitle"`
-	MainImage   string           `json:"main_image"`
+	MainImage   string           `json:"mainImage"`
 	Images      string           `json:"images"`
 	Description string           `json:"description"`
 	Skus        []ProductSKUReq  `json:"skus"`
@@ -196,10 +196,10 @@ func (h *ProductHandler) GetProduct(ctx *gin.Context) {
 }
 
 type ListProductsReq struct {
-	CategoryId int64 `form:"category_id"`
+	CategoryId int64 `form:"categoryId"`
 	Status     int32 `form:"status"`
 	Page       int32 `form:"page" binding:"required,min=1"`
-	PageSize   int32 `form:"page_size" binding:"required,min=1,max=100"`
+	PageSize   int32 `form:"pageSize" binding:"required,min=1,max=100"`
 }
 
 func (h *ProductHandler) ListProducts(ctx *gin.Context, req ListProductsReq) (ginx.Result, error) {
@@ -251,7 +251,7 @@ func (h *ProductHandler) UpdateProductStatus(ctx *gin.Context, req UpdateProduct
 // ==================== 分类 ====================
 
 type CreateCategoryReq struct {
-	ParentId int64  `json:"parent_id"`
+	ParentId int64  `json:"parentId"`
 	Name     string `json:"name" binding:"required"`
 	Level    int32  `json:"level"`
 	Sort     int32  `json:"sort"`
@@ -282,7 +282,7 @@ func (h *ProductHandler) CreateCategory(ctx *gin.Context, req CreateCategoryReq)
 }
 
 type UpdateCategoryReq struct {
-	ParentId int64  `json:"parent_id"`
+	ParentId int64  `json:"parentId"`
 	Name     string `json:"name"`
 	Level    int32  `json:"level"`
 	Sort     int32  `json:"sort"`
@@ -394,7 +394,7 @@ func (h *ProductHandler) UpdateBrand(ctx *gin.Context, req UpdateBrandReq) (ginx
 
 type ListBrandsReq struct {
 	Page     int32 `form:"page" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=1,max=100"`
+	PageSize int32 `form:"pageSize" binding:"required,min=1,max=100"`
 }
 
 func (h *ProductHandler) ListBrands(ctx *gin.Context, req ListBrandsReq) (ginx.Result, error) {

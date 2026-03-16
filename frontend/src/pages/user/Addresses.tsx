@@ -65,7 +65,7 @@ export default function AddressesPage() {
             <div className={styles.cardHeader}>
               <span className={styles.name}>{addr.name}</span>
               <span className={styles.phone}>{addr.phone}</span>
-              {addr.is_default && <span className={styles.defaultTag}>默认</span>}
+              {addr.isDefault && <span className={styles.defaultTag}>默认</span>}
             </div>
             <div className={styles.address}>
               {addr.province}{addr.city}{addr.district}{addr.detail}

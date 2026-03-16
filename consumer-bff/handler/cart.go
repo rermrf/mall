@@ -31,8 +31,8 @@ func NewCartHandler(
 }
 
 type AddCartItemReq struct {
-	SkuID     int64 `json:"sku_id" binding:"required"`
-	ProductID int64 `json:"product_id" binding:"required"`
+	SkuID     int64 `json:"skuId" binding:"required"`
+	ProductID int64 `json:"productId" binding:"required"`
 	Quantity  int32 `json:"quantity" binding:"required,min=1"`
 }
 
@@ -55,7 +55,7 @@ func (h *CartHandler) AddItem(ctx *gin.Context, req AddCartItemReq) (ginx.Result
 type UpdateCartItemReq struct {
 	Quantity       int32 `json:"quantity"`
 	Selected       bool  `json:"selected"`
-	UpdateSelected bool  `json:"update_selected"`
+	UpdateSelected bool  `json:"updateSelected"`
 }
 
 func (h *CartHandler) UpdateItem(ctx *gin.Context, req UpdateCartItemReq) (ginx.Result, error) {
@@ -103,13 +103,13 @@ func (h *CartHandler) RemoveItem(ctx *gin.Context) {
 }
 
 type CartItemVO struct {
-	SkuID        int64  `json:"sku_id"`
-	ProductID    int64  `json:"product_id"`
+	SkuID        int64  `json:"skuId"`
+	ProductID    int64  `json:"productId"`
 	Quantity     int32  `json:"quantity"`
 	Selected     bool   `json:"selected"`
-	ProductName  string `json:"product_name"`
-	ProductImage string `json:"product_image"`
-	SkuSpec      string `json:"sku_spec"`
+	ProductName  string `json:"productName"`
+	ProductImage string `json:"productImage"`
+	SkuSpec      string `json:"skuSpec"`
 	Price        int64  `json:"price"`
 	Stock        int32  `json:"stock"`
 }
@@ -204,7 +204,7 @@ func (h *CartHandler) ClearCart(ctx *gin.Context) {
 }
 
 type BatchRemoveReq struct {
-	SkuIDs []int64 `json:"sku_ids" binding:"required,min=1"`
+	SkuIDs []int64 `json:"skuIds" binding:"required,min=1"`
 }
 
 func (h *CartHandler) BatchRemove(ctx *gin.Context, req BatchRemoveReq) (ginx.Result, error) {

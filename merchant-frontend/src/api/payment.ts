@@ -10,7 +10,7 @@ export async function getPayment(paymentNo: string) {
 }
 
 export async function refundPayment(paymentNo: string, data: RefundReq) {
-  return request<{ refund_no: string }>({ method: 'POST', url: `/payments/${paymentNo}/refund`, data })
+  return request<{ refundNo: string }>({ method: 'POST', url: `/payments/${paymentNo}/refund`, data })
 }
 
 export async function getRefund(refundNo: string) {

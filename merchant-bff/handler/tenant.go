@@ -45,7 +45,7 @@ type UpdateShopReq struct {
 	Logo         string `json:"logo"`
 	Description  string `json:"description"`
 	Subdomain    string `json:"subdomain"`
-	CustomDomain string `json:"custom_domain"`
+	CustomDomain string `json:"customDomain"`
 }
 
 func (h *TenantHandler) UpdateShop(ctx *gin.Context, req UpdateShopReq) (ginx.Result, error) {

@@ -1,7 +1,7 @@
 import { request } from './client'
 
 export interface StockInfo {
-  sku_id: number
+  skuId: number
   available: number
 }
 
@@ -10,5 +10,5 @@ export function getStock(skuId: number) {
 }
 
 export function batchGetStock(skuIds: number[]) {
-  return request<StockInfo[]>({ method: 'POST', url: '/inventory/stock/batch', data: { sku_ids: skuIds } })
+  return request<StockInfo[]>({ method: 'POST', url: '/inventory/stock/batch', data: { skuIds: skuIds } })
 }

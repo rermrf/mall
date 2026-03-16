@@ -19,11 +19,11 @@ export default function NotificationPage() {
   }, [page])
 
   const handleMarkRead = async (n: Notification) => {
-    if (n.is_read) return
+    if (n.isRead) return
     try {
       await markRead(n.id)
       setNotifications((prev) =>
-        prev.map((item) => (item.id === n.id ? { ...item, is_read: true } : item))
+        prev.map((item) => (item.id === n.id ? { ...item, isRead: true } : item))
       )
     } catch {
       // ignore
@@ -33,7 +33,7 @@ export default function NotificationPage() {
   const handleMarkAllRead = async () => {
     try {
       await markAllRead()
-      setNotifications((prev) => prev.map((item) => ({ ...item, is_read: true })))
+      setNotifications((prev) => prev.map((item) => ({ ...item, isRead: true })))
       Toast.show('已全部标记为已读')
     } catch (e: unknown) {
       Toast.show((e as Error).message || '操作失败')
@@ -55,7 +55,7 @@ export default function NotificationPage() {
       {notifications.map((n) => (
         <div
           key={n.id}
-          className={`${styles.card} ${!n.is_read ? styles.unread : ''}`}
+          className={`${styles.card} ${!n.isRead ? styles.unread : ''}`}
           onClick={() => handleMarkRead(n)}
         >
           <div className={styles.cardTitle}>{n.title}</div>

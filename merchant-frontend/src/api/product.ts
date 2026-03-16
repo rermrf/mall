@@ -13,7 +13,7 @@ export async function getProduct(id: number) {
   return request<Product>({ method: 'GET', url: `/products/${id}` })
 }
 
-export async function listProducts(params: { category_id?: number; status?: number; page?: number; pageSize?: number }) {
+export async function listProducts(params: { categoryId?: number; status?: number; page?: number; pageSize?: number }) {
   return request<{ products: Product[]; total: number }>({ method: 'GET', url: '/products', params })
 }
 

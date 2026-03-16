@@ -23,8 +23,8 @@ func NewPaymentHandler(paymentClient paymentv1.PaymentServiceClient, l logger.Lo
 }
 
 type CreatePaymentReq struct {
-	OrderID int64  `json:"order_id" binding:"required"`
-	OrderNo string `json:"order_no" binding:"required"`
+	OrderID int64  `json:"orderId" binding:"required"`
+	OrderNo string `json:"orderNo" binding:"required"`
 	Channel string `json:"channel" binding:"required,oneof=mock wechat alipay"`
 	Amount  int64  `json:"amount" binding:"required,min=1"`
 }
@@ -42,8 +42,8 @@ func (h *PaymentHandler) CreatePayment(ctx *gin.Context, req CreatePaymentReq) (
 		return ginx.HandleGRPCError(err, "创建支付单失败")
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
-		"payment_no": resp.GetPaymentNo(),
-		"pay_url":    resp.GetPayUrl(),
+		"paymentNo": resp.GetPaymentNo(),
+		"payUrl":    resp.GetPayUrl(),
 	}}, nil
 }
 
@@ -67,7 +67,7 @@ func (h *PaymentHandler) GetPayment(ctx *gin.Context) {
 
 type HandleNotifyReq struct {
 	Channel    string `json:"channel" binding:"required"`
-	NotifyBody string `json:"notify_body" binding:"required"`
+	NotifyBody string `json:"notifyBody" binding:"required"`
 }
 
 func (h *PaymentHandler) HandleNotify(ctx *gin.Context, req HandleNotifyReq) (ginx.Result, error) {

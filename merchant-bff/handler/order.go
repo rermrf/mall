@@ -26,7 +26,7 @@ func NewOrderHandler(orderClient orderv1.OrderServiceClient, l logger.Logger) *O
 type ListOrdersReq struct {
 	Status   int32 `form:"status"`
 	Page     int32 `form:"page" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=1,max=100"`
+	PageSize int32 `form:"pageSize" binding:"required,min=1,max=100"`
 }
 
 func (h *OrderHandler) ListOrders(ctx *gin.Context, req ListOrdersReq) (ginx.Result, error) {
@@ -91,7 +91,7 @@ func (h *OrderHandler) ShipOrder(ctx *gin.Context) {
 }
 
 type HandleRefundReq struct {
-	RefundNo string `json:"refund_no" binding:"required"`
+	RefundNo string `json:"refundNo" binding:"required"`
 	Approved bool   `json:"approved"`
 	Reason   string `json:"reason"`
 }
@@ -116,7 +116,7 @@ func (h *OrderHandler) HandleRefund(ctx *gin.Context, req HandleRefundReq) (ginx
 type ListRefundsReq struct {
 	Status   int32 `form:"status"`
 	Page     int32 `form:"page" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=1,max=100"`
+	PageSize int32 `form:"pageSize" binding:"required,min=1,max=100"`
 }
 
 func (h *OrderHandler) ListRefundOrders(ctx *gin.Context, req ListRefundsReq) (ginx.Result, error) {
@@ -134,7 +134,7 @@ func (h *OrderHandler) ListRefundOrders(ctx *gin.Context, req ListRefundsReq) (g
 		return ginx.HandleGRPCError(err, "查询退款列表失败", ginx.OrderErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
-		"refund_orders": resp.GetRefundOrders(),
+		"refundOrders": resp.GetRefundOrders(),
 		"total":         resp.GetTotal(),
 	}}, nil
 }

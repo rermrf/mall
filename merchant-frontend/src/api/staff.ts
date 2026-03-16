@@ -14,7 +14,7 @@ export async function listStaff(params: { page?: number; pageSize?: number }) {
 }
 
 export async function assignRole(userId: number, roleId: number) {
-  return request<null>({ method: 'POST', url: `/staff/${userId}/role`, data: { role_id: roleId } })
+  return request<null>({ method: 'POST', url: `/staff/${userId}/role`, data: { roleId: roleId } })
 }
 
 export async function listRoles() {

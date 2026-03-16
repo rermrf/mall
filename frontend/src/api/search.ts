@@ -3,13 +3,13 @@ import type { Product } from '@/types/product'
 
 export interface SearchParams {
   keyword?: string
-  category_id?: number
-  brand_id?: number
-  price_min?: number
-  price_max?: number
-  sort_by?: string
+  categoryId?: number
+  brandId?: number
+  priceMin?: number
+  priceMax?: number
+  sortBy?: string
   page?: number
-  page_size?: number
+  pageSize?: number
 }
 
 export interface SearchResult {

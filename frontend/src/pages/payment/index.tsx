@@ -72,13 +72,13 @@ export default function PaymentPage() {
     setLoading(true)
     try {
       const result = await createPayment({
-        order_id: 0,
-        order_no: orderNo,
+        orderId: 0,
+        orderNo: orderNo,
         channel: selectedChannel as 'mock' | 'wechat' | 'alipay',
         amount: payAmount,
       })
       setLoading(false)
-      pollPaymentStatus(result.payment_no)
+      pollPaymentStatus(result.paymentNo)
     } catch (e: unknown) {
       Toast.show((e as Error).message || '支付失败')
       setLoading(false)

@@ -12,8 +12,8 @@ export default function PaymentList() {
   const actionRef = useRef<ActionType>(null)
 
   const columns: ProColumns<Payment>[] = [
-    { title: '支付单号', dataIndex: 'payment_no', copyable: true },
-    { title: '订单号', dataIndex: 'order_no', copyable: true },
+    { title: '支付单号', dataIndex: 'paymentNo', copyable: true },
+    { title: '订单号', dataIndex: 'orderNo', copyable: true },
     {
       title: '金额',
       dataIndex: 'amount',
@@ -30,12 +30,12 @@ export default function PaymentList() {
       },
     },
     { title: '支付渠道', dataIndex: 'channel', search: false },
-    { title: '创建时间', dataIndex: 'created_at', valueType: 'dateTime', search: false },
+    { title: '创建时间', dataIndex: 'createdAt', valueType: 'dateTime', search: false },
     {
       title: '操作',
       search: false,
       render: (_, r) => (
-        <a onClick={() => navigate(`/payment/${r.payment_no}`)}>详情</a>
+        <a onClick={() => navigate(`/payment/${r.paymentNo}`)}>详情</a>
       ),
     },
   ]
@@ -44,7 +44,7 @@ export default function PaymentList() {
     <ProTable<Payment>
       headerTitle="支付列表"
       actionRef={actionRef}
-      rowKey="payment_no"
+      rowKey="paymentNo"
       columns={columns}
       request={async (params) => {
         const res = await listPayments({ status: params.status, page: params.current, pageSize: params.pageSize })

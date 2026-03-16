@@ -1,24 +1,24 @@
 export interface Inventory {
-  sku_id: number
+  skuId: number
   total: number
   locked: number
   available: number
-  alert_threshold: number
+  alertThreshold: number
 }
 
 export interface SetStockReq {
-  sku_id: number
+  skuId: number
   total: number
-  alert_threshold: number
+  alertThreshold: number
 }
 
 export interface InventoryLog {
   id: number
-  sku_id: number
-  change_type: string
-  change_amount: number
-  before_total: number
-  after_total: number
-  order_no: string
-  created_at: string
+  skuId: number
+  changeType: string
+  changeAmount: number
+  beforeTotal: number
+  afterTotal: number
+  orderNo: string
+  createdAt: string
 }

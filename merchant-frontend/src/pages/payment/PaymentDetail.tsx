@@ -34,7 +34,7 @@ export default function PaymentDetail() {
     setSubmitting(true)
     try {
       const res = await refundPayment(paymentNo, { amount: refundAmount, reason: refundReason })
-      message.success(`退款申请成功，退款单号：${res?.refund_no}`)
+      message.success(`退款申请成功，退款单号：${res?.refundNo}`)
       setRefundModal(false)
       setRefundAmount(null)
       setRefundReason('')
@@ -68,12 +68,12 @@ export default function PaymentDetail() {
         }
       >
         <Descriptions column={2}>
-          <Descriptions.Item label="支付单号">{payment.payment_no}</Descriptions.Item>
-          <Descriptions.Item label="订单号">{payment.order_no}</Descriptions.Item>
+          <Descriptions.Item label="支付单号">{payment.paymentNo}</Descriptions.Item>
+          <Descriptions.Item label="订单号">{payment.orderNo}</Descriptions.Item>
           <Descriptions.Item label="金额">{formatPrice(payment.amount)}</Descriptions.Item>
           <Descriptions.Item label="状态"><Tag color={status.color}>{status.text}</Tag></Descriptions.Item>
           <Descriptions.Item label="支付渠道">{payment.channel}</Descriptions.Item>
-          <Descriptions.Item label="创建时间">{payment.created_at}</Descriptions.Item>
+          <Descriptions.Item label="创建时间">{payment.createdAt}</Descriptions.Item>
         </Descriptions>
       </Card>
 

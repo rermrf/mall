@@ -14,10 +14,10 @@ export default function TemplateList() {
   const columns: ProColumns<FreightTemplate>[] = [
     { title: 'ID', dataIndex: 'id', width: 80 },
     { title: '模板名称', dataIndex: 'name' },
-    { title: '计费方式', dataIndex: 'charge_type', render: (_, r) => chargeTypeMap[r.charge_type] ?? '未知' },
-    { title: '免邮门槛(分)', dataIndex: 'free_threshold' },
+    { title: '计费方式', dataIndex: 'chargeType', render: (_, r) => chargeTypeMap[r.chargeType] ?? '未知' },
+    { title: '免邮门槛(分)', dataIndex: 'freeThreshold' },
     { title: '规则数', dataIndex: 'rules', render: (_, r) => r.rules?.length ?? 0 },
-    { title: '创建时间', dataIndex: 'created_at', valueType: 'dateTime' },
+    { title: '创建时间', dataIndex: 'createdAt', valueType: 'dateTime' },
     {
       title: '操作',
       render: (_, r) => (

@@ -2,7 +2,7 @@ import { request } from './client'
 
 export interface Shop {
   id: number
-  tenant_id: number
+  tenantId: number
   name: string
   logo: string
   description: string

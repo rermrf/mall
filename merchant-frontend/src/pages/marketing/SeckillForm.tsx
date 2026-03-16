@@ -18,8 +18,8 @@ export default function SeckillForm() {
         if (activity) {
           setInitialValues({
             name: activity.name,
-            start_time: activity.start_time,
-            end_time: activity.end_time,
+            startTime: activity.startTime,
+            endTime: activity.endTime,
             status: activity.status,
             items: activity.items ?? [],
           })
@@ -39,16 +39,16 @@ export default function SeckillForm() {
         onFinish={async (values) => {
           const rawItems = values.items ?? []
           const items: SeckillItem[] = rawItems.map((item) => ({
-            sku_id: Number(item.sku_id) || 0,
-            seckill_price: Number(item.seckill_price) || 0,
-            seckill_stock: Number(item.seckill_stock) || 0,
-            per_limit: Number(item.per_limit) || 1,
+            skuId: Number(item.skuId) || 0,
+            seckillPrice: Number(item.seckillPrice) || 0,
+            seckillStock: Number(item.seckillStock) || 0,
+            perLimit: Number(item.perLimit) || 1,
           }))
 
           const data: CreateSeckillReq = {
             name: values.name,
-            start_time: values.start_time,
-            end_time: values.end_time,
+            startTime: values.startTime,
+            endTime: values.endTime,
             status: values.status,
             items,
           }
@@ -67,8 +67,8 @@ export default function SeckillForm() {
         }}
       >
         <ProFormText name="name" label="活动名称" rules={[{ required: true }]} />
-        <ProFormDateTimePicker name="start_time" label="开始时间" rules={[{ required: true }]} />
-        <ProFormDateTimePicker name="end_time" label="结束时间" rules={[{ required: true }]} />
+        <ProFormDateTimePicker name="startTime" label="开始时间" rules={[{ required: true }]} />
+        <ProFormDateTimePicker name="endTime" label="结束时间" rules={[{ required: true }]} />
         <ProFormSelect name="status" label="状态" initialValue={0} options={[
           { label: '未开始', value: 0 },
           { label: '进行中', value: 1 },
@@ -87,10 +87,10 @@ export default function SeckillForm() {
           )}
         >
           <ProForm.Group key="seckill-item-group">
-            <ProFormDigit name="sku_id" label="SKU ID" rules={[{ required: true }]} min={1} />
-            <ProFormDigit name="seckill_price" label="秒杀价（分）" rules={[{ required: true }]} min={0} />
-            <ProFormDigit name="seckill_stock" label="秒杀库存" rules={[{ required: true }]} min={1} />
-            <ProFormDigit name="per_limit" label="每人限购" initialValue={1} min={1} />
+            <ProFormDigit name="skuId" label="SKU ID" rules={[{ required: true }]} min={1} />
+            <ProFormDigit name="seckillPrice" label="秒杀价（分）" rules={[{ required: true }]} min={0} />
+            <ProFormDigit name="seckillStock" label="秒杀库存" rules={[{ required: true }]} min={1} />
+            <ProFormDigit name="perLimit" label="每人限购" initialValue={1} min={1} />
           </ProForm.Group>
         </ProFormList>
       </ProForm>

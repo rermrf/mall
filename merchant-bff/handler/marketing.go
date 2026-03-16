@@ -31,13 +31,13 @@ type CreateCouponReq struct {
 	Name          string `json:"name" binding:"required"`
 	Type          int32  `json:"type" binding:"required"`
 	Threshold     int64  `json:"threshold"`
-	DiscountValue int64  `json:"discount_value" binding:"required"`
-	TotalCount    int32  `json:"total_count" binding:"required"`
-	PerLimit      int32  `json:"per_limit"`
-	StartTime     int64  `json:"start_time" binding:"required"`
-	EndTime       int64  `json:"end_time" binding:"required"`
-	ScopeType     int32  `json:"scope_type"`
-	ScopeIDs      string `json:"scope_ids"`
+	DiscountValue int64  `json:"discountValue" binding:"required"`
+	TotalCount    int32  `json:"totalCount" binding:"required"`
+	PerLimit      int32  `json:"perLimit"`
+	StartTime     int64  `json:"startTime" binding:"required"`
+	EndTime       int64  `json:"endTime" binding:"required"`
+	ScopeType     int32  `json:"scopeType"`
+	ScopeIDs      string `json:"scopeIds"`
 	Status        int32  `json:"status"`
 }
 
@@ -78,13 +78,13 @@ type UpdateCouponReq struct {
 	Name          string `json:"name"`
 	Type          int32  `json:"type"`
 	Threshold     int64  `json:"threshold"`
-	DiscountValue int64  `json:"discount_value"`
-	TotalCount    int32  `json:"total_count"`
-	PerLimit      int32  `json:"per_limit"`
-	StartTime     int64  `json:"start_time"`
-	EndTime       int64  `json:"end_time"`
-	ScopeType     int32  `json:"scope_type"`
-	ScopeIDs      string `json:"scope_ids"`
+	DiscountValue int64  `json:"discountValue"`
+	TotalCount    int32  `json:"totalCount"`
+	PerLimit      int32  `json:"perLimit"`
+	StartTime     int64  `json:"startTime"`
+	EndTime       int64  `json:"endTime"`
+	ScopeType     int32  `json:"scopeType"`
+	ScopeIDs      string `json:"scopeIds"`
 	Status        int32  `json:"status"`
 }
 
@@ -134,7 +134,7 @@ func (h *MarketingHandler) UpdateCoupon(ctx *gin.Context, req UpdateCouponReq) (
 type ListCouponsReq struct {
 	Status   int32 `form:"status"`
 	Page     int32 `form:"page" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=1,max=100"`
+	PageSize int32 `form:"pageSize" binding:"required,min=1,max=100"`
 }
 
 func (h *MarketingHandler) ListCoupons(ctx *gin.Context, req ListCouponsReq) (ginx.Result, error) {
@@ -178,17 +178,17 @@ func (h *MarketingHandler) GetCoupon(ctx *gin.Context) {
 
 type CreateSeckillReq struct {
 	Name      string              `json:"name" binding:"required"`
-	StartTime int64               `json:"start_time" binding:"required"`
-	EndTime   int64               `json:"end_time" binding:"required"`
+	StartTime int64               `json:"startTime" binding:"required"`
+	EndTime   int64               `json:"endTime" binding:"required"`
 	Status    int32               `json:"status"`
 	Items     []CreateSeckillItem `json:"items" binding:"required,min=1"`
 }
 
 type CreateSeckillItem struct {
-	SkuID        int64 `json:"sku_id" binding:"required"`
-	SeckillPrice int64 `json:"seckill_price" binding:"required"`
-	SeckillStock int32 `json:"seckill_stock" binding:"required"`
-	PerLimit     int32 `json:"per_limit"`
+	SkuID        int64 `json:"skuId" binding:"required"`
+	SeckillPrice int64 `json:"seckillPrice" binding:"required"`
+	SeckillStock int32 `json:"seckillStock" binding:"required"`
+	PerLimit     int32 `json:"perLimit"`
 }
 
 func (h *MarketingHandler) CreateSeckill(ctx *gin.Context, req CreateSeckillReq) (ginx.Result, error) {
@@ -232,8 +232,8 @@ func (h *MarketingHandler) CreateSeckill(ctx *gin.Context, req CreateSeckillReq)
 
 type UpdateSeckillReq struct {
 	Name      string              `json:"name"`
-	StartTime int64               `json:"start_time"`
-	EndTime   int64               `json:"end_time"`
+	StartTime int64               `json:"startTime"`
+	EndTime   int64               `json:"endTime"`
 	Status    int32               `json:"status"`
 	Items     []CreateSeckillItem `json:"items"`
 }
@@ -292,7 +292,7 @@ func (h *MarketingHandler) UpdateSeckill(ctx *gin.Context, req UpdateSeckillReq)
 type ListSeckillReq struct {
 	Status   int32 `form:"status"`
 	Page     int32 `form:"page" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=1,max=100"`
+	PageSize int32 `form:"pageSize" binding:"required,min=1,max=100"`
 }
 
 func (h *MarketingHandler) ListSeckill(ctx *gin.Context, req ListSeckillReq) (ginx.Result, error) {
@@ -338,9 +338,9 @@ type CreatePromotionReq struct {
 	Name          string `json:"name" binding:"required"`
 	Type          int32  `json:"type" binding:"required"`
 	Threshold     int64  `json:"threshold" binding:"required"`
-	DiscountValue int64  `json:"discount_value" binding:"required"`
-	StartTime     int64  `json:"start_time" binding:"required"`
-	EndTime       int64  `json:"end_time" binding:"required"`
+	DiscountValue int64  `json:"discountValue" binding:"required"`
+	StartTime     int64  `json:"startTime" binding:"required"`
+	EndTime       int64  `json:"endTime" binding:"required"`
 	Status        int32  `json:"status"`
 }
 
@@ -377,9 +377,9 @@ type UpdatePromotionReq struct {
 	Name          string `json:"name"`
 	Type          int32  `json:"type"`
 	Threshold     int64  `json:"threshold"`
-	DiscountValue int64  `json:"discount_value"`
-	StartTime     int64  `json:"start_time"`
-	EndTime       int64  `json:"end_time"`
+	DiscountValue int64  `json:"discountValue"`
+	StartTime     int64  `json:"startTime"`
+	EndTime       int64  `json:"endTime"`
 	Status        int32  `json:"status"`
 }
 

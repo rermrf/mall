@@ -83,7 +83,7 @@ export default function RefundDetailPage() {
         <div className={styles.cardTitle}>退款信息</div>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>退款单号</span>
-          <span className={styles.infoValue}>{refund.refund_no}</span>
+          <span className={styles.infoValue}>{refund.refundNo}</span>
         </div>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>退款类型</span>
@@ -91,7 +91,7 @@ export default function RefundDetailPage() {
         </div>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>退款金额</span>
-          <span className={styles.infoValue}><Price value={refund.refund_amount} size="md" /></span>
+          <span className={styles.infoValue}><Price value={refund.refundAmount} size="md" /></span>
         </div>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>退款原因</span>

@@ -5,7 +5,7 @@ export interface User {
   avatar: string
   email: string
   role: string
-  created_at: string
+  createdAt: string
 }
 
 export interface Role {

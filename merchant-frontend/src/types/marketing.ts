@@ -3,53 +3,53 @@ export interface Coupon {
   name: string
   type: number
   threshold: number
-  discount_value: number
-  total_count: number
-  used_count: number
-  per_limit: number
-  start_time: string
-  end_time: string
-  scope_type: number
-  scope_ids: number[]
+  discountValue: number
+  totalCount: number
+  usedCount: number
+  perLimit: number
+  startTime: string
+  endTime: string
+  scopeType: number
+  scopeIds: number[]
   status: number
-  created_at: string
+  createdAt: string
 }
 
 export interface CreateCouponReq {
   name: string
   type: number
   threshold: number
-  discount_value: number
-  total_count: number
-  per_limit: number
-  start_time: number
-  end_time: number
-  scope_type: number
-  scope_ids: string
+  discountValue: number
+  totalCount: number
+  perLimit: number
+  startTime: number
+  endTime: number
+  scopeType: number
+  scopeIds: string
   status: number
 }
 
 export interface SeckillActivity {
   id: number
   name: string
-  start_time: string
-  end_time: string
+  startTime: string
+  endTime: string
   status: number
   items: SeckillItem[]
-  created_at: string
+  createdAt: string
 }
 
 export interface SeckillItem {
-  sku_id: number
-  seckill_price: number
-  seckill_stock: number
-  per_limit: number
+  skuId: number
+  seckillPrice: number
+  seckillStock: number
+  perLimit: number
 }
 
 export interface CreateSeckillReq {
   name: string
-  start_time: string
-  end_time: string
+  startTime: string
+  endTime: string
   status: number
   items: SeckillItem[]
 }
@@ -59,19 +59,19 @@ export interface PromotionRule {
   name: string
   type: number
   threshold: number
-  discount_value: number
-  start_time: string
-  end_time: string
+  discountValue: number
+  startTime: string
+  endTime: string
   status: number
-  created_at: string
+  createdAt: string
 }
 
 export interface CreatePromotionReq {
   name: string
   type: number
   threshold: number
-  discount_value: number
-  start_time: string
-  end_time: string
+  discountValue: number
+  startTime: string
+  endTime: string
   status: number
 }

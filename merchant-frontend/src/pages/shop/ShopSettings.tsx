@@ -22,7 +22,7 @@ export default function ShopSettings() {
             logo: shop.logo,
             description: shop.description,
             subdomain: shop.subdomain,
-            custom_domain: shop.custom_domain,
+            customDomain: shop.customDomain,
           }}
           onFinish={async (values) => {
             try {
@@ -37,7 +37,7 @@ export default function ShopSettings() {
           <ProFormText name="logo" label="Logo URL" />
           <ProFormTextArea name="description" label="店铺描述" />
           <ProFormText name="subdomain" label="子域名" />
-          <ProFormText name="custom_domain" label="自定义域名" />
+          <ProFormText name="customDomain" label="自定义域名" />
         </ProForm>
       )}
       </Spin>

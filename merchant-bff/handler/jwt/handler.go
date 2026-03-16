@@ -17,13 +17,13 @@ import (
 
 type Claims struct {
 	Uid       int64  `json:"uid"`
-	TenantId  int64  `json:"tenant_id"`
-	UserAgent string `json:"user_agent"`
+	TenantId  int64  `json:"tenantId"`
+	UserAgent string `json:"userAgent"`
 	jwt.RegisteredClaims
 }
 
 type LoginReq struct {
-	TenantId int64  `json:"tenant_id"`
+	TenantId int64  `json:"tenantId"`
 	Phone    string `json:"phone"`
 	Password string `json:"password"`
 }

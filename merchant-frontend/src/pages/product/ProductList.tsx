@@ -23,9 +23,9 @@ export default function ProductList() {
 
   const columns: ProColumns<Product>[] = [
     { title: 'ID', dataIndex: 'id', width: 80, search: false },
-    { title: '商品图片', dataIndex: 'main_image', valueType: 'image', width: 80, search: false },
+    { title: '商品图片', dataIndex: 'mainImage', valueType: 'image', width: 80, search: false },
     { title: '商品名称', dataIndex: 'name', ellipsis: true },
-    { title: '分类ID', dataIndex: 'category_id', width: 80, search: false },
+    { title: '分类ID', dataIndex: 'categoryId', width: 80, search: false },
     {
       title: '价格',
       dataIndex: 'skus',

@@ -1,7 +1,7 @@
 import { request } from './client'
 import type { Notification } from '@/types/notification'
 
-export async function listNotifications(params: { channel?: string; unread_only?: boolean; page?: number; pageSize?: number }) {
+export async function listNotifications(params: { channel?: string; unreadOnly?: boolean; page?: number; pageSize?: number }) {
   return request<{ notifications: Notification[]; total: number }>({ method: 'GET', url: '/notifications', params })
 }
 

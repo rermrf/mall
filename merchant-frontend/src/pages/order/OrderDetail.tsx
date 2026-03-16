@@ -14,7 +14,7 @@ export default function OrderDetail() {
   const [order, setOrder] = useState<Order | null>(null)
   const [logistics, setLogistics] = useState<Shipment | null>(null)
   const [shipModal, setShipModal] = useState(false)
-  const [shipForm, setShipForm] = useState<ShipOrderReq>({ carrier_code: '', carrier_name: '', tracking_no: '' })
+  const [shipForm, setShipForm] = useState<ShipOrderReq>({ carrierCode: '', carrierName: '', trackingNo: '' })
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function OrderDetail() {
   }, [orderNo])
 
   const handleShip = async () => {
-    if (!orderNo || !shipForm.tracking_no) {
+    if (!orderNo || !shipForm.trackingNo) {
       message.warning('请填写运单号')
       return
     }
@@ -48,15 +48,15 @@ export default function OrderDetail() {
     <div>
       <Card title="订单信息" extra={<Button onClick={() => navigate(-1)}>返回</Button>}>
         <Descriptions column={2}>
-          <Descriptions.Item label="订单号">{order.order_no}</Descriptions.Item>
+          <Descriptions.Item label="订单号">{order.orderNo}</Descriptions.Item>
           <Descriptions.Item label="状态"><Tag color={ORDER_STATUS_MAP[order.status]?.color}>{ORDER_STATUS_MAP[order.status]?.text ?? '未知'}</Tag></Descriptions.Item>
-          <Descriptions.Item label="支付金额">{formatPrice(order.pay_amount)}</Descriptions.Item>
-          <Descriptions.Item label="运费">{formatPrice(order.freight_amount)}</Descriptions.Item>
-          <Descriptions.Item label="收货人">{order.receiver_name}</Descriptions.Item>
-          <Descriptions.Item label="联系电话">{order.receiver_phone}</Descriptions.Item>
-          <Descriptions.Item label="收货地址" span={2}>{order.receiver_address}</Descriptions.Item>
+          <Descriptions.Item label="支付金额">{formatPrice(order.payAmount)}</Descriptions.Item>
+          <Descriptions.Item label="运费">{formatPrice(order.freightAmount)}</Descriptions.Item>
+          <Descriptions.Item label="收货人">{order.receiverName}</Descriptions.Item>
+          <Descriptions.Item label="联系电话">{order.receiverPhone}</Descriptions.Item>
+          <Descriptions.Item label="收货地址" span={2}>{order.receiverAddress}</Descriptions.Item>
           <Descriptions.Item label="备注">{order.remark || '-'}</Descriptions.Item>
-          <Descriptions.Item label="下单时间">{order.created_at}</Descriptions.Item>
+          <Descriptions.Item label="下单时间">{order.createdAt}</Descriptions.Item>
         </Descriptions>
       </Card>
 
@@ -66,8 +66,8 @@ export default function OrderDetail() {
           rowKey="id"
           pagination={false}
           columns={[
-            { title: '商品', dataIndex: 'product_name' },
-            { title: '规格', dataIndex: 'spec_values' },
+            { title: '商品', dataIndex: 'productName' },
+            { title: '规格', dataIndex: 'specValues' },
             { title: '单价', dataIndex: 'price', render: (v: number) => formatPrice(v) },
             { title: '数量', dataIndex: 'quantity' },
           ]}
@@ -77,8 +77,8 @@ export default function OrderDetail() {
       {logistics && (
         <Card title="物流信息" style={{ marginTop: 16 }}>
           <Descriptions>
-            <Descriptions.Item label="物流公司">{logistics.carrier_name}</Descriptions.Item>
-            <Descriptions.Item label="运单号">{logistics.tracking_no}</Descriptions.Item>
+            <Descriptions.Item label="物流公司">{logistics.carrierName}</Descriptions.Item>
+            <Descriptions.Item label="运单号">{logistics.trackingNo}</Descriptions.Item>
           </Descriptions>
         </Card>
       )}
@@ -92,9 +92,9 @@ export default function OrderDetail() {
       )}
 
       <Modal title="发货" open={shipModal} onOk={handleShip} confirmLoading={loading} onCancel={() => setShipModal(false)}>
-        <Input placeholder="物流公司编码" value={shipForm.carrier_code} onChange={(e) => setShipForm({ ...shipForm, carrier_code: e.target.value })} style={{ marginBottom: 12 }} />
-        <Input placeholder="物流公司名称" value={shipForm.carrier_name} onChange={(e) => setShipForm({ ...shipForm, carrier_name: e.target.value })} style={{ marginBottom: 12 }} />
-        <Input placeholder="运单号" value={shipForm.tracking_no} onChange={(e) => setShipForm({ ...shipForm, tracking_no: e.target.value })} />
+        <Input placeholder="物流公司编码" value={shipForm.carrierCode} onChange={(e) => setShipForm({ ...shipForm, carrierCode: e.target.value })} style={{ marginBottom: 12 }} />
+        <Input placeholder="物流公司名称" value={shipForm.carrierName} onChange={(e) => setShipForm({ ...shipForm, carrierName: e.target.value })} style={{ marginBottom: 12 }} />
+        <Input placeholder="运单号" value={shipForm.trackingNo} onChange={(e) => setShipForm({ ...shipForm, trackingNo: e.target.value })} />
       </Modal>
     </div>
   )

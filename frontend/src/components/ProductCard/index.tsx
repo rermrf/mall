@@ -10,14 +10,14 @@ export default function ProductCard({ product }: { product: Product }) {
     <div className={styles.card} onClick={() => navigate(`/product/${product.id}`, { state: { product } })}>
       <img
         className={styles.image}
-        src={product.main_image || 'https://via.placeholder.com/300'}
+        src={product.mainImage || 'https://via.placeholder.com/300'}
         alt={product.name}
         loading='lazy'
       />
       <div className={styles.info}>
         <div className={styles.name}>{product.name}</div>
         <div className={styles.meta}>
-          <Price value={product.price} original={product.original_price} size='sm' />
+          <Price value={product.price} original={product.originalPrice} size='sm' />
           {product.sales > 0 && (
             <span className={styles.sales}>已售{product.sales}</span>
           )}

@@ -25,13 +25,13 @@ func NewSearchHandler(searchClient searchv1.SearchServiceClient, l logger.Logger
 
 type SearchReq struct {
 	Keyword    string `form:"keyword"`
-	CategoryID int64  `form:"category_id"`
-	BrandID    int64  `form:"brand_id"`
-	PriceMin   int64  `form:"price_min"`
-	PriceMax   int64  `form:"price_max"`
-	SortBy     string `form:"sort_by"`
+	CategoryID int64  `form:"categoryId"`
+	BrandID    int64  `form:"brandId"`
+	PriceMin   int64  `form:"priceMin"`
+	PriceMax   int64  `form:"priceMax"`
+	SortBy     string `form:"sortBy"`
 	Page       int32  `form:"page"`
-	PageSize   int32  `form:"page_size"`
+	PageSize   int32  `form:"pageSize"`
 }
 
 func (h *SearchHandler) Search(ctx *gin.Context, req SearchReq) (ginx.Result, error) {

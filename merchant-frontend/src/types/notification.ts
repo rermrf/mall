@@ -3,6 +3,6 @@ export interface Notification {
   title: string
   content: string
   channel: string
-  is_read: boolean
-  created_at: string
+  isRead: boolean
+  createdAt: string
 }

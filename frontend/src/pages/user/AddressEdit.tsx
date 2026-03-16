@@ -15,7 +15,7 @@ export default function AddressEditPage() {
   const [city, setCity] = useState(existing?.city || '')
   const [district, setDistrict] = useState(existing?.district || '')
   const [detail, setDetail] = useState(existing?.detail || '')
-  const [isDefault, setIsDefault] = useState(existing?.is_default || false)
+  const [isDefault, setIsDefault] = useState(existing?.isDefault || false)
   const [loading, setLoading] = useState(false)
 
   const handleSave = async () => {
@@ -31,7 +31,7 @@ export default function AddressEditPage() {
       city: city.trim(),
       district: district.trim(),
       detail: detail.trim(),
-      is_default: isDefault,
+      isDefault: isDefault,
     }
 
     setLoading(true)

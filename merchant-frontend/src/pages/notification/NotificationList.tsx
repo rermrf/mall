@@ -30,15 +30,15 @@ export default function NotificationList() {
     { title: '渠道', dataIndex: 'channel', search: false },
     {
       title: '状态',
-      dataIndex: 'is_read',
+      dataIndex: 'isRead',
       search: false,
-      render: (_, r) => r.is_read ? <Tag>已读</Tag> : <Tag color="blue">未读</Tag>,
+      render: (_, r) => r.isRead ? <Tag>已读</Tag> : <Tag color="blue">未读</Tag>,
     },
-    { title: '时间', dataIndex: 'created_at', valueType: 'dateTime', search: false },
+    { title: '时间', dataIndex: 'createdAt', valueType: 'dateTime', search: false },
     {
       title: '操作',
       search: false,
-      render: (_, r) => !r.is_read ? <a onClick={() => handleMarkRead(r.id)}>标记已读</a> : '-',
+      render: (_, r) => !r.isRead ? <a onClick={() => handleMarkRead(r.id)}>标记已读</a> : '-',
     },
   ]
 

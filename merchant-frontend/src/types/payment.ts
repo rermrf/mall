@@ -1,20 +1,20 @@
 export interface Payment {
   id: number
-  payment_no: string
-  order_no: string
+  paymentNo: string
+  orderNo: string
   amount: number
   status: number
   channel: string
-  created_at: string
+  createdAt: string
 }
 
 export interface Refund {
-  refund_no: string
-  payment_no: string
+  refundNo: string
+  paymentNo: string
   amount: number
   reason: string
   status: number
-  created_at: string
+  createdAt: string
 }
 
 export interface RefundReq {

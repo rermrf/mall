@@ -8,14 +8,14 @@ import type { Product } from '@/types/product'
 import type { Inventory } from '@/types/inventory'
 
 interface StockRow {
-  sku_id: number
-  sku_code: string
-  product_name: string
-  spec_values: string
+  skuId: number
+  skuCode: string
+  productName: string
+  specValues: string
   total: number
   locked: number
   available: number
-  alert_threshold: number
+  alertThreshold: number
 }
 
 export default function StockList() {
@@ -24,14 +24,14 @@ export default function StockList() {
   const [modalOpen, setModalOpen] = useState(false)
 
   const columns: ProColumns<StockRow>[] = [
-    { title: 'SKU ID', dataIndex: 'sku_id', width: 80 },
-    { title: '商品', dataIndex: 'product_name', ellipsis: true },
-    { title: 'SKU编码', dataIndex: 'sku_code' },
-    { title: '规格', dataIndex: 'spec_values' },
+    { title: 'SKU ID', dataIndex: 'skuId', width: 80 },
+    { title: '商品', dataIndex: 'productName', ellipsis: true },
+    { title: 'SKU编码', dataIndex: 'skuCode' },
+    { title: '规格', dataIndex: 'specValues' },
     { title: '总库存', dataIndex: 'total', search: false },
     { title: '锁定', dataIndex: 'locked', search: false },
     { title: '可用', dataIndex: 'available', search: false },
-    { title: '预警值', dataIndex: 'alert_threshold', search: false },
+    { title: '预警值', dataIndex: 'alertThreshold', search: false },
     {
       title: '操作',
       search: false,
@@ -46,29 +46,29 @@ export default function StockList() {
       <ProTable<StockRow>
         headerTitle="库存管理"
         actionRef={actionRef}
-        rowKey="sku_id"
+        rowKey="skuId"
         columns={columns}
         search={false}
         request={async (params) => {
           const productRes = await listProducts({ page: params.current, pageSize: params.pageSize })
           const products = productRes?.products ?? []
           const allSkus = products.flatMap((p: Product) =>
-            (p.skus ?? []).map((s) => ({ ...s, product_name: p.name }))
+            (p.skus ?? []).map((s) => ({ ...s, productName: p.name }))
           )
           if (allSkus.length === 0) return { data: [], total: 0, success: true }
           const stocks = await batchGetStock(allSkus.map((s) => s.id)).catch(() => [] as Inventory[])
-          const stockMap = new Map((stocks ?? []).map((s) => [s.sku_id, s]))
+          const stockMap = new Map((stocks ?? []).map((s) => [s.skuId, s]))
           const rows: StockRow[] = allSkus.map((s) => {
             const inv = stockMap.get(s.id)
             return {
-              sku_id: s.id,
-              sku_code: s.sku_code,
-              product_name: s.product_name,
-              spec_values: s.spec_values,
+              skuId: s.id,
+              skuCode: s.skuCode,
+              productName: s.productName,
+              specValues: s.specValues,
               total: inv?.total ?? 0,
               locked: inv?.locked ?? 0,
               available: inv?.available ?? 0,
-              alert_threshold: inv?.alert_threshold ?? 0,
+              alertThreshold: inv?.alertThreshold ?? 0,
             }
           })
           return { data: rows, total: productRes?.total ?? 0, success: true }
@@ -78,11 +78,11 @@ export default function StockList() {
       <ModalForm
         title="设置库存"
         open={modalOpen}
-        initialValues={editSku ? { total: editSku.total, alert_threshold: editSku.alert_threshold } : {}}
+        initialValues={editSku ? { total: editSku.total, alertThreshold: editSku.alertThreshold } : {}}
         onOpenChange={setModalOpen}
         onFinish={async (values) => {
           if (editSku) {
-            await setStock({ sku_id: editSku.sku_id, total: values.total, alert_threshold: values.alert_threshold })
+            await setStock({ skuId: editSku.skuId, total: values.total, alertThreshold: values.alertThreshold })
             message.success('设置成功')
             actionRef.current?.reload()
           }
@@ -90,7 +90,7 @@ export default function StockList() {
         }}
       >
         <ProFormDigit name="total" label="总库存" rules={[{ required: true }]} min={0} />
-        <ProFormDigit name="alert_threshold" label="预警阈值" min={0} />
+        <ProFormDigit name="alertThreshold" label="预警阈值" min={0} />
       </ModalForm>
     </>
   )

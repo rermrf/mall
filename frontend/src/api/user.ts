@@ -8,7 +8,7 @@ export interface Address {
   city: string
   district: string
   detail: string
-  is_default: boolean
+  isDefault: boolean
 }
 
 export interface UserProfile {

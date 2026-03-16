@@ -3,20 +3,20 @@ import { request } from './client'
 export interface SeckillActivity {
   id: number
   name: string
-  start_time: string
-  end_time: string
+  startTime: string
+  endTime: string
   status: number
   items: SeckillItem[]
 }
 
 export interface SeckillItem {
   id: number
-  product_name: string
-  product_image: string
-  original_price: number
-  seckill_price: number
-  total_stock: number
-  available_stock: number
+  productName: string
+  productImage: string
+  originalPrice: number
+  seckillPrice: number
+  totalStock: number
+  availableStock: number
 }
 
 export interface Coupon {
@@ -24,9 +24,9 @@ export interface Coupon {
   name: string
   type: number
   value: number
-  min_spend: number
-  start_time: string
-  end_time: string
+  minSpend: number
+  startTime: string
+  endTime: string
   total: number
   remaining: number
 }
@@ -47,20 +47,20 @@ export function listAvailableCoupons() {
 
 export interface UserCoupon {
   id: number
-  coupon_id: number
+  couponId: number
   name: string
   type: number
   value: number
-  min_spend: number
-  start_time: string
-  end_time: string
+  minSpend: number
+  startTime: string
+  endTime: string
   status: number
 }
 
 export interface SeckillResult {
   success: boolean
   message: string
-  order_no: string
+  orderNo: string
 }
 
 export function receiveCoupon(id: number) {

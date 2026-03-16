@@ -29,13 +29,13 @@ export default function OrderConfirm() {
     }
     listAddresses().then((list) => {
       setAddresses(list || [])
-      const defaultAddr = (list || []).find((a) => a.is_default) || (list || [])[0]
+      const defaultAddr = (list || []).find((a) => a.isDefault) || (list || [])[0]
       if (defaultAddr) setSelectedAddress(defaultAddr)
     }).catch(() => {})
     listMyCoupons(1).then((list) => setCoupons(list || [])).catch(() => {})
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const usableCoupons = coupons.filter((c) => c.min_spend <= totalAmount)
+  const usableCoupons = coupons.filter((c) => c.minSpend <= totalAmount)
 
   const discountAmount = selectedCoupon
     ? (selectedCoupon.type === 1 ? selectedCoupon.value : Math.round(totalAmount * (1 - selectedCoupon.value / 100)))
@@ -50,13 +50,13 @@ export default function OrderConfirm() {
     setLoading(true)
     try {
       const result = await createOrder({
-        items: selectedItems.map((i) => ({ sku_id: i.sku_id, quantity: i.quantity })),
-        address_id: selectedAddress.id,
-        coupon_id: selectedCoupon?.coupon_id,
+        items: selectedItems.map((i) => ({ skuId: i.skuId, quantity: i.quantity })),
+        addressId: selectedAddress.id,
+        couponId: selectedCoupon?.couponId,
         remark,
       })
       await fetchCart()
-      navigate(`/payment/${result.order_no}`, { replace: true, state: { payAmount: result.pay_amount } })
+      navigate(`/payment/${result.orderNo}`, { replace: true, state: { payAmount: result.payAmount } })
     } catch (e: unknown) {
       Toast.show((e as Error).message || '下单失败')
     } finally {
@@ -90,10 +90,10 @@ export default function OrderConfirm() {
 
       <div className={styles.itemsCard}>
         {selectedItems.map((item) => (
-          <div key={item.sku_id} className={styles.orderItem}>
-            <img className={styles.orderItemImage} src={item.product_image || 'https://via.placeholder.com/60'} alt='' />
+          <div key={item.skuId} className={styles.orderItem}>
+            <img className={styles.orderItemImage} src={item.productImage || 'https://via.placeholder.com/60'} alt='' />
             <div className={styles.orderItemInfo}>
-              <div className={styles.orderItemName}>{item.product_name}</div>
+              <div className={styles.orderItemName}>{item.productName}</div>
               <div className={styles.orderItemMeta}>
                 <Price value={item.price} size='sm' />
                 <span>x{item.quantity}</span>
@@ -156,7 +156,7 @@ export default function OrderConfirm() {
               </span>
               <div className={styles.popupCouponInfo}>
                 <div className={styles.popupCouponName}>{c.name}</div>
-                <div className={styles.popupCouponCondition}>满{(c.min_spend / 100).toFixed(0)}可用</div>
+                <div className={styles.popupCouponCondition}>满{(c.minSpend / 100).toFixed(0)}可用</div>
               </div>
             </div>
           ))}

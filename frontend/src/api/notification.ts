@@ -5,7 +5,7 @@ export interface Notification {
   channel: number
   title: string
   content: string
-  is_read: boolean
+  isRead: boolean
   status: number
   ctime: string
 }

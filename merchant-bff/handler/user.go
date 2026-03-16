@@ -65,7 +65,7 @@ func (h *UserHandler) UpdateProfile(ctx *gin.Context, req UpdateProfileReq) (gin
 
 type ListStaffReq struct {
 	Page     int32 `form:"page"`
-	PageSize int32 `form:"page_size"`
+	PageSize int32 `form:"pageSize"`
 }
 
 func (h *UserHandler) ListStaff(ctx *gin.Context, req ListStaffReq) (ginx.Result, error) {
@@ -159,7 +159,7 @@ func (h *UserHandler) UpdateRole(ctx *gin.Context, req UpdateRoleReq) (ginx.Resu
 }
 
 type AssignRoleReq struct {
-	RoleId int64 `json:"role_id"`
+	RoleId int64 `json:"roleId"`
 }
 
 func (h *UserHandler) AssignRole(ctx *gin.Context, req AssignRoleReq) (ginx.Result, error) {

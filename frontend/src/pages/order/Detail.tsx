@@ -77,7 +77,7 @@ export default function OrderDetailPage() {
         try {
           const res = await applyRefund(orderNo, { reason: '买家申请退款' })
           Toast.show('已提交退款申请')
-          navigate(`/refunds/${res.refund_no}`)
+          navigate(`/refunds/${res.refundNo}`)
         } catch (e: unknown) {
           Toast.show((e as Error).message || '申请失败')
         }
@@ -115,12 +115,12 @@ export default function OrderDetailPage() {
         <div className={styles.card}>
           <div className={styles.cardTitle}>物流信息</div>
           <div className={styles.logisticsInfo}>
-            {logistics.carrier_name} {logistics.tracking_no}
+            {logistics.carrierName} {logistics.trackingNo}
           </div>
           {visibleTracks.map((t, i) => (
             <div key={i} className={styles.trackItem}>
               <div>{t.description}</div>
-              <div className={styles.trackTime}>{formatTime(t.track_time)}</div>
+              <div className={styles.trackTime}>{formatTime(t.trackTime)}</div>
             </div>
           ))}
           {tracks.length > 1 && (
@@ -134,10 +134,10 @@ export default function OrderDetailPage() {
       <div className={styles.card}>
         <div className={styles.cardTitle}>收货地址</div>
         <div className={styles.addressInfo}>
-          <span className={styles.addressName}>{order.receiver_name}</span>
-          <span className={styles.addressPhone}>{order.receiver_phone}</span>
+          <span className={styles.addressName}>{order.receiverName}</span>
+          <span className={styles.addressPhone}>{order.receiverPhone}</span>
         </div>
-        <div className={styles.addressDetail}>{order.receiver_address}</div>
+        <div className={styles.addressDetail}>{order.receiverAddress}</div>
       </div>
 
       <div className={styles.card}>
@@ -146,12 +146,12 @@ export default function OrderDetailPage() {
           <div key={item.id} className={styles.orderItem}>
             <img
               className={styles.itemImage}
-              src={item.product_image || 'https://via.placeholder.com/70'}
+              src={item.productImage || 'https://via.placeholder.com/70'}
               alt=""
             />
             <div className={styles.itemInfo}>
-              <div className={styles.itemName}>{item.product_name}</div>
-              {item.sku_spec && <div className={styles.itemSpec}>{item.sku_spec}</div>}
+              <div className={styles.itemName}>{item.productName}</div>
+              {item.skuSpec && <div className={styles.itemSpec}>{item.skuSpec}</div>}
               <div className={styles.itemBottom}>
                 <Price value={item.price} size="sm" />
                 <span className={styles.itemQty}>x{item.quantity}</span>
@@ -165,19 +165,19 @@ export default function OrderDetailPage() {
         <div className={styles.cardTitle}>价格明细</div>
         <div className={styles.priceRow}>
           <span className={styles.priceLabel}>商品金额</span>
-          <span><Price value={order.total_amount} size="sm" /></span>
+          <span><Price value={order.totalAmount} size="sm" /></span>
         </div>
         <div className={styles.priceRow}>
           <span className={styles.priceLabel}>运费</span>
-          <span><Price value={order.freight_amount} size="sm" /></span>
+          <span><Price value={order.freightAmount} size="sm" /></span>
         </div>
         <div className={styles.priceRow}>
           <span className={styles.priceLabel}>优惠</span>
-          <span>-<Price value={order.discount_amount} size="sm" /></span>
+          <span>-<Price value={order.discountAmount} size="sm" /></span>
         </div>
         <div className={styles.priceRow}>
           <span className={styles.priceLabel}>实付</span>
-          <span className={styles.priceTotal}><Price value={order.pay_amount} size="md" /></span>
+          <span className={styles.priceTotal}><Price value={order.payAmount} size="md" /></span>
         </div>
       </div>
 
@@ -185,28 +185,28 @@ export default function OrderDetailPage() {
         <div className={styles.cardTitle}>订单信息</div>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>订单编号</span>
-          <span className={styles.infoValue}>{order.order_no}</span>
+          <span className={styles.infoValue}>{order.orderNo}</span>
         </div>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>下单时间</span>
           <span className={styles.infoValue}>{formatTime(order.ctime)}</span>
         </div>
-        {order.pay_time > 0 && (
+        {order.payTime > 0 && (
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>支付时间</span>
-            <span className={styles.infoValue}>{formatTime(order.pay_time)}</span>
+            <span className={styles.infoValue}>{formatTime(order.payTime)}</span>
           </div>
         )}
-        {order.ship_time > 0 && (
+        {order.shipTime > 0 && (
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>发货时间</span>
-            <span className={styles.infoValue}>{formatTime(order.ship_time)}</span>
+            <span className={styles.infoValue}>{formatTime(order.shipTime)}</span>
           </div>
         )}
-        {order.receive_time > 0 && (
+        {order.receiveTime > 0 && (
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>收货时间</span>
-            <span className={styles.infoValue}>{formatTime(order.receive_time)}</span>
+            <span className={styles.infoValue}>{formatTime(order.receiveTime)}</span>
           </div>
         )}
         {order.remark && (
@@ -225,7 +225,7 @@ export default function OrderDetailPage() {
               <Button
                 color="primary"
                 className={styles.footerBtn}
-                onClick={() => navigate(`/payment/${order.order_no}`)}
+                onClick={() => navigate(`/payment/${order.orderNo}`)}
               >
                 去付款
               </Button>

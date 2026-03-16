@@ -18,8 +18,8 @@ import (
 
 type Claims struct {
 	Uid       int64  `json:"uid"`
-	TenantId  int64  `json:"tenant_id"`
-	UserAgent string `json:"user_agent"`
+	TenantId  int64  `json:"tenantId"`
+	UserAgent string `json:"userAgent"`
 	jwt.RegisteredClaims
 }
 
@@ -105,7 +105,7 @@ func (h *JWTHandler) OAuthLogin(ctx *gin.Context, req OAuthLoginReq) (ginx.Resul
 	if err != nil {
 		return ginx.Result{}, fmt.Errorf("生成 token 失败: %w", err)
 	}
-	return ginx.Result{Code: 0, Msg: "登录成功", Data: map[string]any{"is_new": resp.GetIsNew()}}, nil
+	return ginx.Result{Code: 0, Msg: "登录成功", Data: map[string]any{"isNew": resp.GetIsNew()}}, nil
 }
 
 func (h *JWTHandler) Refresh(ctx *gin.Context, _ RefreshReq) (ginx.Result, error) {

@@ -1,46 +1,46 @@
 import { request } from './client'
 
 export interface CreateOrderParams {
-  items: Array<{ sku_id: number; quantity: number }>
-  address_id: number
-  coupon_id?: number
+  items: Array<{ skuId: number; quantity: number }>
+  addressId: number
+  couponId?: number
   remark?: string
 }
 
 export interface CreateOrderResult {
-  order_no: string
-  pay_amount: number
+  orderNo: string
+  payAmount: number
 }
 
 export interface OrderItem {
   id: number
-  order_id: number
-  product_id: number
-  sku_id: number
-  product_name: string
-  sku_spec: string
-  product_image: string
+  orderId: number
+  productId: number
+  skuId: number
+  productName: string
+  skuSpec: string
+  productImage: string
   price: number
   quantity: number
-  total_amount: number
+  totalAmount: number
 }
 
 export interface Order {
   id: number
-  order_no: string
+  orderNo: string
   status: number
-  total_amount: number
-  discount_amount: number
-  freight_amount: number
-  pay_amount: number
-  receiver_name: string
-  receiver_phone: string
-  receiver_address: string
+  totalAmount: number
+  discountAmount: number
+  freightAmount: number
+  payAmount: number
+  receiverName: string
+  receiverPhone: string
+  receiverAddress: string
   remark: string
-  pay_time: number
-  ship_time: number
-  receive_time: number
-  close_time: number
+  payTime: number
+  shipTime: number
+  receiveTime: number
+  closeTime: number
   items: OrderItem[]
   ctime: string
   utime: string
@@ -50,11 +50,11 @@ export interface Order {
 
 export interface RefundOrder {
   id: number
-  order_id: number
-  refund_no: string
+  orderId: number
+  refundNo: string
   type: number
   status: number
-  refund_amount: number
+  refundAmount: number
   reason: string
   ctime: string
   utime: string
@@ -71,7 +71,7 @@ export function createOrder(params: CreateOrderParams) {
   return request<CreateOrderResult>({ method: 'POST', url: '/orders', data: params })
 }
 
-export function listOrders(params: { status?: number; page: number; page_size: number }) {
+export function listOrders(params: { status?: number; page: number; pageSize: number }) {
   return request<PageResult<Order>>({ method: 'GET', url: '/orders', params })
 }
 
@@ -88,10 +88,10 @@ export function confirmReceive(orderNo: string) {
 }
 
 export function applyRefund(orderNo: string, params: { reason: string }) {
-  return request<{ refund_no: string }>({ method: 'POST', url: `/orders/${orderNo}/refund`, data: params })
+  return request<{ refundNo: string }>({ method: 'POST', url: `/orders/${orderNo}/refund`, data: params })
 }
 
-export function listRefunds(params: { page: number; page_size: number }) {
+export function listRefunds(params: { page: number; pageSize: number }) {
   return request<PageResult<RefundOrder>>({ method: 'GET', url: '/refunds', params })
 }
 

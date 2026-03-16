@@ -43,7 +43,7 @@ export default function ProductDetail() {
     }
     setAdding(true)
     try {
-      await addCartItem({ sku_id: Number(id), product_id: product.id, quantity: 1 })
+      await addCartItem({ skuId: Number(id), productId: product.id, quantity: 1 })
       Toast.show('已加入购物车')
     } catch (e: unknown) {
       Toast.show((e as Error).message || '添加失败')
@@ -57,13 +57,13 @@ export default function ProductDetail() {
       <NavBar onBack={() => navigate(-1)} style={{ background: 'transparent', position: 'absolute', zIndex: 10, width: '100%' }} />
       <img
         className={styles.image}
-        src={product.main_image || 'https://via.placeholder.com/400'}
+        src={product.mainImage || 'https://via.placeholder.com/400'}
         alt={product.name}
       />
       <div className={styles.info}>
         <div className={styles.name}>{product.name}</div>
         <div className={styles.priceRow}>
-          <Price value={product.price} original={product.original_price} size='lg' />
+          <Price value={product.price} original={product.originalPrice} size='lg' />
         </div>
         {stock !== null && (
           <div className={`${styles.stock} ${stock < 10 ? styles.stockLow : ''}`}>

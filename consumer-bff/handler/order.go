@@ -24,13 +24,13 @@ func NewOrderHandler(orderClient orderv1.OrderServiceClient, l logger.Logger) *O
 
 type CreateOrderReq struct {
 	Items     []CreateOrderItem `json:"items" binding:"required,min=1"`
-	AddressID int64             `json:"address_id" binding:"required"`
-	CouponID  int64             `json:"coupon_id"`
+	AddressID int64             `json:"addressId" binding:"required"`
+	CouponID  int64             `json:"couponId"`
 	Remark    string            `json:"remark"`
 }
 
 type CreateOrderItem struct {
-	SkuID    int64 `json:"sku_id" binding:"required"`
+	SkuID    int64 `json:"skuId" binding:"required"`
 	Quantity int32 `json:"quantity" binding:"required,min=1"`
 }
 
@@ -56,15 +56,15 @@ func (h *OrderHandler) CreateOrder(ctx *gin.Context, req CreateOrderReq) (ginx.R
 		return ginx.HandleGRPCError(err, "创建订单失败", ginx.OrderErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
-		"order_no":   resp.GetOrderNo(),
-		"pay_amount": resp.GetPayAmount(),
+		"orderNo":   resp.GetOrderNo(),
+		"payAmount": resp.GetPayAmount(),
 	}}, nil
 }
 
 type ListOrdersReq struct {
 	Status   int32 `form:"status"`
 	Page     int32 `form:"page" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=1,max=100"`
+	PageSize int32 `form:"pageSize" binding:"required,min=1,max=100"`
 }
 
 func (h *OrderHandler) ListOrders(ctx *gin.Context, req ListOrdersReq) (ginx.Result, error) {
@@ -138,7 +138,7 @@ func (h *OrderHandler) ConfirmReceive(ctx *gin.Context) {
 
 type ApplyRefundReq struct {
 	Type         int32  `json:"type" binding:"required,oneof=1 2"`
-	RefundAmount int64  `json:"refund_amount" binding:"required,min=1"`
+	RefundAmount int64  `json:"refundAmount" binding:"required,min=1"`
 	Reason       string `json:"reason" binding:"required"`
 }
 
@@ -156,14 +156,14 @@ func (h *OrderHandler) ApplyRefund(ctx *gin.Context, req ApplyRefundReq) (ginx.R
 		return ginx.HandleGRPCError(err, "申请退款失败", ginx.OrderErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
-		"refund_no": resp.GetRefundNo(),
+		"refundNo": resp.GetRefundNo(),
 	}}, nil
 }
 
 type ListRefundsReq struct {
 	Status   int32 `form:"status"`
 	Page     int32 `form:"page" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=1,max=100"`
+	PageSize int32 `form:"pageSize" binding:"required,min=1,max=100"`
 }
 
 func (h *OrderHandler) ListRefundOrders(ctx *gin.Context, req ListRefundsReq) (ginx.Result, error) {
@@ -180,7 +180,7 @@ func (h *OrderHandler) ListRefundOrders(ctx *gin.Context, req ListRefundsReq) (g
 		return ginx.HandleGRPCError(err, "查询退款列表失败", ginx.OrderErrMappings...)
 	}
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
-		"refund_orders": resp.GetRefundOrders(),
+		"refundOrders": resp.GetRefundOrders(),
 		"total":         resp.GetTotal(),
 	}}, nil
 }

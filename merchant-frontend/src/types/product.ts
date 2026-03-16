@@ -1,27 +1,27 @@
 export interface Product {
   id: number
-  category_id: number
-  brand_id: number
+  categoryId: number
+  brandId: number
   name: string
   subtitle: string
-  main_image: string
+  mainImage: string
   images: string[]
   description: string
   status: number
   skus: ProductSKU[]
   specs: ProductSpec[]
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface ProductSKU {
   id: number
-  sku_code: string
+  skuCode: string
   price: number
-  original_price: number
-  cost_price: number
-  bar_code: string
-  spec_values: string
+  originalPrice: number
+  costPrice: number
+  barCode: string
+  specValues: string
   status: number
 }
 
@@ -31,11 +31,11 @@ export interface ProductSpec {
 }
 
 export interface CreateProductReq {
-  category_id: number
-  brand_id: number
+  categoryId: number
+  brandId: number
   name: string
   subtitle: string
-  main_image: string
+  mainImage: string
   images: string[]
   description: string
   status: number
@@ -44,12 +44,12 @@ export interface CreateProductReq {
 }
 
 export interface CreateSKUReq {
-  sku_code: string
+  skuCode: string
   price: number
-  original_price: number
-  cost_price: number
-  bar_code: string
-  spec_values: string
+  originalPrice: number
+  costPrice: number
+  barCode: string
+  specValues: string
   status: number
 }
 
@@ -57,7 +57,7 @@ export type UpdateProductReq = CreateProductReq
 
 export interface Category {
   id: number
-  parent_id: number
+  parentId: number
   name: string
   level: number
   sort: number
@@ -67,7 +67,7 @@ export interface Category {
 }
 
 export interface CreateCategoryReq {
-  parent_id: number
+  parentId: number
   name: string
   level: number
   sort: number
