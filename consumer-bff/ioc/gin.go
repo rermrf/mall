@@ -25,6 +25,7 @@ func InitGinServer(
 	marketingHandler *handler.MarketingHandler,
 	logisticsHandler *handler.LogisticsHandler,
 	notificationHandler *handler.NotificationHandler,
+	productHandler *handler.ProductHandler,
 	tenantClient tenantv1.TenantServiceClient,
 	redisClient redis.Cmdable,
 	l logger.Logger,
@@ -54,6 +55,8 @@ func InitGinServer(
 		// 营销（公开）
 		pub.GET("/coupons", marketingHandler.ListAvailableCoupons)
 		pub.GET("/seckill", marketingHandler.ListSeckillActivities)
+		// 商品详情（公开）
+		pub.GET("/products/:id", productHandler.GetProduct)
 	}
 
 	auth := engine.Group("/api/v1")

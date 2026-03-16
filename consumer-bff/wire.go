@@ -37,6 +37,7 @@ var handlerSet = wire.NewSet(
 	handler.NewMarketingHandler,
 	handler.NewLogisticsHandler,
 	handler.NewNotificationHandler,
+	handler.NewProductHandler,
 	ioc.InitGinServer,
 )
 

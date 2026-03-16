@@ -40,7 +40,8 @@ func InitApp() *App {
 	logisticsHandler := handler.NewLogisticsHandler(logisticsServiceClient, orderServiceClient, logger)
 	notificationServiceClient := ioc.InitNotificationClient(client)
 	notificationHandler := handler.NewNotificationHandler(notificationServiceClient, logger)
-	engine := ioc.InitGinServer(jwtHandler, userHandler, tenantHandler, inventoryHandler, orderHandler, paymentHandler, cartHandler, searchHandler, marketingHandler, logisticsHandler, notificationHandler, tenantServiceClient, cmdable, logger)
+	productHandler := handler.NewProductHandler(productServiceClient, logger)
+	engine := ioc.InitGinServer(jwtHandler, userHandler, tenantHandler, inventoryHandler, orderHandler, paymentHandler, cartHandler, searchHandler, marketingHandler, logisticsHandler, notificationHandler, productHandler, tenantServiceClient, cmdable, logger)
 	app := &App{
 		Server: engine,
 	}
@@ -51,4 +52,4 @@ func InitApp() *App {
 
 var thirdPartySet = wire.NewSet(ioc.InitEtcdClient, ioc.InitLogger, ioc.InitRedis, ioc.InitUserClient, ioc.InitTenantClient, ioc.InitInventoryClient, ioc.InitOrderClient, ioc.InitPaymentClient, ioc.InitCartClient, ioc.InitProductClient, ioc.InitSearchClient, ioc.InitMarketingClient, ioc.InitLogisticsClient, ioc.InitNotificationClient)
 
-var handlerSet = wire.NewSet(ioc.InitJWTHandler, handler.NewUserHandler, handler.NewTenantHandler, handler.NewInventoryHandler, handler.NewOrderHandler, handler.NewPaymentHandler, handler.NewCartHandler, handler.NewSearchHandler, handler.NewMarketingHandler, handler.NewLogisticsHandler, handler.NewNotificationHandler, ioc.InitGinServer)
+var handlerSet = wire.NewSet(ioc.InitJWTHandler, handler.NewUserHandler, handler.NewTenantHandler, handler.NewInventoryHandler, handler.NewOrderHandler, handler.NewPaymentHandler, handler.NewCartHandler, handler.NewSearchHandler, handler.NewMarketingHandler, handler.NewLogisticsHandler, handler.NewNotificationHandler, handler.NewProductHandler, ioc.InitGinServer)
