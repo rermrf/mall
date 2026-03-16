@@ -102,6 +102,10 @@ func (s *userService) Signup(ctx context.Context, u domain.User) (domain.User, e
 func (s *userService) Login(ctx context.Context, tenantId int64, phone, password string) (domain.User, error) {
 	u, err := s.repo.FindByTenantAndPhone(ctx, tenantId, phone)
 	if err != nil {
+		s.l.Debug("login failed: user not found",
+			logger.Int64("tenant_id", tenantId),
+			logger.String("phone", phone),
+			logger.Error(err))
 		return domain.User{}, ErrInvalidCredentials
 	}
 	if u.Status == domain.UserStatusFrozen {
@@ -109,6 +113,10 @@ func (s *userService) Login(ctx context.Context, tenantId int64, phone, password
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
 	if err != nil {
+		s.l.Debug("login failed: password mismatch",
+			logger.Int64("uid", u.ID),
+			logger.Int64("tenant_id", tenantId),
+			logger.String("phone", phone))
 		return domain.User{}, ErrInvalidCredentials
 	}
 	return u, nil
