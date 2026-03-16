@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { NavBar, Button, TextArea, Toast, Popup } from 'antd-mobile'
 import { useCartStore } from '@/stores/cart'
 import { listAddresses, type Address } from '@/api/user'
@@ -10,9 +10,31 @@ import styles from './confirm.module.css'
 
 export default function OrderConfirm() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const locationState = location.state as {
+    directBuy?: boolean
+    product?: { skuId: number; id: number; name: string; mainImage: string; price: number }
+    quantity?: number
+  } | null
+
+  const directBuy = locationState?.directBuy
+  const directItems = directBuy && locationState?.product
+    ? [{
+        skuId: locationState.product.skuId,
+        productId: locationState.product.id,
+        productName: locationState.product.name,
+        productImage: locationState.product.mainImage,
+        price: locationState.product.price,
+        quantity: locationState.quantity || 1,
+        selected: true,
+      }]
+    : null
+
   const selectedItems = useCartStore((s) => s.selectedItems())
-  const totalAmount = useCartStore((s) => s.totalAmount())
   const fetchCart = useCartStore((s) => s.fetchCart)
+
+  const orderItems = directItems || selectedItems
+  const orderTotal = orderItems.reduce((sum: number, i: any) => sum + i.price * i.quantity, 0)
 
   const [addresses, setAddresses] = useState<Address[]>([])
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null)
@@ -23,7 +45,7 @@ export default function OrderConfirm() {
   const [showCouponPopup, setShowCouponPopup] = useState(false)
 
   useEffect(() => {
-    if (selectedItems.length === 0) {
+    if (!directBuy && selectedItems.length === 0) {
       navigate('/cart', { replace: true })
       return
     }
@@ -35,12 +57,12 @@ export default function OrderConfirm() {
     listMyCoupons(1).then((list) => setCoupons(list || [])).catch(() => {})
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const usableCoupons = coupons.filter((c) => c.minSpend <= totalAmount)
+  const usableCoupons = coupons.filter((c) => c.minSpend <= orderTotal)
 
   const discountAmount = selectedCoupon
-    ? (selectedCoupon.type === 1 ? selectedCoupon.value : Math.round(totalAmount * (1 - selectedCoupon.value / 100)))
+    ? (selectedCoupon.type === 1 ? selectedCoupon.value : Math.round(orderTotal * (1 - selectedCoupon.value / 100)))
     : 0
-  const payAmount = Math.max(totalAmount - discountAmount, 0)
+  const payAmount = Math.max(orderTotal - discountAmount, 0)
 
   const handleSubmit = async () => {
     if (!selectedAddress) {
@@ -50,12 +72,12 @@ export default function OrderConfirm() {
     setLoading(true)
     try {
       const result = await createOrder({
-        items: selectedItems.map((i) => ({ skuId: i.skuId, quantity: i.quantity })),
+        items: orderItems.map((i: any) => ({ skuId: i.skuId, quantity: i.quantity })),
         addressId: selectedAddress.id,
         couponId: selectedCoupon?.couponId,
         remark,
       })
-      await fetchCart()
+      if (!directBuy) await fetchCart()
       navigate(`/payment/${result.orderNo}`, { replace: true, state: { payAmount: result.payAmount } })
     } catch (e: unknown) {
       Toast.show((e as Error).message || '下单失败')
@@ -83,13 +105,25 @@ export default function OrderConfirm() {
           </>
         ) : (
           <div className={styles.noAddress}>
-            {addresses.length === 0 ? '请先添加收货地址' : '请选择收货地址'}
+            {addresses.length === 0 ? (
+              <>
+                <span>请先添加收货地址</span>
+                <Button
+                  size="mini"
+                  color="primary"
+                  style={{ marginLeft: 8 }}
+                  onClick={() => navigate('/me/addresses/edit', { state: { from: 'order-confirm' } })}
+                >
+                  新增地址
+                </Button>
+              </>
+            ) : '请选择收货地址'}
           </div>
         )}
       </div>
 
       <div className={styles.itemsCard}>
-        {selectedItems.map((item) => (
+        {orderItems.map((item: any) => (
           <div key={item.skuId} className={styles.orderItem}>
             <img className={styles.orderItemImage} src={item.productImage || 'https://via.placeholder.com/60'} alt='' />
             <div className={styles.orderItemInfo}>
