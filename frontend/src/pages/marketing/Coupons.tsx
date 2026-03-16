@@ -48,10 +48,13 @@ export default function CouponsPage() {
     try {
       await receiveCoupon(id)
       Toast.show('领取成功')
-      setAvailable((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, remaining: c.remaining - 1 } : c))
-      )
-      listMyCoupons().then((v) => setMine(v ?? [])).catch(() => {})
+      // Refresh both lists
+      const [newAvailable, newMine] = await Promise.all([
+        listAvailableCoupons(),
+        listMyCoupons(),
+      ])
+      setAvailable(newAvailable ?? [])
+      setMine(newMine ?? [])
     } catch (e: unknown) {
       Toast.show((e as Error).message || '领取失败')
     }
