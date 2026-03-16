@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { NavBar, Toast, SpinLoading } from 'antd-mobile'
-import { getRefund, type RefundOrder } from '@/api/order'
+import { NavBar, Toast, SpinLoading, Button, Dialog } from 'antd-mobile'
+import { getRefund, cancelRefund, type RefundOrder } from '@/api/order'
 import Price from '@/components/Price'
 import styles from './refundDetail.module.css'
 
@@ -117,6 +117,31 @@ export default function RefundDetailPage() {
           ))}
         </div>
       </div>
+
+      {refund.status === 1 && (
+        <div className={styles.footer}>
+          <Button
+            color="danger"
+            fill="outline"
+            onClick={() => {
+              Dialog.confirm({
+                content: '确定取消退款申请？',
+                onConfirm: async () => {
+                  try {
+                    await cancelRefund(refund.refundNo)
+                    Toast.show('已取消退款')
+                    navigate(-1)
+                  } catch (e: unknown) {
+                    Toast.show((e as Error).message || '取消失败')
+                  }
+                },
+              })
+            }}
+          >
+            取消退款
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

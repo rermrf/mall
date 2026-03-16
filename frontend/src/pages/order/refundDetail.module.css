@@ -129,3 +129,15 @@
   justify-content: center;
   padding: 40vh 0;
 }
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  background: #fff;
+  border-top: 1px solid var(--adm-border-color);
+  display: flex;
+  gap: 12px;
+}

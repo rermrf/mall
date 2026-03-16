@@ -98,3 +98,7 @@ export function listRefunds(params: { page: number; pageSize: number }) {
 export function getRefund(refundNo: string) {
   return request<RefundOrder>({ method: 'GET', url: `/refunds/${refundNo}` })
 }
+
+export function cancelRefund(refundNo: string) {
+  return request<void>({ method: 'POST', url: `/refunds/${refundNo}/cancel` })
+}
