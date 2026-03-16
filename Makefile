@@ -43,3 +43,34 @@ seed:
 # 清空所有表 + 完整测试数据
 seed-reset:
 	go run ./script/seed/ -reset
+
+# ==================== Local Dev (go run) ====================
+
+SERVICES := user tenant product inventory order payment cart search \
+            marketing logistics notification consumer-bff merchant-bff admin-bff
+
+.PHONY: dev-run-all dev-stop-all dev-status dev-run-logs $(addprefix dev-run-,$(SERVICES)) $(addprefix dev-stop-,$(SERVICES))
+
+# 启动全部后端服务 (go run, 连接远程基础设施)
+dev-run-all:
+	@script/dev.sh start
+
+# 停止全部后端服务
+dev-stop-all:
+	@script/dev.sh stop
+
+# 查看服务状态
+dev-status:
+	@script/dev.sh status
+
+# 查看全部日志
+dev-run-logs:
+	@script/dev.sh logs
+
+# 单独启动某个服务: make dev-run-order, make dev-run-consumer-bff, ...
+$(addprefix dev-run-,$(SERVICES)):
+	@script/dev.sh start $(subst dev-run-,,$@)
+
+# 单独停止某个服务: make dev-stop-order, make dev-stop-consumer-bff, ...
+$(addprefix dev-stop-,$(SERVICES)):
+	@script/dev.sh stop $(subst dev-stop-,,$@)

@@ -66,5 +66,6 @@ logs/
 # ====================
 tmp/
 *.tmp
+.dev/
 
 dev.yaml
