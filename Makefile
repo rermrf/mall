@@ -36,6 +36,10 @@ dev-logs:
 dev-build:
 	docker compose --profile consumer build
 
-# 单独运行 seed
+# 种子数据 (仅登录账号)
 seed:
 	go run ./script/seed/
+
+# 清空所有表 + 完整测试数据
+seed-reset:
+	go run ./script/seed/ -reset
