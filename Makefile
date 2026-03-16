@@ -53,24 +53,24 @@ SERVICES := user tenant product inventory order payment cart search \
 
 # 启动全部后端服务 (go run, 连接远程基础设施)
 dev-run-all:
-	@script/dev.sh start
+	@go run ./script/dev start
 
 # 停止全部后端服务
 dev-stop-all:
-	@script/dev.sh stop
+	@go run ./script/dev stop
 
 # 查看服务状态
 dev-status:
-	@script/dev.sh status
+	@go run ./script/dev status
 
 # 查看全部日志
 dev-run-logs:
-	@script/dev.sh logs
+	@go run ./script/dev logs
 
 # 单独启动某个服务: make dev-run-order, make dev-run-consumer-bff, ...
 $(addprefix dev-run-,$(SERVICES)):
-	@script/dev.sh start $(subst dev-run-,,$@)
+	@go run ./script/dev start $(subst dev-run-,,$@)
 
 # 单独停止某个服务: make dev-stop-order, make dev-stop-consumer-bff, ...
 $(addprefix dev-stop-,$(SERVICES)):
-	@script/dev.sh stop $(subst dev-stop-,,$@)
+	@go run ./script/dev stop $(subst dev-stop-,,$@)
