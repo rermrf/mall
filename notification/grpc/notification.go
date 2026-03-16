@@ -74,6 +74,13 @@ func (s *NotificationGRPCServer) GetUnreadCount(ctx context.Context, req *notifi
 	return &notificationv1.GetUnreadCountResponse{Count: count}, nil
 }
 
+func (s *NotificationGRPCServer) DeleteNotification(ctx context.Context, req *notificationv1.DeleteNotificationRequest) (*notificationv1.DeleteNotificationResponse, error) {
+	if err := s.svc.DeleteNotification(ctx, req.GetId(), req.GetUserId()); err != nil {
+		return nil, err
+	}
+	return &notificationv1.DeleteNotificationResponse{}, nil
+}
+
 func (s *NotificationGRPCServer) CreateTemplate(ctx context.Context, req *notificationv1.CreateTemplateRequest) (*notificationv1.CreateTemplateResponse, error) {
 	t := req.GetTemplate()
 	tmpl, err := s.svc.CreateTemplate(ctx, domain.NotificationTemplate{

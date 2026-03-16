@@ -94,4 +94,5 @@ const (
 	RefundStatusRefunding RefundStatus = 3 // 退款中
 	RefundStatusRefunded  RefundStatus = 4 // 已退款
 	RefundStatusRejected  RefundStatus = 5 // 已拒绝
+	RefundStatusCancelled RefundStatus = 6 // 已取消
 )

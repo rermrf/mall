@@ -1216,6 +1216,94 @@ func (*DeleteTemplateResponse) Descriptor() ([]byte, []int) {
 	return file_notification_v1_notification_proto_rawDescGZIP(), []int{21}
 }
 
+type DeleteNotificationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteNotificationRequest) Reset() {
+	*x = DeleteNotificationRequest{}
+	mi := &file_notification_v1_notification_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteNotificationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteNotificationRequest) ProtoMessage() {}
+
+func (x *DeleteNotificationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_notification_v1_notification_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteNotificationRequest.ProtoReflect.Descriptor instead.
+func (*DeleteNotificationRequest) Descriptor() ([]byte, []int) {
+	return file_notification_v1_notification_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *DeleteNotificationRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *DeleteNotificationRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type DeleteNotificationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteNotificationResponse) Reset() {
+	*x = DeleteNotificationResponse{}
+	mi := &file_notification_v1_notification_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteNotificationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteNotificationResponse) ProtoMessage() {}
+
+func (x *DeleteNotificationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_notification_v1_notification_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteNotificationResponse.ProtoReflect.Descriptor instead.
+func (*DeleteNotificationResponse) Descriptor() ([]byte, []int) {
+	return file_notification_v1_notification_proto_rawDescGZIP(), []int{23}
+}
+
 var File_notification_v1_notification_proto protoreflect.FileDescriptor
 
 const file_notification_v1_notification_proto_rawDesc = "" +
@@ -1300,7 +1388,11 @@ const file_notification_v1_notification_proto_rawDesc = "" +
 	"\x15DeleteTemplateRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"\x18\n" +
-	"\x16DeleteTemplateResponse2\xf9\a\n" +
+	"\x16DeleteTemplateResponse\"D\n" +
+	"\x19DeleteNotificationRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"\x1c\n" +
+	"\x1aDeleteNotificationResponse2\xe8\b\n" +
 	"\x13NotificationService\x12g\n" +
 	"\x10SendNotification\x12(.notification.v1.SendNotificationRequest\x1a).notification.v1.SendNotificationResponse\x12v\n" +
 	"\x15BatchSendNotification\x12-.notification.v1.BatchSendNotificationRequest\x1a..notification.v1.BatchSendNotificationResponse\x12j\n" +
@@ -1311,7 +1403,8 @@ const file_notification_v1_notification_proto_rawDesc = "" +
 	"\x0eCreateTemplate\x12&.notification.v1.CreateTemplateRequest\x1a'.notification.v1.CreateTemplateResponse\x12a\n" +
 	"\x0eUpdateTemplate\x12&.notification.v1.UpdateTemplateRequest\x1a'.notification.v1.UpdateTemplateResponse\x12a\n" +
 	"\x0eDeleteTemplate\x12&.notification.v1.DeleteTemplateRequest\x1a'.notification.v1.DeleteTemplateResponse\x12^\n" +
-	"\rListTemplates\x12%.notification.v1.ListTemplatesRequest\x1a&.notification.v1.ListTemplatesResponseB\xca\x01\n" +
+	"\rListTemplates\x12%.notification.v1.ListTemplatesRequest\x1a&.notification.v1.ListTemplatesResponse\x12m\n" +
+	"\x12DeleteNotification\x12*.notification.v1.DeleteNotificationRequest\x1a+.notification.v1.DeleteNotificationResponseB\xca\x01\n" +
 	"\x13com.notification.v1B\x11NotificationProtoP\x01ZCgithub.com/rermrf/mall/api/proto/gen/notification/v1;notificationv1\xa2\x02\x03NXX\xaa\x02\x0fNotification.V1\xca\x02\x0fNotification\\V1\xe2\x02\x1bNotification\\V1\\GPBMetadata\xea\x02\x10Notification::V1b\x06proto3"
 
 var (
@@ -1326,7 +1419,7 @@ func file_notification_v1_notification_proto_rawDescGZIP() []byte {
 	return file_notification_v1_notification_proto_rawDescData
 }
 
-var file_notification_v1_notification_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_notification_v1_notification_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_notification_v1_notification_proto_goTypes = []any{
 	(*NotificationTemplate)(nil),          // 0: notification.v1.NotificationTemplate
 	(*Notification)(nil),                  // 1: notification.v1.Notification
@@ -1350,15 +1443,17 @@ var file_notification_v1_notification_proto_goTypes = []any{
 	(*ListTemplatesResponse)(nil),         // 19: notification.v1.ListTemplatesResponse
 	(*DeleteTemplateRequest)(nil),         // 20: notification.v1.DeleteTemplateRequest
 	(*DeleteTemplateResponse)(nil),        // 21: notification.v1.DeleteTemplateResponse
-	nil,                                   // 22: notification.v1.SendNotificationRequest.ParamsEntry
-	nil,                                   // 23: notification.v1.BatchSendNotificationRequest.ParamsEntry
-	(*timestamppb.Timestamp)(nil),         // 24: google.protobuf.Timestamp
+	(*DeleteNotificationRequest)(nil),     // 22: notification.v1.DeleteNotificationRequest
+	(*DeleteNotificationResponse)(nil),    // 23: notification.v1.DeleteNotificationResponse
+	nil,                                   // 24: notification.v1.SendNotificationRequest.ParamsEntry
+	nil,                                   // 25: notification.v1.BatchSendNotificationRequest.ParamsEntry
+	(*timestamppb.Timestamp)(nil),         // 26: google.protobuf.Timestamp
 }
 var file_notification_v1_notification_proto_depIdxs = []int32{
-	24, // 0: notification.v1.NotificationTemplate.ctime:type_name -> google.protobuf.Timestamp
-	24, // 1: notification.v1.Notification.ctime:type_name -> google.protobuf.Timestamp
-	22, // 2: notification.v1.SendNotificationRequest.params:type_name -> notification.v1.SendNotificationRequest.ParamsEntry
-	23, // 3: notification.v1.BatchSendNotificationRequest.params:type_name -> notification.v1.BatchSendNotificationRequest.ParamsEntry
+	26, // 0: notification.v1.NotificationTemplate.ctime:type_name -> google.protobuf.Timestamp
+	26, // 1: notification.v1.Notification.ctime:type_name -> google.protobuf.Timestamp
+	24, // 2: notification.v1.SendNotificationRequest.params:type_name -> notification.v1.SendNotificationRequest.ParamsEntry
+	25, // 3: notification.v1.BatchSendNotificationRequest.params:type_name -> notification.v1.BatchSendNotificationRequest.ParamsEntry
 	1,  // 4: notification.v1.ListNotificationsResponse.notifications:type_name -> notification.v1.Notification
 	0,  // 5: notification.v1.CreateTemplateRequest.template:type_name -> notification.v1.NotificationTemplate
 	0,  // 6: notification.v1.UpdateTemplateRequest.template:type_name -> notification.v1.NotificationTemplate
@@ -1373,18 +1468,20 @@ var file_notification_v1_notification_proto_depIdxs = []int32{
 	16, // 15: notification.v1.NotificationService.UpdateTemplate:input_type -> notification.v1.UpdateTemplateRequest
 	20, // 16: notification.v1.NotificationService.DeleteTemplate:input_type -> notification.v1.DeleteTemplateRequest
 	18, // 17: notification.v1.NotificationService.ListTemplates:input_type -> notification.v1.ListTemplatesRequest
-	3,  // 18: notification.v1.NotificationService.SendNotification:output_type -> notification.v1.SendNotificationResponse
-	5,  // 19: notification.v1.NotificationService.BatchSendNotification:output_type -> notification.v1.BatchSendNotificationResponse
-	7,  // 20: notification.v1.NotificationService.ListNotifications:output_type -> notification.v1.ListNotificationsResponse
-	9,  // 21: notification.v1.NotificationService.MarkRead:output_type -> notification.v1.MarkReadResponse
-	11, // 22: notification.v1.NotificationService.MarkAllRead:output_type -> notification.v1.MarkAllReadResponse
-	13, // 23: notification.v1.NotificationService.GetUnreadCount:output_type -> notification.v1.GetUnreadCountResponse
-	15, // 24: notification.v1.NotificationService.CreateTemplate:output_type -> notification.v1.CreateTemplateResponse
-	17, // 25: notification.v1.NotificationService.UpdateTemplate:output_type -> notification.v1.UpdateTemplateResponse
-	21, // 26: notification.v1.NotificationService.DeleteTemplate:output_type -> notification.v1.DeleteTemplateResponse
-	19, // 27: notification.v1.NotificationService.ListTemplates:output_type -> notification.v1.ListTemplatesResponse
-	18, // [18:28] is the sub-list for method output_type
-	8,  // [8:18] is the sub-list for method input_type
+	22, // 18: notification.v1.NotificationService.DeleteNotification:input_type -> notification.v1.DeleteNotificationRequest
+	3,  // 19: notification.v1.NotificationService.SendNotification:output_type -> notification.v1.SendNotificationResponse
+	5,  // 20: notification.v1.NotificationService.BatchSendNotification:output_type -> notification.v1.BatchSendNotificationResponse
+	7,  // 21: notification.v1.NotificationService.ListNotifications:output_type -> notification.v1.ListNotificationsResponse
+	9,  // 22: notification.v1.NotificationService.MarkRead:output_type -> notification.v1.MarkReadResponse
+	11, // 23: notification.v1.NotificationService.MarkAllRead:output_type -> notification.v1.MarkAllReadResponse
+	13, // 24: notification.v1.NotificationService.GetUnreadCount:output_type -> notification.v1.GetUnreadCountResponse
+	15, // 25: notification.v1.NotificationService.CreateTemplate:output_type -> notification.v1.CreateTemplateResponse
+	17, // 26: notification.v1.NotificationService.UpdateTemplate:output_type -> notification.v1.UpdateTemplateResponse
+	21, // 27: notification.v1.NotificationService.DeleteTemplate:output_type -> notification.v1.DeleteTemplateResponse
+	19, // 28: notification.v1.NotificationService.ListTemplates:output_type -> notification.v1.ListTemplatesResponse
+	23, // 29: notification.v1.NotificationService.DeleteNotification:output_type -> notification.v1.DeleteNotificationResponse
+	19, // [19:30] is the sub-list for method output_type
+	8,  // [8:19] is the sub-list for method input_type
 	8,  // [8:8] is the sub-list for extension type_name
 	8,  // [8:8] is the sub-list for extension extendee
 	0,  // [0:8] is the sub-list for field type_name
@@ -1401,7 +1498,7 @@ func file_notification_v1_notification_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_notification_v1_notification_proto_rawDesc), len(file_notification_v1_notification_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   24,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

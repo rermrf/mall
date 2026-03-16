@@ -1708,6 +1708,94 @@ func (x *ListRefundOrdersResponse) GetTotal() int64 {
 	return 0
 }
 
+type CancelRefundRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RefundNo      string                 `protobuf:"bytes,1,opt,name=refund_no,json=refundNo,proto3" json:"refund_no,omitempty"`
+	BuyerId       int64                  `protobuf:"varint,2,opt,name=buyer_id,json=buyerId,proto3" json:"buyer_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelRefundRequest) Reset() {
+	*x = CancelRefundRequest{}
+	mi := &file_order_v1_order_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelRefundRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelRefundRequest) ProtoMessage() {}
+
+func (x *CancelRefundRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_order_v1_order_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelRefundRequest.ProtoReflect.Descriptor instead.
+func (*CancelRefundRequest) Descriptor() ([]byte, []int) {
+	return file_order_v1_order_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *CancelRefundRequest) GetRefundNo() string {
+	if x != nil {
+		return x.RefundNo
+	}
+	return ""
+}
+
+func (x *CancelRefundRequest) GetBuyerId() int64 {
+	if x != nil {
+		return x.BuyerId
+	}
+	return 0
+}
+
+type CancelRefundResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelRefundResponse) Reset() {
+	*x = CancelRefundResponse{}
+	mi := &file_order_v1_order_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelRefundResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelRefundResponse) ProtoMessage() {}
+
+func (x *CancelRefundResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_order_v1_order_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelRefundResponse.ProtoReflect.Descriptor instead.
+func (*CancelRefundResponse) Descriptor() ([]byte, []int) {
+	return file_order_v1_order_proto_rawDescGZIP(), []int{26}
+}
+
 var File_order_v1_order_proto protoreflect.FileDescriptor
 
 const file_order_v1_order_proto_rawDesc = "" +
@@ -1847,7 +1935,11 @@ const file_order_v1_order_proto_rawDesc = "" +
 	"\tpage_size\x18\x05 \x01(\x05R\bpageSize\"l\n" +
 	"\x18ListRefundOrdersResponse\x12:\n" +
 	"\rrefund_orders\x18\x01 \x03(\v2\x15.order.v1.RefundOrderR\frefundOrders\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x03R\x05total2\xb0\x06\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"M\n" +
+	"\x13CancelRefundRequest\x12\x1b\n" +
+	"\trefund_no\x18\x01 \x01(\tR\brefundNo\x12\x19\n" +
+	"\bbuyer_id\x18\x02 \x01(\x03R\abuyerId\"\x16\n" +
+	"\x14CancelRefundResponse2\xff\x06\n" +
 	"\fOrderService\x12J\n" +
 	"\vCreateOrder\x12\x1c.order.v1.CreateOrderRequest\x1a\x1d.order.v1.CreateOrderResponse\x12A\n" +
 	"\bGetOrder\x12\x19.order.v1.GetOrderRequest\x1a\x1a.order.v1.GetOrderResponse\x12G\n" +
@@ -1859,7 +1951,8 @@ const file_order_v1_order_proto_rawDesc = "" +
 	"\vApplyRefund\x12\x1c.order.v1.ApplyRefundRequest\x1a\x1d.order.v1.ApplyRefundResponse\x12M\n" +
 	"\fHandleRefund\x12\x1d.order.v1.HandleRefundRequest\x1a\x1e.order.v1.HandleRefundResponse\x12S\n" +
 	"\x0eGetRefundOrder\x12\x1f.order.v1.GetRefundOrderRequest\x1a .order.v1.GetRefundOrderResponse\x12Y\n" +
-	"\x10ListRefundOrders\x12!.order.v1.ListRefundOrdersRequest\x1a\".order.v1.ListRefundOrdersResponseB\x92\x01\n" +
+	"\x10ListRefundOrders\x12!.order.v1.ListRefundOrdersRequest\x1a\".order.v1.ListRefundOrdersResponse\x12M\n" +
+	"\fCancelRefund\x12\x1d.order.v1.CancelRefundRequest\x1a\x1e.order.v1.CancelRefundResponseB\x92\x01\n" +
 	"\fcom.order.v1B\n" +
 	"OrderProtoP\x01Z5github.com/rermrf/mall/api/proto/gen/order/v1;orderv1\xa2\x02\x03OXX\xaa\x02\bOrder.V1\xca\x02\bOrder\\V1\xe2\x02\x14Order\\V1\\GPBMetadata\xea\x02\tOrder::V1b\x06proto3"
 
@@ -1875,7 +1968,7 @@ func file_order_v1_order_proto_rawDescGZIP() []byte {
 	return file_order_v1_order_proto_rawDescData
 }
 
-var file_order_v1_order_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_order_v1_order_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_order_v1_order_proto_goTypes = []any{
 	(*Order)(nil),                     // 0: order.v1.Order
 	(*OrderItem)(nil),                 // 1: order.v1.OrderItem
@@ -1902,14 +1995,16 @@ var file_order_v1_order_proto_goTypes = []any{
 	(*GetRefundOrderResponse)(nil),    // 22: order.v1.GetRefundOrderResponse
 	(*ListRefundOrdersRequest)(nil),   // 23: order.v1.ListRefundOrdersRequest
 	(*ListRefundOrdersResponse)(nil),  // 24: order.v1.ListRefundOrdersResponse
-	(*timestamppb.Timestamp)(nil),     // 25: google.protobuf.Timestamp
+	(*CancelRefundRequest)(nil),       // 25: order.v1.CancelRefundRequest
+	(*CancelRefundResponse)(nil),      // 26: order.v1.CancelRefundResponse
+	(*timestamppb.Timestamp)(nil),     // 27: google.protobuf.Timestamp
 }
 var file_order_v1_order_proto_depIdxs = []int32{
 	1,  // 0: order.v1.Order.items:type_name -> order.v1.OrderItem
-	25, // 1: order.v1.Order.ctime:type_name -> google.protobuf.Timestamp
-	25, // 2: order.v1.Order.utime:type_name -> google.protobuf.Timestamp
-	25, // 3: order.v1.RefundOrder.ctime:type_name -> google.protobuf.Timestamp
-	25, // 4: order.v1.RefundOrder.utime:type_name -> google.protobuf.Timestamp
+	27, // 1: order.v1.Order.ctime:type_name -> google.protobuf.Timestamp
+	27, // 2: order.v1.Order.utime:type_name -> google.protobuf.Timestamp
+	27, // 3: order.v1.RefundOrder.ctime:type_name -> google.protobuf.Timestamp
+	27, // 4: order.v1.RefundOrder.utime:type_name -> google.protobuf.Timestamp
 	4,  // 5: order.v1.CreateOrderRequest.items:type_name -> order.v1.CreateOrderItem
 	0,  // 6: order.v1.GetOrderResponse.order:type_name -> order.v1.Order
 	0,  // 7: order.v1.ListOrdersResponse.orders:type_name -> order.v1.Order
@@ -1925,18 +2020,20 @@ var file_order_v1_order_proto_depIdxs = []int32{
 	19, // 17: order.v1.OrderService.HandleRefund:input_type -> order.v1.HandleRefundRequest
 	21, // 18: order.v1.OrderService.GetRefundOrder:input_type -> order.v1.GetRefundOrderRequest
 	23, // 19: order.v1.OrderService.ListRefundOrders:input_type -> order.v1.ListRefundOrdersRequest
-	6,  // 20: order.v1.OrderService.CreateOrder:output_type -> order.v1.CreateOrderResponse
-	8,  // 21: order.v1.OrderService.GetOrder:output_type -> order.v1.GetOrderResponse
-	10, // 22: order.v1.OrderService.ListOrders:output_type -> order.v1.ListOrdersResponse
-	12, // 23: order.v1.OrderService.CancelOrder:output_type -> order.v1.CancelOrderResponse
-	14, // 24: order.v1.OrderService.ConfirmReceive:output_type -> order.v1.ConfirmReceiveResponse
-	16, // 25: order.v1.OrderService.UpdateOrderStatus:output_type -> order.v1.UpdateOrderStatusResponse
-	18, // 26: order.v1.OrderService.ApplyRefund:output_type -> order.v1.ApplyRefundResponse
-	20, // 27: order.v1.OrderService.HandleRefund:output_type -> order.v1.HandleRefundResponse
-	22, // 28: order.v1.OrderService.GetRefundOrder:output_type -> order.v1.GetRefundOrderResponse
-	24, // 29: order.v1.OrderService.ListRefundOrders:output_type -> order.v1.ListRefundOrdersResponse
-	20, // [20:30] is the sub-list for method output_type
-	10, // [10:20] is the sub-list for method input_type
+	25, // 20: order.v1.OrderService.CancelRefund:input_type -> order.v1.CancelRefundRequest
+	6,  // 21: order.v1.OrderService.CreateOrder:output_type -> order.v1.CreateOrderResponse
+	8,  // 22: order.v1.OrderService.GetOrder:output_type -> order.v1.GetOrderResponse
+	10, // 23: order.v1.OrderService.ListOrders:output_type -> order.v1.ListOrdersResponse
+	12, // 24: order.v1.OrderService.CancelOrder:output_type -> order.v1.CancelOrderResponse
+	14, // 25: order.v1.OrderService.ConfirmReceive:output_type -> order.v1.ConfirmReceiveResponse
+	16, // 26: order.v1.OrderService.UpdateOrderStatus:output_type -> order.v1.UpdateOrderStatusResponse
+	18, // 27: order.v1.OrderService.ApplyRefund:output_type -> order.v1.ApplyRefundResponse
+	20, // 28: order.v1.OrderService.HandleRefund:output_type -> order.v1.HandleRefundResponse
+	22, // 29: order.v1.OrderService.GetRefundOrder:output_type -> order.v1.GetRefundOrderResponse
+	24, // 30: order.v1.OrderService.ListRefundOrders:output_type -> order.v1.ListRefundOrdersResponse
+	26, // 31: order.v1.OrderService.CancelRefund:output_type -> order.v1.CancelRefundResponse
+	21, // [21:32] is the sub-list for method output_type
+	10, // [10:21] is the sub-list for method input_type
 	10, // [10:10] is the sub-list for extension type_name
 	10, // [10:10] is the sub-list for extension extendee
 	0,  // [0:10] is the sub-list for field type_name
@@ -1953,7 +2050,7 @@ func file_order_v1_order_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_order_v1_order_proto_rawDesc), len(file_order_v1_order_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   25,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

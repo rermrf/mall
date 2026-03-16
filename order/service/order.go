@@ -33,6 +33,7 @@ type OrderService interface {
 	HandleRefund(ctx context.Context, refundNo string, tenantId int64, approved bool, reason string) error
 	GetRefundOrder(ctx context.Context, refundNo string) (domain.RefundOrder, error)
 	ListRefundOrders(ctx context.Context, tenantId, buyerId int64, status, page, pageSize int32) ([]domain.RefundOrder, int64, error)
+	CancelRefund(ctx context.Context, refundNo string, buyerId int64) error
 	// 内部方法：消费者调用
 	HandleOrderPaid(ctx context.Context, evt events.OrderPaidEvent) error
 	HandleOrderCloseDelay(ctx context.Context, orderNo string) error
@@ -407,6 +408,20 @@ func (s *orderService) GetRefundOrder(ctx context.Context, refundNo string) (dom
 
 func (s *orderService) ListRefundOrders(ctx context.Context, tenantId, buyerId int64, status, page, pageSize int32) ([]domain.RefundOrder, int64, error) {
 	return s.repo.ListRefunds(ctx, tenantId, buyerId, status, page, pageSize)
+}
+
+func (s *orderService) CancelRefund(ctx context.Context, refundNo string, buyerId int64) error {
+	refund, err := s.repo.FindRefundByNo(ctx, refundNo)
+	if err != nil {
+		return err
+	}
+	if refund.BuyerID != buyerId {
+		return fmt.Errorf("无权取消此退款申请")
+	}
+	if refund.Status != domain.RefundStatusPending {
+		return fmt.Errorf("当前状态不允许取消退款")
+	}
+	return s.repo.UpdateRefundStatus(ctx, refundNo, domain.RefundStatusCancelled, nil)
 }
 
 // HandleOrderPaid 消费 order_paid 事件

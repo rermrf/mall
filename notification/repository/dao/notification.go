@@ -51,6 +51,7 @@ type NotificationDAO interface {
 	MarkRead(ctx context.Context, id, userId int64) error
 	MarkAllRead(ctx context.Context, userId int64) error
 	CountUnread(ctx context.Context, userId int64) (int64, error)
+	DeleteByIdAndUser(ctx context.Context, id, userId int64) error
 }
 
 // ==================== 实现 ====================
@@ -160,4 +161,8 @@ func (d *GORMNotificationDAO) CountUnread(ctx context.Context, userId int64) (in
 	var count int64
 	err := d.db.WithContext(ctx).Model(&Notification{}).Where("user_id = ? AND is_read = ?", userId, false).Count(&count).Error
 	return count, err
+}
+
+func (d *GORMNotificationDAO) DeleteByIdAndUser(ctx context.Context, id, userId int64) error {
+	return d.db.WithContext(ctx).Where("id = ? AND user_id = ?", id, userId).Delete(&Notification{}).Error
 }

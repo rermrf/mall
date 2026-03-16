@@ -82,6 +82,7 @@ func InitGinServer(
 		auth.POST("/orders/:orderNo/refund", ginx.WrapBody[handler.ApplyRefundReq](l, orderHandler.ApplyRefund))
 		auth.GET("/refunds", ginx.WrapQuery[handler.ListRefundsReq](l, orderHandler.ListRefundOrders))
 		auth.GET("/refunds/:refundNo", orderHandler.GetRefundOrder)
+		auth.POST("/refunds/:refundNo/cancel", orderHandler.CancelRefund)
 		// 支付
 		auth.POST("/payments", ginx.WrapBody[handler.CreatePaymentReq](l, paymentHandler.CreatePayment))
 		auth.GET("/payments/:paymentNo", paymentHandler.GetPayment)
@@ -107,6 +108,7 @@ func InitGinServer(
 		auth.GET("/notifications/unread-count", notificationHandler.GetUnreadCount)
 		auth.PUT("/notifications/:id/read", notificationHandler.MarkRead)
 		auth.PUT("/notifications/read-all", notificationHandler.MarkAllRead)
+		auth.DELETE("/notifications/:id", notificationHandler.DeleteNotification)
 	}
 
 	return engine

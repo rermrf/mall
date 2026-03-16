@@ -23,6 +23,7 @@ type NotificationRepository interface {
 	MarkRead(ctx context.Context, id, userId int64) error
 	MarkAllRead(ctx context.Context, userId int64) error
 	GetUnreadCount(ctx context.Context, userId int64) (int64, error)
+	DeleteNotification(ctx context.Context, id, userId int64) error
 }
 
 type notificationRepository struct {
@@ -152,6 +153,15 @@ func (r *notificationRepository) GetUnreadCount(ctx context.Context, userId int6
 	}
 	_ = r.cache.SetUnreadCount(ctx, userId, count)
 	return count, nil
+}
+
+func (r *notificationRepository) DeleteNotification(ctx context.Context, id, userId int64) error {
+	err := r.notificationDAO.DeleteByIdAndUser(ctx, id, userId)
+	if err != nil {
+		return err
+	}
+	_ = r.cache.DeleteUnreadCount(ctx, userId)
+	return nil
 }
 
 // ==================== 转换 ====================

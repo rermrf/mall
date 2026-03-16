@@ -126,6 +126,14 @@ func (s *OrderGRPCServer) ListRefundOrders(ctx context.Context, req *orderv1.Lis
 	return &orderv1.ListRefundOrdersResponse{RefundOrders: dtos, Total: total}, nil
 }
 
+func (s *OrderGRPCServer) CancelRefund(ctx context.Context, req *orderv1.CancelRefundRequest) (*orderv1.CancelRefundResponse, error) {
+	err := s.svc.CancelRefund(ctx, req.GetRefundNo(), req.GetBuyerId())
+	if err != nil {
+		return nil, err
+	}
+	return &orderv1.CancelRefundResponse{}, nil
+}
+
 func (s *OrderGRPCServer) toOrderDTO(o domain.Order) *orderv1.Order {
 	items := make([]*orderv1.OrderItem, 0, len(o.Items))
 	for _, item := range o.Items {

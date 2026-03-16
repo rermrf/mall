@@ -3052,3 +3052,211 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListRefundOrdersResponseValidationError{}
+
+// Validate checks the field values on CancelRefundRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CancelRefundRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CancelRefundRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CancelRefundRequestMultiError, or nil if none found.
+func (m *CancelRefundRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CancelRefundRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for RefundNo
+
+	// no validation rules for BuyerId
+
+	if len(errors) > 0 {
+		return CancelRefundRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CancelRefundRequestMultiError is an error wrapping multiple validation
+// errors returned by CancelRefundRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CancelRefundRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CancelRefundRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CancelRefundRequestMultiError) AllErrors() []error { return m }
+
+// CancelRefundRequestValidationError is the validation error returned by
+// CancelRefundRequest.Validate if the designated constraints aren't met.
+type CancelRefundRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CancelRefundRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CancelRefundRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CancelRefundRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CancelRefundRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CancelRefundRequestValidationError) ErrorName() string {
+	return "CancelRefundRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CancelRefundRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCancelRefundRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CancelRefundRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CancelRefundRequestValidationError{}
+
+// Validate checks the field values on CancelRefundResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CancelRefundResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CancelRefundResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CancelRefundResponseMultiError, or nil if none found.
+func (m *CancelRefundResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CancelRefundResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return CancelRefundResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CancelRefundResponseMultiError is an error wrapping multiple validation
+// errors returned by CancelRefundResponse.ValidateAll() if the designated
+// constraints aren't met.
+type CancelRefundResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CancelRefundResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CancelRefundResponseMultiError) AllErrors() []error { return m }
+
+// CancelRefundResponseValidationError is the validation error returned by
+// CancelRefundResponse.Validate if the designated constraints aren't met.
+type CancelRefundResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CancelRefundResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CancelRefundResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CancelRefundResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CancelRefundResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CancelRefundResponseValidationError) ErrorName() string {
+	return "CancelRefundResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CancelRefundResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCancelRefundResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CancelRefundResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CancelRefundResponseValidationError{}

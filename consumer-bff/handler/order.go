@@ -202,3 +202,19 @@ func (h *OrderHandler) GetRefundOrder(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetRefundOrder()})
 }
+
+func (h *OrderHandler) CancelRefund(ctx *gin.Context) {
+	refundNo := ctx.Param("refundNo")
+	uid, _ := ctx.Get("uid")
+	_, err := h.orderClient.CancelRefund(ctx.Request.Context(), &orderv1.CancelRefundRequest{
+		RefundNo: refundNo,
+		BuyerId:  uid.(int64),
+	})
+	if err != nil {
+		h.l.Error("取消退款失败", logger.Error(err))
+		result, _ := ginx.HandleRawError(err, ginx.OrderErrMappings...)
+		ctx.JSON(http.StatusOK, result)
+		return
+	}
+	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})
+}

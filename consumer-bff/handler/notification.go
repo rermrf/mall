@@ -92,3 +92,20 @@ func (h *NotificationHandler) MarkAllRead(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})
 }
+
+func (h *NotificationHandler) DeleteNotification(ctx *gin.Context) {
+	uid, _ := ctx.Get("uid")
+	idStr := ctx.Param("id")
+	id, _ := strconv.ParseInt(idStr, 10, 64)
+	_, err := h.notificationClient.DeleteNotification(ctx.Request.Context(), &notificationv1.DeleteNotificationRequest{
+		Id:     id,
+		UserId: uid.(int64),
+	})
+	if err != nil {
+		h.l.Error("删除通知失败", logger.Error(err))
+		result, _ := ginx.HandleRawError(err)
+		ctx.JSON(http.StatusOK, result)
+		return
+	}
+	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success"})
+}

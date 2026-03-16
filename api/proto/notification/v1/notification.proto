@@ -53,6 +53,9 @@ service NotificationService {
   rpc UpdateTemplate(UpdateTemplateRequest) returns (UpdateTemplateResponse);
   rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse);
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
+
+  // 删除通知
+  rpc DeleteNotification(DeleteNotificationRequest) returns (DeleteNotificationResponse);
 }
 
 // ==================== Requests & Responses ====================
@@ -137,3 +140,9 @@ message DeleteTemplateRequest {
   int64 tenant_id = 2; // 0=平台模板
 }
 message DeleteTemplateResponse {}
+
+message DeleteNotificationRequest {
+  int64 id = 1;
+  int64 user_id = 2;
+}
+message DeleteNotificationResponse {}

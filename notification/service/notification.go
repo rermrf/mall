@@ -24,6 +24,7 @@ type NotificationService interface {
 	MarkRead(ctx context.Context, id, userId int64) error
 	MarkAllRead(ctx context.Context, userId int64) error
 	GetUnreadCount(ctx context.Context, userId int64) (int64, error)
+	DeleteNotification(ctx context.Context, id, userId int64) error
 	CreateTemplate(ctx context.Context, t domain.NotificationTemplate) (domain.NotificationTemplate, error)
 	UpdateTemplate(ctx context.Context, t domain.NotificationTemplate) error
 	DeleteTemplate(ctx context.Context, id, tenantId int64) error
@@ -121,6 +122,10 @@ func (s *notificationService) MarkAllRead(ctx context.Context, userId int64) err
 
 func (s *notificationService) GetUnreadCount(ctx context.Context, userId int64) (int64, error) {
 	return s.repo.GetUnreadCount(ctx, userId)
+}
+
+func (s *notificationService) DeleteNotification(ctx context.Context, id, userId int64) error {
+	return s.repo.DeleteNotification(ctx, id, userId)
 }
 
 func (s *notificationService) CreateTemplate(ctx context.Context, t domain.NotificationTemplate) (domain.NotificationTemplate, error) {
