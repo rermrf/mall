@@ -50,22 +50,42 @@ export const useCartStore = create<CartState>((set, get) => ({
   },
 
   toggleSelect: async (skuId, selected) => {
-    await updateCartItem(skuId, { selected, updateSelected: true })
+    const prev = get().items
     set((s) => ({
       items: s.items.map((i) => (i.skuId === skuId ? { ...i, selected } : i)),
     }))
+    try {
+      await updateCartItem(skuId, { selected, updateSelected: true })
+    } catch (e) {
+      set({ items: prev })
+      throw e
+    }
   },
 
   updateQuantity: async (skuId, quantity) => {
-    await updateCartItem(skuId, { quantity })
+    const prev = get().items
+    // Optimistic update
     set((s) => ({
       items: s.items.map((i) => (i.skuId === skuId ? { ...i, quantity } : i)),
     }))
+    try {
+      await updateCartItem(skuId, { quantity })
+    } catch (e) {
+      // Rollback
+      set({ items: prev })
+      throw e
+    }
   },
 
   remove: async (skuId) => {
-    await removeCartItem(skuId)
+    const prev = get().items
     set((s) => ({ items: s.items.filter((i) => i.skuId !== skuId) }))
+    try {
+      await removeCartItem(skuId)
+    } catch (e) {
+      set({ items: prev })
+      throw e
+    }
   },
 
   clearAll: async () => {
