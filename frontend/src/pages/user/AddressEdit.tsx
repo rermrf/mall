@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { NavBar, Input, Switch, Button, Toast } from 'antd-mobile'
+import { NavBar, Input, Switch, Button, Toast, CascadePicker } from 'antd-mobile'
 import { createAddress, updateAddress, type Address } from '@/api/user'
+import { regionData } from '@/data/regions'
 import styles from './addressEdit.module.css'
+
+const PHONE_REG = /^1[3-9]\d{9}$/
 
 export default function AddressEditPage() {
   const navigate = useNavigate()
@@ -11,27 +14,33 @@ export default function AddressEditPage() {
 
   const [name, setName] = useState(existing?.name || '')
   const [phone, setPhone] = useState(existing?.phone || '')
-  const [province, setProvince] = useState(existing?.province || '')
-  const [city, setCity] = useState(existing?.city || '')
-  const [district, setDistrict] = useState(existing?.district || '')
+  const [region, setRegion] = useState<string[]>(
+    existing ? [existing.province, existing.city, existing.district].filter(Boolean) : []
+  )
+  const [regionVisible, setRegionVisible] = useState(false)
   const [detail, setDetail] = useState(existing?.detail || '')
   const [isDefault, setIsDefault] = useState(existing?.isDefault || false)
   const [loading, setLoading] = useState(false)
 
+  const regionText = region.length >= 2 ? region.join(' ') : ''
+
   const handleSave = async () => {
     if (!name.trim()) { Toast.show('请输入姓名'); return }
-    if (!phone.trim()) { Toast.show('请输入手机号'); return }
-    if (!province.trim() || !city.trim()) { Toast.show('请输入省市'); return }
+    if (!phone.trim() || !PHONE_REG.test(phone.trim())) {
+      Toast.show('请输入正确的11位手机号')
+      return
+    }
+    if (region.length < 2) { Toast.show('请选择省市区'); return }
     if (!detail.trim()) { Toast.show('请输入详细地址'); return }
 
     const params = {
       name: name.trim(),
       phone: phone.trim(),
-      province: province.trim(),
-      city: city.trim(),
-      district: district.trim(),
+      province: region[0],
+      city: region[1],
+      district: region[2] || '',
       detail: detail.trim(),
-      isDefault: isDefault,
+      isDefault,
     }
 
     setLoading(true)
@@ -67,20 +76,24 @@ export default function AddressEditPage() {
           <Input placeholder="收货人手机号" type="tel" value={phone} onChange={setPhone} clearable maxLength={11} />
         </div>
 
-        <div className={styles.row}>
-          <div className={styles.field}>
-            <div className={styles.label}>省份</div>
-            <Input placeholder="省" value={province} onChange={setProvince} />
-          </div>
-          <div className={styles.field}>
-            <div className={styles.label}>城市</div>
-            <Input placeholder="市" value={city} onChange={setCity} />
-          </div>
-          <div className={styles.field}>
-            <div className={styles.label}>区县</div>
-            <Input placeholder="区" value={district} onChange={setDistrict} />
+        <div className={styles.field} onClick={() => setRegionVisible(true)}>
+          <div className={styles.label}>所在地区</div>
+          <div className={styles.regionValue}>
+            {regionText || <span style={{ color: 'var(--color-text-secondary)' }}>请选择省/市/区</span>}
           </div>
         </div>
+
+        <CascadePicker
+          title="选择地区"
+          options={regionData}
+          visible={regionVisible}
+          onClose={() => setRegionVisible(false)}
+          onConfirm={(val) => {
+            setRegion(val as string[])
+            setRegionVisible(false)
+          }}
+          value={region}
+        />
 
         <div className={styles.field}>
           <div className={styles.label}>详细地址</div>

@@ -45,6 +45,13 @@
   font-size: 15px;
 }
 
+.regionValue {
+  font-size: 14px;
+  min-height: 24px;
+  line-height: 24px;
+  cursor: pointer;
+}
+
 .saveBtn {
   width: 100%;
   margin-top: 24px;
