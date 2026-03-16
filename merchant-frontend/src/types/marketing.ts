@@ -22,10 +22,10 @@ export interface CreateCouponReq {
   discount_value: number
   total_count: number
   per_limit: number
-  start_time: string
-  end_time: string
+  start_time: number
+  end_time: number
   scope_type: number
-  scope_ids: number[]
+  scope_ids: string
   status: number
 }
 

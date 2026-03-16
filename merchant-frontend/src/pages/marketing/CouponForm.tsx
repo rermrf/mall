@@ -57,10 +57,10 @@ export default function CouponForm() {
             discount_value: values.discount_value,
             total_count: values.total_count,
             per_limit: values.per_limit,
-            start_time: values.start_time,
-            end_time: values.end_time,
+            start_time: new Date(values.start_time).getTime(),
+            end_time: new Date(values.end_time).getTime(),
             scope_type: scopeType,
-            scope_ids: scopeIds,
+            scope_ids: scopeIds.length ? scopeIds.join(',') : '',
             status: values.status,
           }
 
