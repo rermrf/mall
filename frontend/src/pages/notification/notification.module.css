@@ -5,7 +5,11 @@
 }
 
 .navBar {
-  margin: -12px -12px 12px;
+  margin: -12px -12px 0;
+}
+
+.tabs {
+  margin: 0 -12px 12px;
 }
 
 .actions {
@@ -34,13 +38,39 @@
   border-left: 3px solid var(--color-accent);
 }
 
-.cardTitle {
-  font-size: 15px;
-  font-weight: 600;
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 4px;
 }
 
+.cardTitle {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.channelTag {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  padding: 1px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
 .cardContent {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin-bottom: 6px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.cardContentExpanded {
   font-size: 13px;
   color: var(--color-text-secondary);
   line-height: 1.4;
@@ -52,12 +82,14 @@
   color: var(--color-text-secondary);
 }
 
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+
 .empty {
   text-align: center;
   padding: 60px 0;
   color: var(--color-text-secondary);
-}
-
-.loadMore {
-  padding: 12px 0;
 }

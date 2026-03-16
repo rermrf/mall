@@ -97,10 +97,6 @@ export default function LoginPage() {
     }
   }
 
-  const handleOAuth = (provider: string) => {
-    Toast.show(`${provider}登录暂未开放`)
-  }
-
   return (
     <div className={styles.page}>
       <div className={styles.title}>欢迎回来</div>
@@ -167,13 +163,13 @@ export default function LoginPage() {
       </div>
 
       <div className={styles.oauthRow}>
-        <div className={styles.oauthBtn} onClick={() => handleOAuth('微信')}>
+        <div className={styles.oauthBtn} style={{ opacity: 0.4, pointerEvents: 'none' }}>
           <span className={styles.oauthIcon}>💚</span>
-          <span className={styles.oauthLabel}>微信</span>
+          <span className={styles.oauthLabel}>微信(即将开放)</span>
         </div>
-        <div className={styles.oauthBtn} onClick={() => handleOAuth('支付宝')}>
+        <div className={styles.oauthBtn} style={{ opacity: 0.4, pointerEvents: 'none' }}>
           <span className={styles.oauthIcon}>🔵</span>
-          <span className={styles.oauthLabel}>支付宝</span>
+          <span className={styles.oauthLabel}>支付宝(即将开放)</span>
         </div>
       </div>
 

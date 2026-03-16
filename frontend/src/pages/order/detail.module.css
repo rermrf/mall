@@ -163,6 +163,13 @@
   color: var(--color-primary);
 }
 
+.copyBtn {
+  margin-left: 8px;
+  color: var(--color-accent);
+  font-size: 12px;
+  cursor: pointer;
+}
+
 .footer {
   position: fixed;
   bottom: 0;

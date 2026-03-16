@@ -11,9 +11,15 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const PHONE_REG = /^1[3-9]\d{9}$/
+
   const handleSignup = async () => {
-    if (!phone || !password) {
-      Toast.show('请填写必填项')
+    if (!phone || !PHONE_REG.test(phone)) {
+      Toast.show('请输入正确的11位手机号')
+      return
+    }
+    if (!password || password.length < 6) {
+      Toast.show('密码至少6位')
       return
     }
     setLoading(true)

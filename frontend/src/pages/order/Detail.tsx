@@ -185,7 +185,20 @@ export default function OrderDetailPage() {
         <div className={styles.cardTitle}>订单信息</div>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>订单编号</span>
-          <span className={styles.infoValue}>{order.orderNo}</span>
+          <span className={styles.infoValue}>
+            {order.orderNo}
+            <span
+              className={styles.copyBtn}
+              onClick={() => {
+                navigator.clipboard.writeText(order.orderNo).then(
+                  () => Toast.show('已复制'),
+                  () => Toast.show('复制失败')
+                )
+              }}
+            >
+              复制
+            </span>
+          </span>
         </div>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>下单时间</span>

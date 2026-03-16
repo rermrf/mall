@@ -63,12 +63,24 @@ client.interceptors.response.use(
 )
 
 export async function request<T>(config: Parameters<typeof client.request>[0]): Promise<T> {
-  const res = await client.request(config)
-  const body = res.data as ApiResult<T>
-  if (body.code !== 0) {
-    throw new Error(body.msg || '请求失败')
+  try {
+    const res = await client.request(config)
+    const body = res.data as ApiResult<T>
+    if (body.code !== 0) {
+      throw new Error(body.msg || '请求失败')
+    }
+    return body.data
+  } catch (e: unknown) {
+    if (e instanceof Error) throw e
+    const axiosError = e as { response?: { status: number } }
+    if (axiosError.response?.status === 500) {
+      throw new Error('服务器繁忙，请稍后重试')
+    }
+    if (axiosError.response?.status === 404) {
+      throw new Error('请求的资源不存在')
+    }
+    throw new Error('网络连接失败，请检查网络')
   }
-  return body.data
 }
 
 export { client }

@@ -39,3 +39,7 @@ export function markRead(id: number) {
 export function markAllRead() {
   return request<void>({ method: 'PUT', url: '/notifications/read-all' })
 }
+
+export function deleteNotification(id: number) {
+  return request<void>({ method: 'DELETE', url: `/notifications/${id}` })
+}

@@ -38,6 +38,7 @@ export default function OrderListPage() {
     setOrders([])
     setPage(1)
     setHasMore(true)
+    window.scrollTo(0, 0)
   }
 
   return (
