@@ -4,7 +4,9 @@ import { getCart, updateCartItem, removeCartItem, clearCart, batchRemove, type C
 interface CartState {
   items: CartItem[]
   loading: boolean
+  stockMap: Record<number, number>  // skuId -> available stock
   fetchCart: () => Promise<void>
+  fetchStock: () => Promise<void>
   toggleSelect: (skuId: number, selected: boolean) => Promise<void>
   updateQuantity: (skuId: number, quantity: number) => Promise<void>
   remove: (skuId: number) => Promise<void>
@@ -18,6 +20,7 @@ interface CartState {
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
   loading: false,
+  stockMap: {},
 
   fetchCart: async () => {
     set({ loading: true })
@@ -26,6 +29,23 @@ export const useCartStore = create<CartState>((set, get) => ({
       set({ items: items || [] })
     } finally {
       set({ loading: false })
+    }
+  },
+
+  fetchStock: async () => {
+    const items = get().items
+    if (items.length === 0) return
+    try {
+      const { batchGetStock } = await import('@/api/inventory')
+      const skuIds = items.map((i) => i.skuId)
+      const stocks = await batchGetStock(skuIds)
+      const map: Record<number, number> = {}
+      for (const s of (stocks || [])) {
+        map[s.skuId] = s.available
+      }
+      set({ stockMap: map })
+    } catch {
+      // non-critical, ignore
     }
   },
 

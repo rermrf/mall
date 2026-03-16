@@ -7,17 +7,27 @@ import styles from './cart.module.css'
 
 export default function CartPage() {
   const navigate = useNavigate()
-  const { items, loading, fetchCart, toggleSelect, updateQuantity, remove, clearAll, batchRemoveSelected } = useCartStore()
+  const { items, loading, stockMap, fetchCart, fetchStock, toggleSelect, updateQuantity, remove, clearAll, batchRemoveSelected } = useCartStore()
   const selectedItems = items.filter((i) => i.selected)
   const totalAmount = selectedItems.reduce((sum, i) => sum + i.price * i.quantity, 0)
 
   useEffect(() => {
-    fetchCart()
+    fetchCart().then(() => {
+      useCartStore.getState().fetchStock()
+    })
   }, [fetchCart])
 
   const handleCheckout = () => {
     if (selectedItems.length === 0) {
       Toast.show('请选择商品')
+      return
+    }
+    const outOfStockItem = selectedItems.find((i) => {
+      const max = stockMap[i.skuId]
+      return max !== undefined && i.quantity > max
+    })
+    if (outOfStockItem) {
+      Toast.show(`${outOfStockItem.productName} 库存不足，请调整数量`)
       return
     }
     navigate('/order/confirm')
@@ -75,7 +85,16 @@ export default function CartPage() {
 
       {items.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 60, color: 'var(--color-text-secondary)' }}>
-          购物车是空的
+          <div>购物车是空的</div>
+          <Button
+            color="primary"
+            fill="outline"
+            size="small"
+            style={{ marginTop: 16 }}
+            onClick={() => navigate('/')}
+          >
+            去逛逛
+          </Button>
         </div>
       ) : (
         items.map((item) => (
@@ -101,13 +120,20 @@ export default function CartPage() {
                   <Price value={item.price} size='sm' />
                   <div className={styles.quantityControl}>
                     <span
-                      className={styles.qtyBtn}
+                      className={`${styles.qtyBtn} ${item.quantity <= 1 ? styles.qtyBtnDisabled : ''}`}
                       onClick={() => item.quantity > 1 && updateQuantity(item.skuId, item.quantity - 1)}
                     >-</span>
                     <span className={styles.qtyValue}>{item.quantity}</span>
                     <span
-                      className={styles.qtyBtn}
-                      onClick={() => updateQuantity(item.skuId, item.quantity + 1)}
+                      className={`${styles.qtyBtn} ${stockMap[item.skuId] !== undefined && item.quantity >= stockMap[item.skuId] ? styles.qtyBtnDisabled : ''}`}
+                      onClick={() => {
+                        const max = stockMap[item.skuId]
+                        if (max !== undefined && item.quantity >= max) {
+                          Toast.show('库存不足')
+                          return
+                        }
+                        updateQuantity(item.skuId, item.quantity + 1)
+                      }}
                     >+</span>
                   </div>
                 </div>

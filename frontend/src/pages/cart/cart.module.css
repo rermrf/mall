@@ -120,3 +120,8 @@
   border-radius: var(--radius);
   min-width: 120px;
 }
+
+.qtyBtnDisabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
