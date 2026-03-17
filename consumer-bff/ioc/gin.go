@@ -55,8 +55,10 @@ func InitGinServer(
 		// 营销（公开）
 		pub.GET("/coupons", marketingHandler.ListAvailableCoupons)
 		pub.GET("/seckill", marketingHandler.ListSeckillActivities)
-		// 商品详情（公开）
+		// 商品（公开）
 		pub.GET("/products/:id", productHandler.GetProduct)
+		pub.GET("/categories", productHandler.ListCategories)
+		pub.GET("/products", ginx.WrapQuery[handler.ListProductsReq](l, productHandler.ListProducts))
 	}
 
 	auth := engine.Group("/api/v1")
