@@ -31,3 +31,14 @@ export interface ProductSpec {
   name: string
   values: string
 }
+
+export interface Category {
+  id: number
+  parentId: number
+  name: string
+  icon: string
+  level: number
+  sort: number
+  status: number
+  children?: Category[]
+}
