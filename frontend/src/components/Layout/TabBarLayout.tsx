@@ -3,7 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { TabBar, Badge } from 'antd-mobile'
 import {
   AppOutline,
-  SearchOutline,
+  AppstoreOutline,
   ShopbagOutline,
   UserOutline,
 } from 'antd-mobile-icons'
@@ -27,7 +27,7 @@ export default function TabBarLayout() {
 
   const tabs = [
     { key: '/', title: '首页', icon: <AppOutline /> },
-    { key: '/search', title: '搜索', icon: <SearchOutline /> },
+    { key: '/category', title: '分类', icon: <AppstoreOutline /> },
     { key: '/cart', title: '购物车', icon: <ShopbagOutline /> },
     {
       key: '/me',

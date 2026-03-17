@@ -24,6 +24,7 @@ const RefundListPage = lazy(() => import('@/pages/order/RefundList'))
 const RefundDetailPage = lazy(() => import('@/pages/order/RefundDetail'))
 
 // Phase 3 pages
+const CategoryPage = lazy(() => import('@/pages/category'))
 const NotificationPage = lazy(() => import('@/pages/notification'))
 const CouponsPage = lazy(() => import('@/pages/marketing/Coupons'))
 const MyCouponsPage = lazy(() => import('@/pages/marketing/MyCoupons'))
@@ -46,7 +47,7 @@ export const router = createBrowserRouter([
     element: <TabBarLayout />,
     children: [
       { path: '/', element: <Lazy><HomePage /></Lazy> },
-      { path: '/search', element: <Lazy><SearchPage /></Lazy> },
+      { path: '/category', element: <Lazy><CategoryPage /></Lazy> },
       {
         path: '/cart',
         element: <AuthGuard><Lazy><CartPage /></Lazy></AuthGuard>,
@@ -57,6 +58,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  { path: '/search', element: <Lazy><SearchPage /></Lazy> },
   { path: '/login', element: <Lazy><LoginPage /></Lazy> },
   { path: '/signup', element: <Lazy><SignupPage /></Lazy> },
   { path: '/product/:id', element: <Lazy><ProductDetail /></Lazy> },

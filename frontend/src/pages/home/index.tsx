@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Skeleton } from 'antd-mobile'
+import { Skeleton, SearchBar } from 'antd-mobile'
 import { getShop, type Shop } from '@/api/shop'
 import {
   listSeckillActivities,
@@ -46,6 +46,10 @@ export default function HomePage() {
           <div className={styles.shopName}>{shop.name}</div>
         </div>
       )}
+
+      <div style={{ padding: '0 12px 12px' }}>
+        <SearchBar placeholder="搜索商品" onFocus={() => navigate('/search')} />
+      </div>
 
       {allSeckillItems.length > 0 && (
         <div className={styles.section}>
