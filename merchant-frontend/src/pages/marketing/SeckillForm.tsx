@@ -47,8 +47,8 @@ export default function SeckillForm() {
 
           const data: CreateSeckillReq = {
             name: values.name,
-            startTime: values.startTime,
-            endTime: values.endTime,
+            startTime: new Date(values.startTime).getTime(),
+            endTime: new Date(values.endTime).getTime(),
             status: values.status,
             items,
           }

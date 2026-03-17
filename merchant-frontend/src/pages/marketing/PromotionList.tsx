@@ -44,7 +44,11 @@ export default function PromotionList() {
             title="创建促销"
             trigger={<a><PlusOutlined /> 创建促销</a>}
             onFinish={async (values) => {
-              await createPromotion(values)
+              await createPromotion({
+                ...values,
+                startTime: new Date(values.startTime).getTime(),
+                endTime: new Date(values.endTime).getTime(),
+              })
               message.success('创建成功')
               actionRef.current?.reload()
               return true
@@ -72,7 +76,11 @@ export default function PromotionList() {
         onOpenChange={setModalOpen}
         onFinish={async (values) => {
           if (editItem) {
-            await updatePromotion(editItem.id, values)
+            await updatePromotion(editItem.id, {
+              ...values,
+              startTime: new Date(values.startTime).getTime(),
+              endTime: new Date(values.endTime).getTime(),
+            })
             message.success('更新成功')
             actionRef.current?.reload()
           }

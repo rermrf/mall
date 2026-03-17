@@ -48,8 +48,8 @@ export interface SeckillItem {
 
 export interface CreateSeckillReq {
   name: string
-  startTime: string
-  endTime: string
+  startTime: number
+  endTime: number
   status: number
   items: SeckillItem[]
 }
@@ -71,7 +71,7 @@ export interface CreatePromotionReq {
   type: number
   threshold: number
   discountValue: number
-  startTime: string
-  endTime: string
+  startTime: number
+  endTime: number
   status: number
 }
