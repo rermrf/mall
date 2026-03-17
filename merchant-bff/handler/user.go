@@ -97,7 +97,7 @@ func (h *UserHandler) ListRoles(ctx *gin.Context, _ ListRolesReq) (ginx.Result, 
 	if err != nil {
 		return ginx.HandleGRPCError(err, "获取角色列表失败", ginx.UserErrMappings...)
 	}
-	return ginx.Result{Code: 0, Msg: "success", Data: resp}, nil
+	return ginx.Result{Code: 0, Msg: "success", Data: resp.GetRoles()}, nil
 }
 
 type CreateRoleReq struct {
