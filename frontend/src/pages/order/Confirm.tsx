@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { NavBar, Button, TextArea, Toast, Popup } from 'antd-mobile'
+import { useShallow } from 'zustand/react/shallow'
 import { useCartStore } from '@/stores/cart'
 import { listAddresses, type Address } from '@/api/user'
 import { createOrder } from '@/api/order'
@@ -30,7 +31,7 @@ export default function OrderConfirm() {
       }]
     : null
 
-  const selectedItems = useCartStore((s) => s.selectedItems())
+  const selectedItems = useCartStore(useShallow((s) => s.items.filter((i) => i.selected)))
   const fetchCart = useCartStore((s) => s.fetchCart)
 
   const orderItems = directItems || selectedItems
