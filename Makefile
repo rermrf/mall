@@ -46,7 +46,7 @@ seed-reset:
 
 # ==================== Local Dev (go run) ====================
 
-SERVICES := user tenant product inventory order payment cart search \
+SERVICES := user tenant product inventory order payment account cart search \
             marketing logistics notification consumer-bff merchant-bff admin-bff
 
 # 配置文件: make dev-run-all CONF=config/example.yaml

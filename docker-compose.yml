@@ -11,9 +11,9 @@
 #
 # Profiles:
 #   consumer  - 11 core + consumer-bff + seed
-#   merchant  - 11 core + merchant-bff
-#   admin     - 11 core + admin-bff
-#   full      - 全部 14 服务 + seed
+#   merchant  - 12 core + merchant-bff
+#   admin     - 12 core + admin-bff
+#   full      - 全部 15 服务 + seed
 #   local     - 本地 MySQL/Redis/Kafka/etcd/ES
 # ============================================================
 
@@ -101,6 +101,16 @@ services:
     profiles: [consumer, merchant, admin, full]
     ports:
       - "8086:8086"
+
+  account:
+    <<: *service-common
+    build:
+      context: .
+      args:
+        SERVICE: account
+    profiles: [admin, merchant, full]
+    ports:
+      - "8092:8092"
 
   cart:
     <<: *service-common
@@ -232,6 +242,8 @@ services:
         condition: service_started
       payment:
         condition: service_started
+      account:
+        condition: service_started
       marketing:
         condition: service_started
       logistics:
@@ -264,6 +276,8 @@ services:
       order:
         condition: service_started
       payment:
+        condition: service_started
+      account:
         condition: service_started
       notification:
         condition: service_started

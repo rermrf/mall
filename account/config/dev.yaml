@@ -1,0 +1,24 @@
+db:
+  dsn: "root:wen123...@tcp(rermrf.icu:3306)/mall_account?charset=utf8mb4&parseTime=true&loc=Local"
+
+redis:
+  addr: "rermrf.icu:6379"
+  password: ""
+  db: 6
+
+kafka:
+  addrs:
+    - "rermrf.icu:9094"
+
+grpc:
+  port: 8092
+  etcdAddrs:
+    - "rermrf.icu:2379"
+
+etcd:
+  addrs:
+    - "rermrf.icu:2379"
+
+settlement:
+  settleDays: 7
+  defaultCommissionRate: 500

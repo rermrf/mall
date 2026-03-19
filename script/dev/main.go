@@ -22,7 +22,7 @@ type service struct {
 
 var allServices = []service{
 	{"user", 8081}, {"tenant", 8082}, {"product", 8083}, {"inventory", 8084},
-	{"order", 8085}, {"payment", 8086}, {"cart", 8087}, {"search", 8088},
+	{"order", 8085}, {"payment", 8086}, {"account", 8092}, {"cart", 8087}, {"search", 8088},
 	{"marketing", 8089}, {"logistics", 8090}, {"notification", 8091},
 	{"consumer-bff", 8080}, {"merchant-bff", 8180}, {"admin-bff", 8280},
 }
