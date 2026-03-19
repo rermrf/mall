@@ -15,7 +15,6 @@ import (
 	"github.com/rermrf/mall/pkg/ginx"
 )
 
-
 type Claims struct {
 	Uid       int64  `json:"uid"`
 	TenantId  int64  `json:"tenant_id"`
@@ -102,46 +101,30 @@ func (h *JWTHandler) Refresh(ctx *gin.Context, _ RefreshReq) (ginx.Result, error
 
 func (h *JWTHandler) Logout(ctx *gin.Context, _ LogoutReq) (ginx.Result, error) {
 	accessToken := h.extractTokenFromHeader(ctx)
-	if accessToken == "" {
-		return ginx.Result{Code: 401001, Msg: "缺少 access token"}, nil
-	}
-
-	refreshToken := ctx.GetHeader("X-Refresh-Token")
-	if refreshToken == "" {
-		return ginx.Result{Code: 401001, Msg: "缺少 refresh token"}, nil
-	}
-
-	// 解析 access token
-	accessClaims := &Claims{}
-	accessTokenObj, err := jwt.ParseWithClaims(accessToken, accessClaims, func(token *jwt.Token) (interface{}, error) {
-		return h.accessSecret, nil
-	})
-	if err != nil || !accessTokenObj.Valid {
-		return ginx.Result{Code: 401001, Msg: "access token 无效或已过期"}, nil
-	}
-
-	// 解析 refresh token
-	refreshClaims := &Claims{}
-	refreshTokenObj, err := jwt.ParseWithClaims(refreshToken, refreshClaims, func(token *jwt.Token) (interface{}, error) {
-		return h.refreshSecret, nil
-	})
-	if err != nil || !refreshTokenObj.Valid {
-		return ginx.Result{Code: 401001, Msg: "refresh token 无效或已过期"}, nil
-	}
-
-	// 将两个 token 的 ID 加入黑名单
-	reqCtx := ctx.Request.Context()
-	if accessClaims.ID != "" && accessClaims.ExpiresAt != nil {
-		ttl := time.Until(accessClaims.ExpiresAt.Time)
-		if ttl > 0 {
-			h.rdb.Set(reqCtx, "blacklist:"+accessClaims.ID, "", ttl)
+	if accessToken != "" {
+		claims := &Claims{}
+		token, err := jwt.ParseWithClaims(accessToken, claims, func(t *jwt.Token) (interface{}, error) {
+			return h.accessSecret, nil
+		})
+		if err == nil && token.Valid && claims.ID != "" {
+			ttl := time.Until(claims.ExpiresAt.Time)
+			if ttl > 0 {
+				h.rdb.Set(ctx.Request.Context(), "jwt:blacklist:"+claims.ID, "1", ttl)
+			}
 		}
 	}
 
-	if refreshClaims.ID != "" && refreshClaims.ExpiresAt != nil {
-		ttl := time.Until(refreshClaims.ExpiresAt.Time)
-		if ttl > 0 {
-			h.rdb.Set(reqCtx, "blacklist:"+refreshClaims.ID, "", ttl)
+	refreshToken := ctx.GetHeader("X-Refresh-Token")
+	if refreshToken != "" {
+		claims := &Claims{}
+		token, err := jwt.ParseWithClaims(refreshToken, claims, func(t *jwt.Token) (interface{}, error) {
+			return h.refreshSecret, nil
+		})
+		if err == nil && token.Valid && claims.ID != "" {
+			ttl := time.Until(claims.ExpiresAt.Time)
+			if ttl > 0 {
+				h.rdb.Set(ctx.Request.Context(), "jwt:blacklist:"+claims.ID, "1", ttl)
+			}
 		}
 	}
 
@@ -207,14 +190,11 @@ func (h *JWTHandler) ParseAccessToken(tokenStr string) (*Claims, error) {
 }
 
 func (h *JWTHandler) IsTokenBlacklisted(ctx context.Context, jti string) bool {
-	val, err := h.rdb.Get(ctx, "blacklist:"+jti).Result()
-	if err == redis.Nil {
-		return false
-	}
+	val, err := h.rdb.Exists(ctx, "jwt:blacklist:"+jti).Result()
 	if err != nil {
 		return false
 	}
-	return val != ""
+	return val > 0
 }
 
 func (h *JWTHandler) extractTokenFromHeader(ctx *gin.Context) string {

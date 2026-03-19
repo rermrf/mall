@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type { ApiResult } from '@/types/api'
+import { createRefreshFlow } from './refresh_flow'
 
 const client = axios.create({
   baseURL: '/api/v1',
@@ -14,48 +15,43 @@ client.interceptors.request.use((config) => {
   return config
 })
 
-let isRefreshing = false
-let pendingRequests: Array<(token: string) => void> = []
+const refreshFlow = createRefreshFlow()
 
 client.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
     if (error.response?.status === 401 && !originalRequest._retry) {
-      if (isRefreshing) {
-        return new Promise((resolve) => {
-          pendingRequests.push((token: string) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`
-            resolve(client(originalRequest))
-          })
+      if (refreshFlow.isRefreshing()) {
+        return refreshFlow.waitForToken().then((token) => {
+          originalRequest.headers.Authorization = `Bearer ${token}`
+          return client(originalRequest)
         })
       }
       originalRequest._retry = true
-      isRefreshing = true
+      refreshFlow.begin()
       try {
         const refreshToken = localStorage.getItem('refresh_token')
         if (!refreshToken) throw new Error('No refresh token')
         const res = await axios.post('/api/v1/refresh-token', {}, {
-          headers: { Authorization: `Bearer ${refreshToken}` },
+          headers: refreshFlow.buildRefreshHeaders(refreshToken),
         })
         const newAccessToken = res.headers['x-jwt-token']
         const newRefreshToken = res.headers['x-refresh-token']
         if (newAccessToken) {
           localStorage.setItem('access_token', newAccessToken)
           if (newRefreshToken) localStorage.setItem('refresh_token', newRefreshToken)
-          pendingRequests.forEach((cb) => cb(newAccessToken))
-          pendingRequests = []
+          refreshFlow.succeed(newAccessToken)
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
           return client(originalRequest)
         }
         throw new Error('No token in refresh response')
-      } catch {
+      } catch (refreshError) {
+        refreshFlow.fail(refreshError)
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
         window.location.href = '/login'
-        return Promise.reject(error)
-      } finally {
-        isRefreshing = false
+        return Promise.reject(refreshError)
       }
     }
     return Promise.reject(error)

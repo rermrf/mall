@@ -40,6 +40,7 @@ func InitGinServer(
 	pub := engine.Group("/api/v1")
 	{
 		pub.POST("/login", ginx.WrapBody[ijwt.LoginReq](l, jwtHandler.Login))
+		pub.POST("/refresh-token", ginx.WrapBody[ijwt.RefreshReq](l, jwtHandler.Refresh))
 	}
 
 	// 需要认证 + 管理员权限的路由
@@ -47,7 +48,6 @@ func InitGinServer(
 	auth.Use(loginJWT, adminOnly)
 	{
 		auth.POST("/logout", ginx.WrapBody[ijwt.LogoutReq](l, jwtHandler.Logout))
-		auth.POST("/refresh-token", ginx.WrapBody[ijwt.RefreshReq](l, jwtHandler.Refresh))
 
 		// 用户管理
 		auth.GET("/users", ginx.WrapQuery[handler.ListUsersReq](l, userHandler.ListUsers))

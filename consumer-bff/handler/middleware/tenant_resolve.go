@@ -9,6 +9,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	tenantv1 "github.com/rermrf/mall/api/proto/gen/tenant/v1"
 	"github.com/rermrf/mall/pkg/ginx"
@@ -71,9 +73,14 @@ func (b *TenantResolveBuilder) Build() gin.HandlerFunc {
 			Domain: domain,
 		})
 		if err != nil {
-			_ = b.redisClient.Set(ctx.Request.Context(), cacheKey, tenantNegativeValue, tenantNegativeTTL).Err()
-			ctx.AbortWithStatusJSON(http.StatusNotFound,
-				ginx.Result{Code: 404001, Msg: "店铺不存在"})
+			if s, ok := status.FromError(err); ok && s.Code() == codes.NotFound {
+				_ = b.redisClient.Set(ctx.Request.Context(), cacheKey, tenantNegativeValue, tenantNegativeTTL).Err()
+				ctx.AbortWithStatusJSON(http.StatusNotFound,
+					ginx.Result{Code: 404001, Msg: "店铺不存在"})
+				return
+			}
+			ctx.AbortWithStatusJSON(http.StatusServiceUnavailable,
+				ginx.Result{Code: ginx.CodeSystem, Msg: "租户服务暂时不可用"})
 			return
 		}
 

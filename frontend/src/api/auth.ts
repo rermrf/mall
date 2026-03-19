@@ -54,7 +54,12 @@ export async function sendSmsCode(phone: string, scene: number = 1) {
 }
 
 export async function logout() {
-  await client.post('/logout', {})
+  const refreshToken = localStorage.getItem('refresh_token')
+  await client.post('/logout', {}, refreshToken ? {
+    headers: {
+      'X-Refresh-Token': refreshToken,
+    },
+  } : undefined)
   localStorage.removeItem('access_token')
   localStorage.removeItem('refresh_token')
 }

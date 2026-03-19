@@ -44,6 +44,7 @@ func InitGinServer(
 	{
 		pub.POST("/signup", ginx.WrapBody[handler.SignupReq](l, userHandler.Signup))
 		pub.POST("/login", ginx.WrapBody[ijwt.LoginReq](l, jwtHandler.Login))
+		pub.POST("/refresh-token", ginx.WrapBody[ijwt.RefreshReq](l, jwtHandler.Refresh))
 		pub.POST("/sms/send", ginx.WrapBody[handler.SendSmsCodeReq](l, userHandler.SendSmsCode))
 		pub.POST("/login/phone", ginx.WrapBody[ijwt.LoginByPhoneReq](l, jwtHandler.LoginByPhone))
 		pub.POST("/login/oauth", ginx.WrapBody[ijwt.OAuthLoginReq](l, jwtHandler.OAuthLogin))
@@ -65,7 +66,6 @@ func InitGinServer(
 	auth.Use(middleware.NewLoginJWTBuilder(jwtHandler).Build())
 	{
 		auth.POST("/logout", ginx.WrapBody[ijwt.LogoutReq](l, jwtHandler.Logout))
-		auth.POST("/refresh-token", ginx.WrapBody[ijwt.RefreshReq](l, jwtHandler.Refresh))
 		auth.GET("/profile", userHandler.GetProfile)
 		auth.PUT("/profile", ginx.WrapBody[handler.UpdateProfileReq](l, userHandler.UpdateProfile))
 		auth.GET("/addresses", userHandler.ListAddresses)
