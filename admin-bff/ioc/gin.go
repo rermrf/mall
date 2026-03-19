@@ -23,6 +23,7 @@ func InitGinServer(
 	inventoryHandler *handler.InventoryHandler,
 	marketingHandler *handler.MarketingHandler,
 	logisticsHandler *handler.LogisticsHandler,
+	accountHandler *handler.AccountHandler,
 	l logger.Logger,
 ) *gin.Engine {
 	engine := gin.Default()
@@ -108,6 +109,15 @@ func InitGinServer(
 		auth.GET("/freight-templates/:id", logisticsHandler.GetFreightTemplate)
 		auth.GET("/shipments/:id", logisticsHandler.GetShipment)
 		auth.GET("/orders/:orderNo/logistics", logisticsHandler.GetOrderLogistics)
+
+		// 账户管理
+		auth.GET("/accounts", ginx.WrapQuery[handler.AdminListAccountsReq](l, accountHandler.ListAccounts))
+		auth.GET("/accounts/:tenantId", accountHandler.GetAccount)
+		auth.GET("/settlements", ginx.WrapQuery[handler.AdminListSettlementsReq](l, accountHandler.ListSettlements))
+		auth.GET("/withdrawals", ginx.WrapQuery[handler.AdminListWithdrawalsReq](l, accountHandler.ListWithdrawals))
+		auth.POST("/withdrawals/:id/review", ginx.WrapBody[handler.AdminReviewWithdrawalReq](l, accountHandler.ReviewWithdrawal))
+		auth.POST("/withdrawals/:id/confirm", accountHandler.ConfirmWithdrawalPaid)
+		auth.GET("/transactions", ginx.WrapQuery[handler.AdminListTransactionsReq](l, accountHandler.ListTransactions))
 	}
 
 	return engine

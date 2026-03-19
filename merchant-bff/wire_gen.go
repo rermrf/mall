@@ -37,7 +37,9 @@ func InitApp() *App {
 	notificationHandler := handler.NewNotificationHandler(notificationServiceClient, logger)
 	productServiceClient := ioc.InitProductClient(client)
 	productHandler := handler.NewProductHandler(productServiceClient, logger)
-	engine := ioc.InitGinServer(jwtHandler, userHandler, tenantHandler, inventoryHandler, orderHandler, paymentHandler, marketingHandler, logisticsHandler, notificationHandler, productHandler, logger)
+	accountServiceClient := ioc.InitAccountClient(client)
+	accountHandler := handler.NewAccountHandler(accountServiceClient, logger)
+	engine := ioc.InitGinServer(jwtHandler, userHandler, tenantHandler, inventoryHandler, orderHandler, paymentHandler, marketingHandler, logisticsHandler, notificationHandler, productHandler, accountHandler, logger)
 	app := &App{
 		Server: engine,
 	}
@@ -46,6 +48,6 @@ func InitApp() *App {
 
 // wire.go:
 
-var thirdPartySet = wire.NewSet(ioc.InitEtcdClient, ioc.InitLogger, ioc.InitRedis, ioc.InitUserClient, ioc.InitTenantClient, ioc.InitInventoryClient, ioc.InitOrderClient, ioc.InitPaymentClient, ioc.InitMarketingClient, ioc.InitLogisticsClient, ioc.InitNotificationClient, ioc.InitProductClient)
+var thirdPartySet = wire.NewSet(ioc.InitEtcdClient, ioc.InitLogger, ioc.InitRedis, ioc.InitUserClient, ioc.InitTenantClient, ioc.InitInventoryClient, ioc.InitOrderClient, ioc.InitPaymentClient, ioc.InitMarketingClient, ioc.InitLogisticsClient, ioc.InitNotificationClient, ioc.InitProductClient, ioc.InitAccountClient)
 
-var handlerSet = wire.NewSet(ioc.InitJWTHandler, handler.NewUserHandler, handler.NewTenantHandler, handler.NewInventoryHandler, handler.NewOrderHandler, handler.NewPaymentHandler, handler.NewMarketingHandler, handler.NewLogisticsHandler, handler.NewNotificationHandler, handler.NewProductHandler, ioc.InitGinServer)
+var handlerSet = wire.NewSet(ioc.InitJWTHandler, handler.NewUserHandler, handler.NewTenantHandler, handler.NewInventoryHandler, handler.NewOrderHandler, handler.NewPaymentHandler, handler.NewMarketingHandler, handler.NewLogisticsHandler, handler.NewNotificationHandler, handler.NewProductHandler, handler.NewAccountHandler, ioc.InitGinServer)

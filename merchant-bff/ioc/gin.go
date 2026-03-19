@@ -23,6 +23,7 @@ func InitGinServer(
 	logisticsHandler *handler.LogisticsHandler,
 	notificationHandler *handler.NotificationHandler,
 	productHandler *handler.ProductHandler,
+	accountHandler *handler.AccountHandler,
 	l logger.Logger,
 ) *gin.Engine {
 	engine := gin.Default()
@@ -132,6 +133,15 @@ func InitGinServer(
 		auth.POST("/brands", ginx.WrapBody[handler.CreateBrandReq](l, productHandler.CreateBrand))
 		auth.PUT("/brands/:id", ginx.WrapBody[handler.UpdateBrandReq](l, productHandler.UpdateBrand))
 		auth.GET("/brands", ginx.WrapQuery[handler.ListBrandsReq](l, productHandler.ListBrands))
+
+		// 账户管理
+		auth.GET("/account", accountHandler.GetAccount)
+		auth.PUT("/account/bank-info", ginx.WrapBody[handler.UpdateBankInfoReq](l, accountHandler.UpdateBankInfo))
+		auth.GET("/account/summary", accountHandler.GetAccountSummary)
+		auth.GET("/settlements", ginx.WrapQuery[handler.ListSettlementsReq](l, accountHandler.ListSettlements))
+		auth.POST("/withdrawals", ginx.WrapBody[handler.RequestWithdrawalReq](l, accountHandler.RequestWithdrawal))
+		auth.GET("/withdrawals", ginx.WrapQuery[handler.ListWithdrawalsReq](l, accountHandler.ListWithdrawals))
+		auth.GET("/transactions", ginx.WrapQuery[handler.ListTransactionsReq](l, accountHandler.ListTransactions))
 	}
 
 	return engine

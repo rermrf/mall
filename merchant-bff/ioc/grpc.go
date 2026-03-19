@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
+	accountv1 "github.com/rermrf/mall/api/proto/gen/account/v1"
 	inventoryv1 "github.com/rermrf/mall/api/proto/gen/inventory/v1"
 	logisticsv1 "github.com/rermrf/mall/api/proto/gen/logistics/v1"
 	marketingv1 "github.com/rermrf/mall/api/proto/gen/marketing/v1"
@@ -103,4 +104,9 @@ func InitNotificationClient(etcdClient *clientv3.Client) notificationv1.Notifica
 func InitProductClient(etcdClient *clientv3.Client) productv1.ProductServiceClient {
 	conn := initServiceConn(etcdClient, "product")
 	return productv1.NewProductServiceClient(conn)
+}
+
+func InitAccountClient(etcdClient *clientv3.Client) accountv1.AccountServiceClient {
+	conn := initServiceConn(etcdClient, "account")
+	return accountv1.NewAccountServiceClient(conn)
 }

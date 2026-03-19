@@ -21,6 +21,7 @@ var thirdPartySet = wire.NewSet(
 	ioc.InitLogisticsClient,
 	ioc.InitNotificationClient,
 	ioc.InitProductClient,
+	ioc.InitAccountClient,
 )
 
 var handlerSet = wire.NewSet(
@@ -34,6 +35,7 @@ var handlerSet = wire.NewSet(
 	handler.NewLogisticsHandler,
 	handler.NewNotificationHandler,
 	handler.NewProductHandler,
+	handler.NewAccountHandler,
 	ioc.InitGinServer,
 )
 
