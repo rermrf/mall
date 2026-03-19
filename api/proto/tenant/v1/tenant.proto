@@ -32,6 +32,7 @@ message TenantPlan {
   int32 status = 8;
   google.protobuf.Timestamp ctime = 9;
   google.protobuf.Timestamp utime = 10;
+  int32 commission_rate = 11; // 佣金比例（万分比，500=5%）
 }
 
 message Shop {

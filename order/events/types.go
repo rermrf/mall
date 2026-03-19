@@ -28,9 +28,11 @@ type OrderCancelledEvent struct {
 }
 
 type OrderCompletedEvent struct {
-	OrderNo  string              `json:"order_no"`
-	TenantID int64               `json:"tenant_id"`
-	Items    []CompletedItemInfo `json:"items"`
+	OrderNo   string              `json:"order_no"`
+	TenantID  int64               `json:"tenant_id"`
+	PaymentNo string              `json:"payment_no"`
+	Amount    int64               `json:"amount"`
+	Items     []CompletedItemInfo `json:"items"`
 }
 
 type CompletedItemInfo struct {

@@ -330,7 +330,7 @@ func (s *orderService) UpdateOrderStatus(ctx context.Context, orderNo string, st
 				items = append(items, events.CompletedItemInfo{ProductID: item.ProductID, Quantity: item.Quantity})
 			}
 			if produceErr := s.producer.ProduceCompleted(ctx, events.OrderCompletedEvent{
-				OrderNo: orderNo, TenantID: order.TenantID, Items: items,
+				OrderNo: orderNo, TenantID: order.TenantID, PaymentNo: order.PaymentNo, Amount: order.TotalAmount, Items: items,
 			}); produceErr != nil {
 				s.l.Error("发送完成事件失败", logger.String("orderNo", orderNo), logger.Error(produceErr))
 			}

@@ -139,19 +139,20 @@ func (x *Tenant) GetUtime() *timestamppb.Timestamp {
 }
 
 type TenantPlan struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Price         int64                  `protobuf:"varint,3,opt,name=price,proto3" json:"price,omitempty"` // 分
-	DurationDays  int32                  `protobuf:"varint,4,opt,name=duration_days,json=durationDays,proto3" json:"duration_days,omitempty"`
-	MaxProducts   int32                  `protobuf:"varint,5,opt,name=max_products,json=maxProducts,proto3" json:"max_products,omitempty"`
-	MaxStaff      int32                  `protobuf:"varint,6,opt,name=max_staff,json=maxStaff,proto3" json:"max_staff,omitempty"`
-	Features      string                 `protobuf:"bytes,7,opt,name=features,proto3" json:"features,omitempty"` // JSON
-	Status        int32                  `protobuf:"varint,8,opt,name=status,proto3" json:"status,omitempty"`
-	Ctime         *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=ctime,proto3" json:"ctime,omitempty"`
-	Utime         *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=utime,proto3" json:"utime,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name           string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Price          int64                  `protobuf:"varint,3,opt,name=price,proto3" json:"price,omitempty"` // 分
+	DurationDays   int32                  `protobuf:"varint,4,opt,name=duration_days,json=durationDays,proto3" json:"duration_days,omitempty"`
+	MaxProducts    int32                  `protobuf:"varint,5,opt,name=max_products,json=maxProducts,proto3" json:"max_products,omitempty"`
+	MaxStaff       int32                  `protobuf:"varint,6,opt,name=max_staff,json=maxStaff,proto3" json:"max_staff,omitempty"`
+	Features       string                 `protobuf:"bytes,7,opt,name=features,proto3" json:"features,omitempty"` // JSON
+	Status         int32                  `protobuf:"varint,8,opt,name=status,proto3" json:"status,omitempty"`
+	Ctime          *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=ctime,proto3" json:"ctime,omitempty"`
+	Utime          *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=utime,proto3" json:"utime,omitempty"`
+	CommissionRate int32                  `protobuf:"varint,11,opt,name=commission_rate,json=commissionRate,proto3" json:"commission_rate,omitempty"` // 佣金比例（万分比，500=5%）
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *TenantPlan) Reset() {
@@ -252,6 +253,13 @@ func (x *TenantPlan) GetUtime() *timestamppb.Timestamp {
 		return x.Utime
 	}
 	return nil
+}
+
+func (x *TenantPlan) GetCommissionRate() int32 {
+	if x != nil {
+		return x.CommissionRate
+	}
+	return 0
 }
 
 type Shop struct {
@@ -1898,7 +1906,7 @@ const file_tenant_v1_tenant_proto_rawDesc = "" +
 	"\x10plan_expire_time\x18\b \x01(\x03R\x0eplanExpireTime\x120\n" +
 	"\x05ctime\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\x05ctime\x120\n" +
 	"\x05utime\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\x05utime\"\xc3\x02\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x05utime\"\xec\x02\n" +
 	"\n" +
 	"TenantPlan\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
@@ -1911,7 +1919,8 @@ const file_tenant_v1_tenant_proto_rawDesc = "" +
 	"\x06status\x18\b \x01(\x05R\x06status\x120\n" +
 	"\x05ctime\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\x05ctime\x120\n" +
 	"\x05utime\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\x05utime\"\xd4\x02\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\x05utime\x12'\n" +
+	"\x0fcommission_rate\x18\v \x01(\x05R\x0ecommissionRate\"\xd4\x02\n" +
 	"\x04Shop\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\x12\x12\n" +

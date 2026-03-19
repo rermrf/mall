@@ -1,0 +1,217 @@
+syntax = "proto3";
+
+package account.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "/account/v1;accountv1";
+
+// ==================== Messages ====================
+
+message MerchantAccount {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  int64 balance = 3; // 可用余额（分）
+  int64 frozen_balance = 4; // 冻结金额（提现中）
+  int64 total_income = 5; // 累计收入
+  int64 total_withdrawn = 6; // 累计提现
+  int64 total_commission = 7; // 累计被扣佣金
+  string bank_account_name = 8;
+  string bank_account_no = 9;
+  string bank_name = 10;
+  int32 status = 11; // 1=正常 2=冻结
+  google.protobuf.Timestamp ctime = 12;
+  google.protobuf.Timestamp utime = 13;
+}
+
+message SettlementRecord {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string settlement_no = 3;
+  string order_no = 4;
+  string payment_no = 5;
+  int64 order_amount = 6; // 订单金额（分）
+  int32 commission_rate = 7; // 佣金比例（万分比，500=5%）
+  int64 commission_amount = 8;
+  int64 settlement_amount = 9;
+  int32 status = 10; // 1=待结算 2=已结算 3=已退款冲销
+  int64 settled_at = 11;
+  string settle_date = 12; // YYYY-MM-DD
+  google.protobuf.Timestamp ctime = 13;
+  google.protobuf.Timestamp utime = 14;
+}
+
+message WithdrawalRecord {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string withdrawal_no = 3;
+  int64 amount = 4;
+  int32 status = 5; // 1=待审核 2=已通过 3=已拒绝 4=已打款
+  string bank_account_name = 6;
+  string bank_account_no = 7;
+  string bank_name = 8;
+  string reject_reason = 9;
+  int64 reviewed_at = 10;
+  int64 paid_at = 11;
+  google.protobuf.Timestamp ctime = 12;
+  google.protobuf.Timestamp utime = 13;
+}
+
+message AccountTransaction {
+  int64 id = 1;
+  int64 tenant_id = 2;
+  string transaction_no = 3;
+  int32 type = 4; // 1=结算入账 2=提现冻结 3=提现扣款 4=提现退回 5=退款扣款
+  int64 amount = 5; // 变动金额（正=入账，负=扣款）
+  int64 balance_after = 6;
+  string ref_no = 7; // 关联单号
+  string remark = 8;
+  google.protobuf.Timestamp ctime = 9;
+}
+
+message AccountSummary {
+  int64 balance = 1;
+  int64 frozen_balance = 2;
+  int64 pending_settlement = 3;
+  int64 month_income = 4;
+  int64 month_commission = 5;
+  int64 month_withdrawn = 6;
+}
+
+// ==================== AccountService ====================
+
+service AccountService {
+  // 账户管理
+  rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
+  rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
+  rpc UpdateBankInfo(UpdateBankInfoRequest) returns (UpdateBankInfoResponse);
+
+  // 结算
+  rpc CreateSettlement(CreateSettlementRequest) returns (CreateSettlementResponse);
+  rpc ListSettlements(ListSettlementsRequest) returns (ListSettlementsResponse);
+  rpc ExecuteSettlement(ExecuteSettlementRequest) returns (ExecuteSettlementResponse);
+
+  // 提现
+  rpc RequestWithdrawal(RequestWithdrawalRequest) returns (RequestWithdrawalResponse);
+  rpc ReviewWithdrawal(ReviewWithdrawalRequest) returns (ReviewWithdrawalResponse);
+  rpc ConfirmWithdrawalPaid(ConfirmWithdrawalPaidRequest) returns (ConfirmWithdrawalPaidResponse);
+  rpc ListWithdrawals(ListWithdrawalsRequest) returns (ListWithdrawalsResponse);
+
+  // 流水 & 对账
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
+  rpc GetAccountSummary(GetAccountSummaryRequest) returns (GetAccountSummaryResponse);
+
+  // 管理端
+  rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse);
+}
+
+// ==================== Requests & Responses ====================
+
+message GetAccountRequest {
+  int64 tenant_id = 1;
+}
+message GetAccountResponse {
+  MerchantAccount account = 1;
+}
+
+message CreateAccountRequest {
+  int64 tenant_id = 1;
+}
+message CreateAccountResponse {
+  int64 id = 1;
+}
+
+message UpdateBankInfoRequest {
+  int64 tenant_id = 1;
+  string bank_account_name = 2;
+  string bank_account_no = 3;
+  string bank_name = 4;
+}
+message UpdateBankInfoResponse {}
+
+message CreateSettlementRequest {
+  int64 tenant_id = 1;
+  string order_no = 2;
+  string payment_no = 3;
+  int64 order_amount = 4;
+}
+message CreateSettlementResponse {
+  string settlement_no = 1;
+}
+
+message ListSettlementsRequest {
+  int64 tenant_id = 1;
+  int32 status = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+message ListSettlementsResponse {
+  repeated SettlementRecord settlements = 1;
+  int64 total = 2;
+}
+
+message ExecuteSettlementRequest {
+  string settle_date = 1; // YYYY-MM-DD, 结算所有 <= 此日期的待结算记录
+}
+message ExecuteSettlementResponse {
+  int32 settled_count = 1;
+  int64 settled_amount = 2;
+}
+
+message RequestWithdrawalRequest {
+  int64 tenant_id = 1;
+  int64 amount = 2;
+}
+message RequestWithdrawalResponse {
+  string withdrawal_no = 1;
+}
+
+message ReviewWithdrawalRequest {
+  int64 id = 1;
+  bool approved = 2;
+  string reject_reason = 3;
+}
+message ReviewWithdrawalResponse {}
+
+message ConfirmWithdrawalPaidRequest {
+  int64 id = 1;
+}
+message ConfirmWithdrawalPaidResponse {}
+
+message ListWithdrawalsRequest {
+  int64 tenant_id = 1;
+  int32 status = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+message ListWithdrawalsResponse {
+  repeated WithdrawalRecord withdrawals = 1;
+  int64 total = 2;
+}
+
+message ListTransactionsRequest {
+  int64 tenant_id = 1;
+  int32 type = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+message ListTransactionsResponse {
+  repeated AccountTransaction transactions = 1;
+  int64 total = 2;
+}
+
+message GetAccountSummaryRequest {
+  int64 tenant_id = 1;
+}
+message GetAccountSummaryResponse {
+  AccountSummary summary = 1;
+}
+
+message ListAccountsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+message ListAccountsResponse {
+  repeated MerchantAccount accounts = 1;
+  int64 total = 2;
+}

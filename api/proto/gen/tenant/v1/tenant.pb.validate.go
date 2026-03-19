@@ -303,6 +303,8 @@ func (m *TenantPlan) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for CommissionRate
+
 	if len(errors) > 0 {
 		return TenantPlanMultiError(errors)
 	}
