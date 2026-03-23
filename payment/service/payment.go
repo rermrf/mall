@@ -41,6 +41,7 @@ func NewPaymentService(
 	node *snowflake.Node,
 	mockCh *channel.MockChannel,
 	alipayCh *channel.AlipayChannel,
+	wechatCh *channel.WechatChannel,
 	l logger.Logger,
 ) PaymentService {
 	channels := map[string]channel.Channel{
@@ -48,6 +49,9 @@ func NewPaymentService(
 	}
 	if alipayCh != nil {
 		channels["alipay"] = alipayCh
+	}
+	if wechatCh != nil {
+		channels["wechat"] = wechatCh
 	}
 	return &paymentService{
 		repo:           repo,

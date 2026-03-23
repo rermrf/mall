@@ -43,6 +43,9 @@ func InitGinServer(
 	// Alipay async notification callback (no auth required)
 	engine.POST("/api/v1/payment/notify/alipay", paymentHandler.AlipayNotify)
 
+	// WeChat Pay async notification callback (no auth required)
+	engine.POST("/api/v1/payment/notify/wechat", paymentHandler.WechatNotify)
+
 	pub := engine.Group("/api/v1")
 	{
 		pub.POST("/signup", ginx.WrapBody[handler.SignupReq](l, userHandler.Signup))

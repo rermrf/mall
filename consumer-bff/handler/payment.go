@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -108,4 +109,33 @@ func (h *PaymentHandler) AlipayNotify(ctx *gin.Context) {
 		return
 	}
 	ctx.String(http.StatusOK, "success")
+}
+
+func (h *PaymentHandler) WechatNotify(ctx *gin.Context) {
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		h.l.Error("读取微信支付回调请求体失败", logger.Error(err))
+		ctx.JSON(http.StatusBadRequest, gin.H{"code": "FAIL", "message": "读取请求体失败"})
+		return
+	}
+
+	data := map[string]string{
+		"body":                string(body),
+		"Wechatpay-Timestamp": ctx.GetHeader("Wechatpay-Timestamp"),
+		"Wechatpay-Nonce":     ctx.GetHeader("Wechatpay-Nonce"),
+		"Wechatpay-Signature": ctx.GetHeader("Wechatpay-Signature"),
+		"Wechatpay-Serial":    ctx.GetHeader("Wechatpay-Serial"),
+	}
+	bodyBytes, _ := json.Marshal(data)
+
+	_, err = h.paymentClient.HandleNotify(ctx.Request.Context(), &paymentv1.HandleNotifyRequest{
+		Channel:    "wechat",
+		NotifyBody: string(bodyBytes),
+	})
+	if err != nil {
+		h.l.Error("微信支付异步回调处理失败", logger.Error(err))
+		ctx.JSON(http.StatusInternalServerError, gin.H{"code": "FAIL", "message": "处理失败"})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"code": "SUCCESS", "message": "成功"})
 }

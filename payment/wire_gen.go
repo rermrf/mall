@@ -33,10 +33,13 @@ func InitApp() *App {
 	mockChannel := channel.NewMockChannel(node)
 	alipayClient := ioc.InitAlipayClient()
 	alipayChannel := channel.NewAlipayChannel(alipayClient)
+	wechatConfig := ioc.InitWechatConfig()
+	coreClient := ioc.InitWechatClient(wechatConfig)
+	wechatChannel := channel.NewWechatChannel(coreClient, wechatConfig)
 	logger := ioc.InitLogger()
-	paymentService := service.NewPaymentService(paymentRepository, producer, idempotencyService, node, mockChannel, alipayChannel, logger)
+	paymentService := service.NewPaymentService(paymentRepository, producer, idempotencyService, node, mockChannel, alipayChannel, wechatChannel, logger)
 	reconciliationDAO := dao.NewReconciliationDAO(db)
-	reconciliationService := service.NewReconciliationService(reconciliationDAO, paymentRepository, mockChannel, alipayChannel, node, logger)
+	reconciliationService := service.NewReconciliationService(reconciliationDAO, paymentRepository, mockChannel, alipayChannel, wechatChannel, node, logger)
 	paymentGRPCServer := grpc.NewPaymentGRPCServer(paymentService, reconciliationService)
 	server := ioc.InitGRPCServer(paymentGRPCServer, logger)
 	reconciliationJob := service.NewReconciliationJob(reconciliationService, logger)
@@ -51,4 +54,4 @@ func InitApp() *App {
 
 var thirdPartySet = wire.NewSet(ioc.InitDB, ioc.InitRedis, ioc.InitKafka, ioc.InitLogger, ioc.InitEtcdClient, ioc.InitIdempotencyService, ioc.InitSnowflakeNode)
 
-var paymentSet = wire.NewSet(dao.NewPaymentDAO, dao.NewReconciliationDAO, cache.NewPaymentCache, repository.NewPaymentRepository, channel.NewMockChannel, ioc.InitAlipayClient, channel.NewAlipayChannel, service.NewPaymentService, service.NewReconciliationService, service.NewReconciliationJob, grpc.NewPaymentGRPCServer, ioc.InitSyncProducer, ioc.InitProducer, ioc.InitGRPCServer)
+var paymentSet = wire.NewSet(dao.NewPaymentDAO, dao.NewReconciliationDAO, cache.NewPaymentCache, repository.NewPaymentRepository, channel.NewMockChannel, ioc.InitAlipayClient, channel.NewAlipayChannel, ioc.InitWechatConfig, ioc.InitWechatClient, channel.NewWechatChannel, service.NewPaymentService, service.NewReconciliationService, service.NewReconciliationJob, grpc.NewPaymentGRPCServer, ioc.InitSyncProducer, ioc.InitProducer, ioc.InitGRPCServer)

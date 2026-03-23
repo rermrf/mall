@@ -32,6 +32,7 @@ func NewReconciliationService(
 	repo repository.PaymentRepository,
 	mockCh *channel.MockChannel,
 	alipayCh *channel.AlipayChannel,
+	wechatCh *channel.WechatChannel,
 	node *snowflake.Node,
 	l logger.Logger,
 ) ReconciliationService {
@@ -40,6 +41,9 @@ func NewReconciliationService(
 	}
 	if alipayCh != nil {
 		channels["alipay"] = alipayCh
+	}
+	if wechatCh != nil {
+		channels["wechat"] = wechatCh
 	}
 	return &reconciliationService{
 		reconDAO: reconDAO,
