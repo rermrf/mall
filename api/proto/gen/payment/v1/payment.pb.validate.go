@@ -1917,3 +1917,1023 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListPaymentsResponseValidationError{}
+
+// Validate checks the field values on RunReconciliationRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RunReconciliationRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RunReconciliationRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RunReconciliationRequestMultiError, or nil if none found.
+func (m *RunReconciliationRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RunReconciliationRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Channel
+
+	// no validation rules for BillDate
+
+	if len(errors) > 0 {
+		return RunReconciliationRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RunReconciliationRequestMultiError is an error wrapping multiple validation
+// errors returned by RunReconciliationRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RunReconciliationRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RunReconciliationRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RunReconciliationRequestMultiError) AllErrors() []error { return m }
+
+// RunReconciliationRequestValidationError is the validation error returned by
+// RunReconciliationRequest.Validate if the designated constraints aren't met.
+type RunReconciliationRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RunReconciliationRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RunReconciliationRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RunReconciliationRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RunReconciliationRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RunReconciliationRequestValidationError) ErrorName() string {
+	return "RunReconciliationRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RunReconciliationRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRunReconciliationRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RunReconciliationRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RunReconciliationRequestValidationError{}
+
+// Validate checks the field values on RunReconciliationResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RunReconciliationResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RunReconciliationResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RunReconciliationResponseMultiError, or nil if none found.
+func (m *RunReconciliationResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RunReconciliationResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for BatchId
+
+	if len(errors) > 0 {
+		return RunReconciliationResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// RunReconciliationResponseMultiError is an error wrapping multiple validation
+// errors returned by RunReconciliationResponse.ValidateAll() if the
+// designated constraints aren't met.
+type RunReconciliationResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RunReconciliationResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RunReconciliationResponseMultiError) AllErrors() []error { return m }
+
+// RunReconciliationResponseValidationError is the validation error returned by
+// RunReconciliationResponse.Validate if the designated constraints aren't met.
+type RunReconciliationResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RunReconciliationResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RunReconciliationResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RunReconciliationResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RunReconciliationResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RunReconciliationResponseValidationError) ErrorName() string {
+	return "RunReconciliationResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RunReconciliationResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRunReconciliationResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RunReconciliationResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RunReconciliationResponseValidationError{}
+
+// Validate checks the field values on ReconciliationBatch with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ReconciliationBatch) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ReconciliationBatch with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ReconciliationBatchMultiError, or nil if none found.
+func (m *ReconciliationBatch) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ReconciliationBatch) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for BatchNo
+
+	// no validation rules for Channel
+
+	// no validation rules for BillDate
+
+	// no validation rules for Status
+
+	// no validation rules for TotalChannel
+
+	// no validation rules for TotalLocal
+
+	// no validation rules for TotalMatch
+
+	// no validation rules for TotalMismatch
+
+	// no validation rules for ChannelAmount
+
+	// no validation rules for LocalAmount
+
+	// no validation rules for ErrorMsg
+
+	if all {
+		switch v := interface{}(m.GetCtime()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ReconciliationBatchValidationError{
+					field:  "Ctime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ReconciliationBatchValidationError{
+					field:  "Ctime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCtime()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ReconciliationBatchValidationError{
+				field:  "Ctime",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return ReconciliationBatchMultiError(errors)
+	}
+
+	return nil
+}
+
+// ReconciliationBatchMultiError is an error wrapping multiple validation
+// errors returned by ReconciliationBatch.ValidateAll() if the designated
+// constraints aren't met.
+type ReconciliationBatchMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ReconciliationBatchMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ReconciliationBatchMultiError) AllErrors() []error { return m }
+
+// ReconciliationBatchValidationError is the validation error returned by
+// ReconciliationBatch.Validate if the designated constraints aren't met.
+type ReconciliationBatchValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ReconciliationBatchValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ReconciliationBatchValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ReconciliationBatchValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ReconciliationBatchValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ReconciliationBatchValidationError) ErrorName() string {
+	return "ReconciliationBatchValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ReconciliationBatchValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sReconciliationBatch.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ReconciliationBatchValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ReconciliationBatchValidationError{}
+
+// Validate checks the field values on ReconciliationDetail with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ReconciliationDetail) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ReconciliationDetail with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ReconciliationDetailMultiError, or nil if none found.
+func (m *ReconciliationDetail) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ReconciliationDetail) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for BatchId
+
+	// no validation rules for PaymentNo
+
+	// no validation rules for ChannelTradeNo
+
+	// no validation rules for Type
+
+	// no validation rules for LocalAmount
+
+	// no validation rules for ChannelAmount
+
+	// no validation rules for LocalStatus
+
+	// no validation rules for ChannelStatus
+
+	// no validation rules for Handled
+
+	// no validation rules for Remark
+
+	if len(errors) > 0 {
+		return ReconciliationDetailMultiError(errors)
+	}
+
+	return nil
+}
+
+// ReconciliationDetailMultiError is an error wrapping multiple validation
+// errors returned by ReconciliationDetail.ValidateAll() if the designated
+// constraints aren't met.
+type ReconciliationDetailMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ReconciliationDetailMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ReconciliationDetailMultiError) AllErrors() []error { return m }
+
+// ReconciliationDetailValidationError is the validation error returned by
+// ReconciliationDetail.Validate if the designated constraints aren't met.
+type ReconciliationDetailValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ReconciliationDetailValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ReconciliationDetailValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ReconciliationDetailValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ReconciliationDetailValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ReconciliationDetailValidationError) ErrorName() string {
+	return "ReconciliationDetailValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ReconciliationDetailValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sReconciliationDetail.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ReconciliationDetailValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ReconciliationDetailValidationError{}
+
+// Validate checks the field values on ListReconciliationBatchesRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *ListReconciliationBatchesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListReconciliationBatchesRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ListReconciliationBatchesRequestMultiError, or nil if none found.
+func (m *ListReconciliationBatchesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListReconciliationBatchesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Page
+
+	// no validation rules for PageSize
+
+	if len(errors) > 0 {
+		return ListReconciliationBatchesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListReconciliationBatchesRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// ListReconciliationBatchesRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListReconciliationBatchesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListReconciliationBatchesRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListReconciliationBatchesRequestMultiError) AllErrors() []error { return m }
+
+// ListReconciliationBatchesRequestValidationError is the validation error
+// returned by ListReconciliationBatchesRequest.Validate if the designated
+// constraints aren't met.
+type ListReconciliationBatchesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListReconciliationBatchesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListReconciliationBatchesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListReconciliationBatchesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListReconciliationBatchesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListReconciliationBatchesRequestValidationError) ErrorName() string {
+	return "ListReconciliationBatchesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListReconciliationBatchesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListReconciliationBatchesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListReconciliationBatchesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListReconciliationBatchesRequestValidationError{}
+
+// Validate checks the field values on ListReconciliationBatchesResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *ListReconciliationBatchesResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListReconciliationBatchesResponse
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// ListReconciliationBatchesResponseMultiError, or nil if none found.
+func (m *ListReconciliationBatchesResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListReconciliationBatchesResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetBatches() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListReconciliationBatchesResponseValidationError{
+						field:  fmt.Sprintf("Batches[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListReconciliationBatchesResponseValidationError{
+						field:  fmt.Sprintf("Batches[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListReconciliationBatchesResponseValidationError{
+					field:  fmt.Sprintf("Batches[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return ListReconciliationBatchesResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListReconciliationBatchesResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// ListReconciliationBatchesResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListReconciliationBatchesResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListReconciliationBatchesResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListReconciliationBatchesResponseMultiError) AllErrors() []error { return m }
+
+// ListReconciliationBatchesResponseValidationError is the validation error
+// returned by ListReconciliationBatchesResponse.Validate if the designated
+// constraints aren't met.
+type ListReconciliationBatchesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListReconciliationBatchesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListReconciliationBatchesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListReconciliationBatchesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListReconciliationBatchesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListReconciliationBatchesResponseValidationError) ErrorName() string {
+	return "ListReconciliationBatchesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListReconciliationBatchesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListReconciliationBatchesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListReconciliationBatchesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListReconciliationBatchesResponseValidationError{}
+
+// Validate checks the field values on GetReconciliationBatchDetailRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *GetReconciliationBatchDetailRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetReconciliationBatchDetailRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// GetReconciliationBatchDetailRequestMultiError, or nil if none found.
+func (m *GetReconciliationBatchDetailRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetReconciliationBatchDetailRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for BatchId
+
+	// no validation rules for Page
+
+	// no validation rules for PageSize
+
+	if len(errors) > 0 {
+		return GetReconciliationBatchDetailRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetReconciliationBatchDetailRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// GetReconciliationBatchDetailRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetReconciliationBatchDetailRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetReconciliationBatchDetailRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetReconciliationBatchDetailRequestMultiError) AllErrors() []error { return m }
+
+// GetReconciliationBatchDetailRequestValidationError is the validation error
+// returned by GetReconciliationBatchDetailRequest.Validate if the designated
+// constraints aren't met.
+type GetReconciliationBatchDetailRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetReconciliationBatchDetailRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetReconciliationBatchDetailRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetReconciliationBatchDetailRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetReconciliationBatchDetailRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetReconciliationBatchDetailRequestValidationError) ErrorName() string {
+	return "GetReconciliationBatchDetailRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetReconciliationBatchDetailRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetReconciliationBatchDetailRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetReconciliationBatchDetailRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetReconciliationBatchDetailRequestValidationError{}
+
+// Validate checks the field values on GetReconciliationBatchDetailResponse
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *GetReconciliationBatchDetailResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetReconciliationBatchDetailResponse
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// GetReconciliationBatchDetailResponseMultiError, or nil if none found.
+func (m *GetReconciliationBatchDetailResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetReconciliationBatchDetailResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetBatch()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetReconciliationBatchDetailResponseValidationError{
+					field:  "Batch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetReconciliationBatchDetailResponseValidationError{
+					field:  "Batch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBatch()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetReconciliationBatchDetailResponseValidationError{
+				field:  "Batch",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetDetails() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetReconciliationBatchDetailResponseValidationError{
+						field:  fmt.Sprintf("Details[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetReconciliationBatchDetailResponseValidationError{
+						field:  fmt.Sprintf("Details[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetReconciliationBatchDetailResponseValidationError{
+					field:  fmt.Sprintf("Details[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return GetReconciliationBatchDetailResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetReconciliationBatchDetailResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// GetReconciliationBatchDetailResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetReconciliationBatchDetailResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetReconciliationBatchDetailResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetReconciliationBatchDetailResponseMultiError) AllErrors() []error { return m }
+
+// GetReconciliationBatchDetailResponseValidationError is the validation error
+// returned by GetReconciliationBatchDetailResponse.Validate if the designated
+// constraints aren't met.
+type GetReconciliationBatchDetailResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetReconciliationBatchDetailResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetReconciliationBatchDetailResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetReconciliationBatchDetailResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetReconciliationBatchDetailResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetReconciliationBatchDetailResponseValidationError) ErrorName() string {
+	return "GetReconciliationBatchDetailResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetReconciliationBatchDetailResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetReconciliationBatchDetailResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetReconciliationBatchDetailResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetReconciliationBatchDetailResponseValidationError{}

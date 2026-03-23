@@ -19,13 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PaymentService_CreatePayment_FullMethodName = "/payment.v1.PaymentService/CreatePayment"
-	PaymentService_GetPayment_FullMethodName    = "/payment.v1.PaymentService/GetPayment"
-	PaymentService_HandleNotify_FullMethodName  = "/payment.v1.PaymentService/HandleNotify"
-	PaymentService_ClosePayment_FullMethodName  = "/payment.v1.PaymentService/ClosePayment"
-	PaymentService_Refund_FullMethodName        = "/payment.v1.PaymentService/Refund"
-	PaymentService_GetRefund_FullMethodName     = "/payment.v1.PaymentService/GetRefund"
-	PaymentService_ListPayments_FullMethodName  = "/payment.v1.PaymentService/ListPayments"
+	PaymentService_CreatePayment_FullMethodName                = "/payment.v1.PaymentService/CreatePayment"
+	PaymentService_GetPayment_FullMethodName                   = "/payment.v1.PaymentService/GetPayment"
+	PaymentService_HandleNotify_FullMethodName                 = "/payment.v1.PaymentService/HandleNotify"
+	PaymentService_ClosePayment_FullMethodName                 = "/payment.v1.PaymentService/ClosePayment"
+	PaymentService_Refund_FullMethodName                       = "/payment.v1.PaymentService/Refund"
+	PaymentService_GetRefund_FullMethodName                    = "/payment.v1.PaymentService/GetRefund"
+	PaymentService_ListPayments_FullMethodName                 = "/payment.v1.PaymentService/ListPayments"
+	PaymentService_RunReconciliation_FullMethodName            = "/payment.v1.PaymentService/RunReconciliation"
+	PaymentService_ListReconciliationBatches_FullMethodName    = "/payment.v1.PaymentService/ListReconciliationBatches"
+	PaymentService_GetReconciliationBatchDetail_FullMethodName = "/payment.v1.PaymentService/GetReconciliationBatchDetail"
 )
 
 // PaymentServiceClient is the client API for PaymentService service.
@@ -46,6 +49,10 @@ type PaymentServiceClient interface {
 	GetRefund(ctx context.Context, in *GetRefundRequest, opts ...grpc.CallOption) (*GetRefundResponse, error)
 	// 支付单列表（平台监管）
 	ListPayments(ctx context.Context, in *ListPaymentsRequest, opts ...grpc.CallOption) (*ListPaymentsResponse, error)
+	// 对账
+	RunReconciliation(ctx context.Context, in *RunReconciliationRequest, opts ...grpc.CallOption) (*RunReconciliationResponse, error)
+	ListReconciliationBatches(ctx context.Context, in *ListReconciliationBatchesRequest, opts ...grpc.CallOption) (*ListReconciliationBatchesResponse, error)
+	GetReconciliationBatchDetail(ctx context.Context, in *GetReconciliationBatchDetailRequest, opts ...grpc.CallOption) (*GetReconciliationBatchDetailResponse, error)
 }
 
 type paymentServiceClient struct {
@@ -126,6 +133,36 @@ func (c *paymentServiceClient) ListPayments(ctx context.Context, in *ListPayment
 	return out, nil
 }
 
+func (c *paymentServiceClient) RunReconciliation(ctx context.Context, in *RunReconciliationRequest, opts ...grpc.CallOption) (*RunReconciliationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RunReconciliationResponse)
+	err := c.cc.Invoke(ctx, PaymentService_RunReconciliation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) ListReconciliationBatches(ctx context.Context, in *ListReconciliationBatchesRequest, opts ...grpc.CallOption) (*ListReconciliationBatchesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListReconciliationBatchesResponse)
+	err := c.cc.Invoke(ctx, PaymentService_ListReconciliationBatches_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) GetReconciliationBatchDetail(ctx context.Context, in *GetReconciliationBatchDetailRequest, opts ...grpc.CallOption) (*GetReconciliationBatchDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetReconciliationBatchDetailResponse)
+	err := c.cc.Invoke(ctx, PaymentService_GetReconciliationBatchDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PaymentServiceServer is the server API for PaymentService service.
 // All implementations should embed UnimplementedPaymentServiceServer
 // for forward compatibility.
@@ -144,6 +181,10 @@ type PaymentServiceServer interface {
 	GetRefund(context.Context, *GetRefundRequest) (*GetRefundResponse, error)
 	// 支付单列表（平台监管）
 	ListPayments(context.Context, *ListPaymentsRequest) (*ListPaymentsResponse, error)
+	// 对账
+	RunReconciliation(context.Context, *RunReconciliationRequest) (*RunReconciliationResponse, error)
+	ListReconciliationBatches(context.Context, *ListReconciliationBatchesRequest) (*ListReconciliationBatchesResponse, error)
+	GetReconciliationBatchDetail(context.Context, *GetReconciliationBatchDetailRequest) (*GetReconciliationBatchDetailResponse, error)
 }
 
 // UnimplementedPaymentServiceServer should be embedded to have
@@ -173,6 +214,15 @@ func (UnimplementedPaymentServiceServer) GetRefund(context.Context, *GetRefundRe
 }
 func (UnimplementedPaymentServiceServer) ListPayments(context.Context, *ListPaymentsRequest) (*ListPaymentsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPayments not implemented")
+}
+func (UnimplementedPaymentServiceServer) RunReconciliation(context.Context, *RunReconciliationRequest) (*RunReconciliationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RunReconciliation not implemented")
+}
+func (UnimplementedPaymentServiceServer) ListReconciliationBatches(context.Context, *ListReconciliationBatchesRequest) (*ListReconciliationBatchesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListReconciliationBatches not implemented")
+}
+func (UnimplementedPaymentServiceServer) GetReconciliationBatchDetail(context.Context, *GetReconciliationBatchDetailRequest) (*GetReconciliationBatchDetailResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetReconciliationBatchDetail not implemented")
 }
 func (UnimplementedPaymentServiceServer) testEmbeddedByValue() {}
 
@@ -320,6 +370,60 @@ func _PaymentService_ListPayments_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentService_RunReconciliation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RunReconciliationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).RunReconciliation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_RunReconciliation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).RunReconciliation(ctx, req.(*RunReconciliationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_ListReconciliationBatches_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListReconciliationBatchesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).ListReconciliationBatches(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_ListReconciliationBatches_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).ListReconciliationBatches(ctx, req.(*ListReconciliationBatchesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_GetReconciliationBatchDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetReconciliationBatchDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).GetReconciliationBatchDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_GetReconciliationBatchDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).GetReconciliationBatchDetail(ctx, req.(*GetReconciliationBatchDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PaymentService_ServiceDesc is the grpc.ServiceDesc for PaymentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -354,6 +458,18 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListPayments",
 			Handler:    _PaymentService_ListPayments_Handler,
+		},
+		{
+			MethodName: "RunReconciliation",
+			Handler:    _PaymentService_RunReconciliation_Handler,
+		},
+		{
+			MethodName: "ListReconciliationBatches",
+			Handler:    _PaymentService_ListReconciliationBatches_Handler,
+		},
+		{
+			MethodName: "GetReconciliationBatchDetail",
+			Handler:    _PaymentService_GetReconciliationBatchDetail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

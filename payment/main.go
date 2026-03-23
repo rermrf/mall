@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
@@ -14,6 +15,11 @@ func main() {
 	initViper()
 	app := InitApp()
 
+	// 启动对账定时任务
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	app.ReconJob.Start(ctx)
+
 	go func() {
 		if err := app.Server.Serve(); err != nil {
 			fmt.Println("gRPC 服务启动失败:", err)
@@ -25,6 +31,7 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	fmt.Println("正在关闭服务...")
+	cancel()
 	app.Server.Close()
 }
 

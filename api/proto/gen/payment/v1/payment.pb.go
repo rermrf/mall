@@ -983,6 +983,590 @@ func (x *ListPaymentsResponse) GetTotal() int64 {
 	return 0
 }
 
+type RunReconciliationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Channel       string                 `protobuf:"bytes,1,opt,name=channel,proto3" json:"channel,omitempty"`
+	BillDate      string                 `protobuf:"bytes,2,opt,name=bill_date,json=billDate,proto3" json:"bill_date,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RunReconciliationRequest) Reset() {
+	*x = RunReconciliationRequest{}
+	mi := &file_payment_v1_payment_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RunReconciliationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RunReconciliationRequest) ProtoMessage() {}
+
+func (x *RunReconciliationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RunReconciliationRequest.ProtoReflect.Descriptor instead.
+func (*RunReconciliationRequest) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *RunReconciliationRequest) GetChannel() string {
+	if x != nil {
+		return x.Channel
+	}
+	return ""
+}
+
+func (x *RunReconciliationRequest) GetBillDate() string {
+	if x != nil {
+		return x.BillDate
+	}
+	return ""
+}
+
+type RunReconciliationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BatchId       int64                  `protobuf:"varint,1,opt,name=batch_id,json=batchId,proto3" json:"batch_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RunReconciliationResponse) Reset() {
+	*x = RunReconciliationResponse{}
+	mi := &file_payment_v1_payment_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RunReconciliationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RunReconciliationResponse) ProtoMessage() {}
+
+func (x *RunReconciliationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RunReconciliationResponse.ProtoReflect.Descriptor instead.
+func (*RunReconciliationResponse) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *RunReconciliationResponse) GetBatchId() int64 {
+	if x != nil {
+		return x.BatchId
+	}
+	return 0
+}
+
+type ReconciliationBatch struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BatchNo       string                 `protobuf:"bytes,2,opt,name=batch_no,json=batchNo,proto3" json:"batch_no,omitempty"`
+	Channel       string                 `protobuf:"bytes,3,opt,name=channel,proto3" json:"channel,omitempty"`
+	BillDate      string                 `protobuf:"bytes,4,opt,name=bill_date,json=billDate,proto3" json:"bill_date,omitempty"`
+	Status        int32                  `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"`
+	TotalChannel  int32                  `protobuf:"varint,6,opt,name=total_channel,json=totalChannel,proto3" json:"total_channel,omitempty"`
+	TotalLocal    int32                  `protobuf:"varint,7,opt,name=total_local,json=totalLocal,proto3" json:"total_local,omitempty"`
+	TotalMatch    int32                  `protobuf:"varint,8,opt,name=total_match,json=totalMatch,proto3" json:"total_match,omitempty"`
+	TotalMismatch int32                  `protobuf:"varint,9,opt,name=total_mismatch,json=totalMismatch,proto3" json:"total_mismatch,omitempty"`
+	ChannelAmount int64                  `protobuf:"varint,10,opt,name=channel_amount,json=channelAmount,proto3" json:"channel_amount,omitempty"`
+	LocalAmount   int64                  `protobuf:"varint,11,opt,name=local_amount,json=localAmount,proto3" json:"local_amount,omitempty"`
+	ErrorMsg      string                 `protobuf:"bytes,12,opt,name=error_msg,json=errorMsg,proto3" json:"error_msg,omitempty"`
+	Ctime         *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=ctime,proto3" json:"ctime,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReconciliationBatch) Reset() {
+	*x = ReconciliationBatch{}
+	mi := &file_payment_v1_payment_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReconciliationBatch) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReconciliationBatch) ProtoMessage() {}
+
+func (x *ReconciliationBatch) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReconciliationBatch.ProtoReflect.Descriptor instead.
+func (*ReconciliationBatch) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *ReconciliationBatch) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ReconciliationBatch) GetBatchNo() string {
+	if x != nil {
+		return x.BatchNo
+	}
+	return ""
+}
+
+func (x *ReconciliationBatch) GetChannel() string {
+	if x != nil {
+		return x.Channel
+	}
+	return ""
+}
+
+func (x *ReconciliationBatch) GetBillDate() string {
+	if x != nil {
+		return x.BillDate
+	}
+	return ""
+}
+
+func (x *ReconciliationBatch) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+func (x *ReconciliationBatch) GetTotalChannel() int32 {
+	if x != nil {
+		return x.TotalChannel
+	}
+	return 0
+}
+
+func (x *ReconciliationBatch) GetTotalLocal() int32 {
+	if x != nil {
+		return x.TotalLocal
+	}
+	return 0
+}
+
+func (x *ReconciliationBatch) GetTotalMatch() int32 {
+	if x != nil {
+		return x.TotalMatch
+	}
+	return 0
+}
+
+func (x *ReconciliationBatch) GetTotalMismatch() int32 {
+	if x != nil {
+		return x.TotalMismatch
+	}
+	return 0
+}
+
+func (x *ReconciliationBatch) GetChannelAmount() int64 {
+	if x != nil {
+		return x.ChannelAmount
+	}
+	return 0
+}
+
+func (x *ReconciliationBatch) GetLocalAmount() int64 {
+	if x != nil {
+		return x.LocalAmount
+	}
+	return 0
+}
+
+func (x *ReconciliationBatch) GetErrorMsg() string {
+	if x != nil {
+		return x.ErrorMsg
+	}
+	return ""
+}
+
+func (x *ReconciliationBatch) GetCtime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Ctime
+	}
+	return nil
+}
+
+type ReconciliationDetail struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BatchId        int64                  `protobuf:"varint,2,opt,name=batch_id,json=batchId,proto3" json:"batch_id,omitempty"`
+	PaymentNo      string                 `protobuf:"bytes,3,opt,name=payment_no,json=paymentNo,proto3" json:"payment_no,omitempty"`
+	ChannelTradeNo string                 `protobuf:"bytes,4,opt,name=channel_trade_no,json=channelTradeNo,proto3" json:"channel_trade_no,omitempty"`
+	Type           int32                  `protobuf:"varint,5,opt,name=type,proto3" json:"type,omitempty"`
+	LocalAmount    int64                  `protobuf:"varint,6,opt,name=local_amount,json=localAmount,proto3" json:"local_amount,omitempty"`
+	ChannelAmount  int64                  `protobuf:"varint,7,opt,name=channel_amount,json=channelAmount,proto3" json:"channel_amount,omitempty"`
+	LocalStatus    int32                  `protobuf:"varint,8,opt,name=local_status,json=localStatus,proto3" json:"local_status,omitempty"`
+	ChannelStatus  string                 `protobuf:"bytes,9,opt,name=channel_status,json=channelStatus,proto3" json:"channel_status,omitempty"`
+	Handled        bool                   `protobuf:"varint,10,opt,name=handled,proto3" json:"handled,omitempty"`
+	Remark         string                 `protobuf:"bytes,11,opt,name=remark,proto3" json:"remark,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ReconciliationDetail) Reset() {
+	*x = ReconciliationDetail{}
+	mi := &file_payment_v1_payment_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReconciliationDetail) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReconciliationDetail) ProtoMessage() {}
+
+func (x *ReconciliationDetail) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReconciliationDetail.ProtoReflect.Descriptor instead.
+func (*ReconciliationDetail) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ReconciliationDetail) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ReconciliationDetail) GetBatchId() int64 {
+	if x != nil {
+		return x.BatchId
+	}
+	return 0
+}
+
+func (x *ReconciliationDetail) GetPaymentNo() string {
+	if x != nil {
+		return x.PaymentNo
+	}
+	return ""
+}
+
+func (x *ReconciliationDetail) GetChannelTradeNo() string {
+	if x != nil {
+		return x.ChannelTradeNo
+	}
+	return ""
+}
+
+func (x *ReconciliationDetail) GetType() int32 {
+	if x != nil {
+		return x.Type
+	}
+	return 0
+}
+
+func (x *ReconciliationDetail) GetLocalAmount() int64 {
+	if x != nil {
+		return x.LocalAmount
+	}
+	return 0
+}
+
+func (x *ReconciliationDetail) GetChannelAmount() int64 {
+	if x != nil {
+		return x.ChannelAmount
+	}
+	return 0
+}
+
+func (x *ReconciliationDetail) GetLocalStatus() int32 {
+	if x != nil {
+		return x.LocalStatus
+	}
+	return 0
+}
+
+func (x *ReconciliationDetail) GetChannelStatus() string {
+	if x != nil {
+		return x.ChannelStatus
+	}
+	return ""
+}
+
+func (x *ReconciliationDetail) GetHandled() bool {
+	if x != nil {
+		return x.Handled
+	}
+	return false
+}
+
+func (x *ReconciliationDetail) GetRemark() string {
+	if x != nil {
+		return x.Remark
+	}
+	return ""
+}
+
+type ListReconciliationBatchesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int32                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListReconciliationBatchesRequest) Reset() {
+	*x = ListReconciliationBatchesRequest{}
+	mi := &file_payment_v1_payment_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListReconciliationBatchesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListReconciliationBatchesRequest) ProtoMessage() {}
+
+func (x *ListReconciliationBatchesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListReconciliationBatchesRequest.ProtoReflect.Descriptor instead.
+func (*ListReconciliationBatchesRequest) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ListReconciliationBatchesRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *ListReconciliationBatchesRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+type ListReconciliationBatchesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Batches       []*ReconciliationBatch `protobuf:"bytes,1,rep,name=batches,proto3" json:"batches,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListReconciliationBatchesResponse) Reset() {
+	*x = ListReconciliationBatchesResponse{}
+	mi := &file_payment_v1_payment_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListReconciliationBatchesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListReconciliationBatchesResponse) ProtoMessage() {}
+
+func (x *ListReconciliationBatchesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListReconciliationBatchesResponse.ProtoReflect.Descriptor instead.
+func (*ListReconciliationBatchesResponse) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ListReconciliationBatchesResponse) GetBatches() []*ReconciliationBatch {
+	if x != nil {
+		return x.Batches
+	}
+	return nil
+}
+
+func (x *ListReconciliationBatchesResponse) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+type GetReconciliationBatchDetailRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BatchId       int64                  `protobuf:"varint,1,opt,name=batch_id,json=batchId,proto3" json:"batch_id,omitempty"`
+	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
+	PageSize      int32                  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetReconciliationBatchDetailRequest) Reset() {
+	*x = GetReconciliationBatchDetailRequest{}
+	mi := &file_payment_v1_payment_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetReconciliationBatchDetailRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetReconciliationBatchDetailRequest) ProtoMessage() {}
+
+func (x *GetReconciliationBatchDetailRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetReconciliationBatchDetailRequest.ProtoReflect.Descriptor instead.
+func (*GetReconciliationBatchDetailRequest) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *GetReconciliationBatchDetailRequest) GetBatchId() int64 {
+	if x != nil {
+		return x.BatchId
+	}
+	return 0
+}
+
+func (x *GetReconciliationBatchDetailRequest) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
+func (x *GetReconciliationBatchDetailRequest) GetPageSize() int32 {
+	if x != nil {
+		return x.PageSize
+	}
+	return 0
+}
+
+type GetReconciliationBatchDetailResponse struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Batch         *ReconciliationBatch    `protobuf:"bytes,1,opt,name=batch,proto3" json:"batch,omitempty"`
+	Details       []*ReconciliationDetail `protobuf:"bytes,2,rep,name=details,proto3" json:"details,omitempty"`
+	Total         int64                   `protobuf:"varint,3,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetReconciliationBatchDetailResponse) Reset() {
+	*x = GetReconciliationBatchDetailResponse{}
+	mi := &file_payment_v1_payment_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetReconciliationBatchDetailResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetReconciliationBatchDetailResponse) ProtoMessage() {}
+
+func (x *GetReconciliationBatchDetailResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetReconciliationBatchDetailResponse.ProtoReflect.Descriptor instead.
+func (*GetReconciliationBatchDetailResponse) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *GetReconciliationBatchDetailResponse) GetBatch() *ReconciliationBatch {
+	if x != nil {
+		return x.Batch
+	}
+	return nil
+}
+
+func (x *GetReconciliationBatchDetailResponse) GetDetails() []*ReconciliationDetail {
+	if x != nil {
+		return x.Details
+	}
+	return nil
+}
+
+func (x *GetReconciliationBatchDetailResponse) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
 var File_payment_v1_payment_proto protoreflect.FileDescriptor
 
 const file_payment_v1_payment_proto_rawDesc = "" +
@@ -1062,7 +1646,57 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"\tpage_size\x18\x04 \x01(\x05R\bpageSize\"b\n" +
 	"\x14ListPaymentsResponse\x124\n" +
 	"\bpayments\x18\x01 \x03(\v2\x18.payment.v1.PaymentOrderR\bpayments\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x03R\x05total2\xb7\x04\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"Q\n" +
+	"\x18RunReconciliationRequest\x12\x18\n" +
+	"\achannel\x18\x01 \x01(\tR\achannel\x12\x1b\n" +
+	"\tbill_date\x18\x02 \x01(\tR\bbillDate\"6\n" +
+	"\x19RunReconciliationResponse\x12\x19\n" +
+	"\bbatch_id\x18\x01 \x01(\x03R\abatchId\"\xb6\x03\n" +
+	"\x13ReconciliationBatch\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
+	"\bbatch_no\x18\x02 \x01(\tR\abatchNo\x12\x18\n" +
+	"\achannel\x18\x03 \x01(\tR\achannel\x12\x1b\n" +
+	"\tbill_date\x18\x04 \x01(\tR\bbillDate\x12\x16\n" +
+	"\x06status\x18\x05 \x01(\x05R\x06status\x12#\n" +
+	"\rtotal_channel\x18\x06 \x01(\x05R\ftotalChannel\x12\x1f\n" +
+	"\vtotal_local\x18\a \x01(\x05R\n" +
+	"totalLocal\x12\x1f\n" +
+	"\vtotal_match\x18\b \x01(\x05R\n" +
+	"totalMatch\x12%\n" +
+	"\x0etotal_mismatch\x18\t \x01(\x05R\rtotalMismatch\x12%\n" +
+	"\x0echannel_amount\x18\n" +
+	" \x01(\x03R\rchannelAmount\x12!\n" +
+	"\flocal_amount\x18\v \x01(\x03R\vlocalAmount\x12\x1b\n" +
+	"\terror_msg\x18\f \x01(\tR\berrorMsg\x120\n" +
+	"\x05ctime\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\x05ctime\"\xe4\x02\n" +
+	"\x14ReconciliationDetail\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
+	"\bbatch_id\x18\x02 \x01(\x03R\abatchId\x12\x1d\n" +
+	"\n" +
+	"payment_no\x18\x03 \x01(\tR\tpaymentNo\x12(\n" +
+	"\x10channel_trade_no\x18\x04 \x01(\tR\x0echannelTradeNo\x12\x12\n" +
+	"\x04type\x18\x05 \x01(\x05R\x04type\x12!\n" +
+	"\flocal_amount\x18\x06 \x01(\x03R\vlocalAmount\x12%\n" +
+	"\x0echannel_amount\x18\a \x01(\x03R\rchannelAmount\x12!\n" +
+	"\flocal_status\x18\b \x01(\x05R\vlocalStatus\x12%\n" +
+	"\x0echannel_status\x18\t \x01(\tR\rchannelStatus\x12\x18\n" +
+	"\ahandled\x18\n" +
+	" \x01(\bR\ahandled\x12\x16\n" +
+	"\x06remark\x18\v \x01(\tR\x06remark\"S\n" +
+	" ListReconciliationBatchesRequest\x12\x12\n" +
+	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\"t\n" +
+	"!ListReconciliationBatchesResponse\x129\n" +
+	"\abatches\x18\x01 \x03(\v2\x1f.payment.v1.ReconciliationBatchR\abatches\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"q\n" +
+	"#GetReconciliationBatchDetailRequest\x12\x19\n" +
+	"\bbatch_id\x18\x01 \x01(\x03R\abatchId\x12\x12\n" +
+	"\x04page\x18\x02 \x01(\x05R\x04page\x12\x1b\n" +
+	"\tpage_size\x18\x03 \x01(\x05R\bpageSize\"\xaf\x01\n" +
+	"$GetReconciliationBatchDetailResponse\x125\n" +
+	"\x05batch\x18\x01 \x01(\v2\x1f.payment.v1.ReconciliationBatchR\x05batch\x12:\n" +
+	"\adetails\x18\x02 \x03(\v2 .payment.v1.ReconciliationDetailR\adetails\x12\x14\n" +
+	"\x05total\x18\x03 \x01(\x03R\x05total2\x97\a\n" +
 	"\x0ePaymentService\x12T\n" +
 	"\rCreatePayment\x12 .payment.v1.CreatePaymentRequest\x1a!.payment.v1.CreatePaymentResponse\x12K\n" +
 	"\n" +
@@ -1071,7 +1705,10 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"\fClosePayment\x12\x1f.payment.v1.ClosePaymentRequest\x1a .payment.v1.ClosePaymentResponse\x12?\n" +
 	"\x06Refund\x12\x19.payment.v1.RefundRequest\x1a\x1a.payment.v1.RefundResponse\x12H\n" +
 	"\tGetRefund\x12\x1c.payment.v1.GetRefundRequest\x1a\x1d.payment.v1.GetRefundResponse\x12Q\n" +
-	"\fListPayments\x12\x1f.payment.v1.ListPaymentsRequest\x1a .payment.v1.ListPaymentsResponseB\xa2\x01\n" +
+	"\fListPayments\x12\x1f.payment.v1.ListPaymentsRequest\x1a .payment.v1.ListPaymentsResponse\x12`\n" +
+	"\x11RunReconciliation\x12$.payment.v1.RunReconciliationRequest\x1a%.payment.v1.RunReconciliationResponse\x12x\n" +
+	"\x19ListReconciliationBatches\x12,.payment.v1.ListReconciliationBatchesRequest\x1a-.payment.v1.ListReconciliationBatchesResponse\x12\x81\x01\n" +
+	"\x1cGetReconciliationBatchDetail\x12/.payment.v1.GetReconciliationBatchDetailRequest\x1a0.payment.v1.GetReconciliationBatchDetailResponseB\xa2\x01\n" +
 	"\x0ecom.payment.v1B\fPaymentProtoP\x01Z9github.com/rermrf/mall/api/proto/gen/payment/v1;paymentv1\xa2\x02\x03PXX\xaa\x02\n" +
 	"Payment.V1\xca\x02\n" +
 	"Payment\\V1\xe2\x02\x16Payment\\V1\\GPBMetadata\xea\x02\vPayment::V1b\x06proto3"
@@ -1088,52 +1725,70 @@ func file_payment_v1_payment_proto_rawDescGZIP() []byte {
 	return file_payment_v1_payment_proto_rawDescData
 }
 
-var file_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
 var file_payment_v1_payment_proto_goTypes = []any{
-	(*PaymentOrder)(nil),          // 0: payment.v1.PaymentOrder
-	(*RefundRecord)(nil),          // 1: payment.v1.RefundRecord
-	(*CreatePaymentRequest)(nil),  // 2: payment.v1.CreatePaymentRequest
-	(*CreatePaymentResponse)(nil), // 3: payment.v1.CreatePaymentResponse
-	(*GetPaymentRequest)(nil),     // 4: payment.v1.GetPaymentRequest
-	(*GetPaymentResponse)(nil),    // 5: payment.v1.GetPaymentResponse
-	(*HandleNotifyRequest)(nil),   // 6: payment.v1.HandleNotifyRequest
-	(*HandleNotifyResponse)(nil),  // 7: payment.v1.HandleNotifyResponse
-	(*ClosePaymentRequest)(nil),   // 8: payment.v1.ClosePaymentRequest
-	(*ClosePaymentResponse)(nil),  // 9: payment.v1.ClosePaymentResponse
-	(*RefundRequest)(nil),         // 10: payment.v1.RefundRequest
-	(*RefundResponse)(nil),        // 11: payment.v1.RefundResponse
-	(*GetRefundRequest)(nil),      // 12: payment.v1.GetRefundRequest
-	(*GetRefundResponse)(nil),     // 13: payment.v1.GetRefundResponse
-	(*ListPaymentsRequest)(nil),   // 14: payment.v1.ListPaymentsRequest
-	(*ListPaymentsResponse)(nil),  // 15: payment.v1.ListPaymentsResponse
-	(*timestamppb.Timestamp)(nil), // 16: google.protobuf.Timestamp
+	(*PaymentOrder)(nil),                         // 0: payment.v1.PaymentOrder
+	(*RefundRecord)(nil),                         // 1: payment.v1.RefundRecord
+	(*CreatePaymentRequest)(nil),                 // 2: payment.v1.CreatePaymentRequest
+	(*CreatePaymentResponse)(nil),                // 3: payment.v1.CreatePaymentResponse
+	(*GetPaymentRequest)(nil),                    // 4: payment.v1.GetPaymentRequest
+	(*GetPaymentResponse)(nil),                   // 5: payment.v1.GetPaymentResponse
+	(*HandleNotifyRequest)(nil),                  // 6: payment.v1.HandleNotifyRequest
+	(*HandleNotifyResponse)(nil),                 // 7: payment.v1.HandleNotifyResponse
+	(*ClosePaymentRequest)(nil),                  // 8: payment.v1.ClosePaymentRequest
+	(*ClosePaymentResponse)(nil),                 // 9: payment.v1.ClosePaymentResponse
+	(*RefundRequest)(nil),                        // 10: payment.v1.RefundRequest
+	(*RefundResponse)(nil),                       // 11: payment.v1.RefundResponse
+	(*GetRefundRequest)(nil),                     // 12: payment.v1.GetRefundRequest
+	(*GetRefundResponse)(nil),                    // 13: payment.v1.GetRefundResponse
+	(*ListPaymentsRequest)(nil),                  // 14: payment.v1.ListPaymentsRequest
+	(*ListPaymentsResponse)(nil),                 // 15: payment.v1.ListPaymentsResponse
+	(*RunReconciliationRequest)(nil),             // 16: payment.v1.RunReconciliationRequest
+	(*RunReconciliationResponse)(nil),            // 17: payment.v1.RunReconciliationResponse
+	(*ReconciliationBatch)(nil),                  // 18: payment.v1.ReconciliationBatch
+	(*ReconciliationDetail)(nil),                 // 19: payment.v1.ReconciliationDetail
+	(*ListReconciliationBatchesRequest)(nil),     // 20: payment.v1.ListReconciliationBatchesRequest
+	(*ListReconciliationBatchesResponse)(nil),    // 21: payment.v1.ListReconciliationBatchesResponse
+	(*GetReconciliationBatchDetailRequest)(nil),  // 22: payment.v1.GetReconciliationBatchDetailRequest
+	(*GetReconciliationBatchDetailResponse)(nil), // 23: payment.v1.GetReconciliationBatchDetailResponse
+	(*timestamppb.Timestamp)(nil),                // 24: google.protobuf.Timestamp
 }
 var file_payment_v1_payment_proto_depIdxs = []int32{
-	16, // 0: payment.v1.PaymentOrder.ctime:type_name -> google.protobuf.Timestamp
-	16, // 1: payment.v1.PaymentOrder.utime:type_name -> google.protobuf.Timestamp
-	16, // 2: payment.v1.RefundRecord.ctime:type_name -> google.protobuf.Timestamp
+	24, // 0: payment.v1.PaymentOrder.ctime:type_name -> google.protobuf.Timestamp
+	24, // 1: payment.v1.PaymentOrder.utime:type_name -> google.protobuf.Timestamp
+	24, // 2: payment.v1.RefundRecord.ctime:type_name -> google.protobuf.Timestamp
 	0,  // 3: payment.v1.GetPaymentResponse.payment:type_name -> payment.v1.PaymentOrder
 	1,  // 4: payment.v1.GetRefundResponse.refund:type_name -> payment.v1.RefundRecord
 	0,  // 5: payment.v1.ListPaymentsResponse.payments:type_name -> payment.v1.PaymentOrder
-	2,  // 6: payment.v1.PaymentService.CreatePayment:input_type -> payment.v1.CreatePaymentRequest
-	4,  // 7: payment.v1.PaymentService.GetPayment:input_type -> payment.v1.GetPaymentRequest
-	6,  // 8: payment.v1.PaymentService.HandleNotify:input_type -> payment.v1.HandleNotifyRequest
-	8,  // 9: payment.v1.PaymentService.ClosePayment:input_type -> payment.v1.ClosePaymentRequest
-	10, // 10: payment.v1.PaymentService.Refund:input_type -> payment.v1.RefundRequest
-	12, // 11: payment.v1.PaymentService.GetRefund:input_type -> payment.v1.GetRefundRequest
-	14, // 12: payment.v1.PaymentService.ListPayments:input_type -> payment.v1.ListPaymentsRequest
-	3,  // 13: payment.v1.PaymentService.CreatePayment:output_type -> payment.v1.CreatePaymentResponse
-	5,  // 14: payment.v1.PaymentService.GetPayment:output_type -> payment.v1.GetPaymentResponse
-	7,  // 15: payment.v1.PaymentService.HandleNotify:output_type -> payment.v1.HandleNotifyResponse
-	9,  // 16: payment.v1.PaymentService.ClosePayment:output_type -> payment.v1.ClosePaymentResponse
-	11, // 17: payment.v1.PaymentService.Refund:output_type -> payment.v1.RefundResponse
-	13, // 18: payment.v1.PaymentService.GetRefund:output_type -> payment.v1.GetRefundResponse
-	15, // 19: payment.v1.PaymentService.ListPayments:output_type -> payment.v1.ListPaymentsResponse
-	13, // [13:20] is the sub-list for method output_type
-	6,  // [6:13] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	24, // 6: payment.v1.ReconciliationBatch.ctime:type_name -> google.protobuf.Timestamp
+	18, // 7: payment.v1.ListReconciliationBatchesResponse.batches:type_name -> payment.v1.ReconciliationBatch
+	18, // 8: payment.v1.GetReconciliationBatchDetailResponse.batch:type_name -> payment.v1.ReconciliationBatch
+	19, // 9: payment.v1.GetReconciliationBatchDetailResponse.details:type_name -> payment.v1.ReconciliationDetail
+	2,  // 10: payment.v1.PaymentService.CreatePayment:input_type -> payment.v1.CreatePaymentRequest
+	4,  // 11: payment.v1.PaymentService.GetPayment:input_type -> payment.v1.GetPaymentRequest
+	6,  // 12: payment.v1.PaymentService.HandleNotify:input_type -> payment.v1.HandleNotifyRequest
+	8,  // 13: payment.v1.PaymentService.ClosePayment:input_type -> payment.v1.ClosePaymentRequest
+	10, // 14: payment.v1.PaymentService.Refund:input_type -> payment.v1.RefundRequest
+	12, // 15: payment.v1.PaymentService.GetRefund:input_type -> payment.v1.GetRefundRequest
+	14, // 16: payment.v1.PaymentService.ListPayments:input_type -> payment.v1.ListPaymentsRequest
+	16, // 17: payment.v1.PaymentService.RunReconciliation:input_type -> payment.v1.RunReconciliationRequest
+	20, // 18: payment.v1.PaymentService.ListReconciliationBatches:input_type -> payment.v1.ListReconciliationBatchesRequest
+	22, // 19: payment.v1.PaymentService.GetReconciliationBatchDetail:input_type -> payment.v1.GetReconciliationBatchDetailRequest
+	3,  // 20: payment.v1.PaymentService.CreatePayment:output_type -> payment.v1.CreatePaymentResponse
+	5,  // 21: payment.v1.PaymentService.GetPayment:output_type -> payment.v1.GetPaymentResponse
+	7,  // 22: payment.v1.PaymentService.HandleNotify:output_type -> payment.v1.HandleNotifyResponse
+	9,  // 23: payment.v1.PaymentService.ClosePayment:output_type -> payment.v1.ClosePaymentResponse
+	11, // 24: payment.v1.PaymentService.Refund:output_type -> payment.v1.RefundResponse
+	13, // 25: payment.v1.PaymentService.GetRefund:output_type -> payment.v1.GetRefundResponse
+	15, // 26: payment.v1.PaymentService.ListPayments:output_type -> payment.v1.ListPaymentsResponse
+	17, // 27: payment.v1.PaymentService.RunReconciliation:output_type -> payment.v1.RunReconciliationResponse
+	21, // 28: payment.v1.PaymentService.ListReconciliationBatches:output_type -> payment.v1.ListReconciliationBatchesResponse
+	23, // 29: payment.v1.PaymentService.GetReconciliationBatchDetail:output_type -> payment.v1.GetReconciliationBatchDetailResponse
+	20, // [20:30] is the sub-list for method output_type
+	10, // [10:20] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_payment_v1_payment_proto_init() }
@@ -1147,7 +1802,7 @@ func file_payment_v1_payment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payment_v1_payment_proto_rawDesc), len(file_payment_v1_payment_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   24,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

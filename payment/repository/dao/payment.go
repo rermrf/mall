@@ -47,6 +47,7 @@ type PaymentDAO interface {
 	FindByOrderNo(ctx context.Context, orderNo string) (PaymentOrderModel, error)
 	UpdateStatus(ctx context.Context, paymentNo string, oldStatus, newStatus int32, updates map[string]any) error
 	ListPayments(ctx context.Context, tenantId int64, status int32, offset, limit int) ([]PaymentOrderModel, int64, error)
+	ListPaymentsByDateAndChannel(ctx context.Context, channel string, startTime, endTime int64) ([]PaymentOrderModel, error)
 	CreateRefund(ctx context.Context, refund RefundRecordModel) error
 	FindRefundByNo(ctx context.Context, refundNo string) (RefundRecordModel, error)
 	UpdateRefundStatus(ctx context.Context, refundNo string, status int32, updates map[string]any) error
@@ -133,4 +134,12 @@ func (d *GORMPaymentDAO) UpdateRefundStatus(ctx context.Context, refundNo string
 	updates["utime"] = time.Now().UnixMilli()
 	return d.db.WithContext(ctx).Model(&RefundRecordModel{}).
 		Where("refund_no = ?", refundNo).Updates(updates).Error
+}
+
+func (d *GORMPaymentDAO) ListPaymentsByDateAndChannel(ctx context.Context, channel string, startTime, endTime int64) ([]PaymentOrderModel, error) {
+	var payments []PaymentOrderModel
+	err := d.db.WithContext(ctx).
+		Where("channel = ? AND pay_time >= ? AND pay_time < ? AND status = ?", channel, startTime, endTime, 3).
+		Find(&payments).Error
+	return payments, err
 }

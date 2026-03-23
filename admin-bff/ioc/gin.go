@@ -24,6 +24,7 @@ func InitGinServer(
 	marketingHandler *handler.MarketingHandler,
 	logisticsHandler *handler.LogisticsHandler,
 	accountHandler *handler.AccountHandler,
+	reconciliationHandler *handler.ReconciliationHandler,
 	l logger.Logger,
 ) *gin.Engine {
 	engine := gin.Default()
@@ -118,6 +119,11 @@ func InitGinServer(
 		auth.POST("/withdrawals/:id/review", ginx.WrapBody[handler.AdminReviewWithdrawalReq](l, accountHandler.ReviewWithdrawal))
 		auth.POST("/withdrawals/:id/confirm", accountHandler.ConfirmWithdrawalPaid)
 		auth.GET("/transactions", ginx.WrapQuery[handler.AdminListTransactionsReq](l, accountHandler.ListTransactions))
+
+		// 对账管理
+		auth.POST("/reconciliation/run", ginx.WrapBody[handler.RunReconciliationReq](l, reconciliationHandler.RunReconciliation))
+		auth.GET("/reconciliation/batches", ginx.WrapQuery[handler.ListBatchesReq](l, reconciliationHandler.ListBatches))
+		auth.GET("/reconciliation/batches/:id", reconciliationHandler.GetBatchDetail)
 	}
 
 	return engine

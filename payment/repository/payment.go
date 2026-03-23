@@ -18,6 +18,7 @@ type PaymentRepository interface {
 	FindByOrderNo(ctx context.Context, orderNo string) (domain.PaymentOrder, error)
 	UpdateStatus(ctx context.Context, paymentNo string, oldStatus, newStatus domain.PaymentStatus, updates map[string]any) error
 	ListPayments(ctx context.Context, tenantId int64, status int32, page, pageSize int32) ([]domain.PaymentOrder, int64, error)
+	ListPaymentsByDateAndChannel(ctx context.Context, channel string, startTime, endTime int64) ([]domain.PaymentOrder, error)
 	CreateRefund(ctx context.Context, refund domain.RefundRecord) error
 	FindRefundByNo(ctx context.Context, refundNo string) (domain.RefundRecord, error)
 	UpdateRefundStatus(ctx context.Context, refundNo string, status domain.RefundStatus, updates map[string]any) error
@@ -115,6 +116,18 @@ func (r *paymentRepository) FindRefundByNo(ctx context.Context, refundNo string)
 
 func (r *paymentRepository) UpdateRefundStatus(ctx context.Context, refundNo string, status domain.RefundStatus, updates map[string]any) error {
 	return r.dao.UpdateRefundStatus(ctx, refundNo, int32(status), updates)
+}
+
+func (r *paymentRepository) ListPaymentsByDateAndChannel(ctx context.Context, channel string, startTime, endTime int64) ([]domain.PaymentOrder, error) {
+	models, err := r.dao.ListPaymentsByDateAndChannel(ctx, channel, startTime, endTime)
+	if err != nil {
+		return nil, err
+	}
+	payments := make([]domain.PaymentOrder, 0, len(models))
+	for _, m := range models {
+		payments = append(payments, r.toDomain(m))
+	}
+	return payments, nil
 }
 
 func (r *paymentRepository) setCache(ctx context.Context, paymentNo string, payment domain.PaymentOrder) {

@@ -25,12 +25,15 @@ var thirdPartySet = wire.NewSet(
 
 var paymentSet = wire.NewSet(
 	dao.NewPaymentDAO,
+	dao.NewReconciliationDAO,
 	cache.NewPaymentCache,
 	repository.NewPaymentRepository,
 	channel.NewMockChannel,
 	ioc.InitAlipayClient,
 	channel.NewAlipayChannel,
 	service.NewPaymentService,
+	service.NewReconciliationService,
+	service.NewReconciliationJob,
 	pgrpc.NewPaymentGRPCServer,
 	ioc.InitSyncProducer,
 	ioc.InitProducer,

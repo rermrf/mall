@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -13,11 +14,12 @@ import (
 
 type PaymentGRPCServer struct {
 	paymentv1.UnimplementedPaymentServiceServer
-	svc service.PaymentService
+	svc     service.PaymentService
+	reconSvc service.ReconciliationService
 }
 
-func NewPaymentGRPCServer(svc service.PaymentService) *PaymentGRPCServer {
-	return &PaymentGRPCServer{svc: svc}
+func NewPaymentGRPCServer(svc service.PaymentService, reconSvc service.ReconciliationService) *PaymentGRPCServer {
+	return &PaymentGRPCServer{svc: svc, reconSvc: reconSvc}
 }
 
 func (s *PaymentGRPCServer) Register(server *grpc.Server) {
@@ -115,4 +117,86 @@ func (s *PaymentGRPCServer) toRefundDTO(r domain.RefundRecord) *paymentv1.Refund
 		ChannelRefundNo: r.ChannelRefundNo,
 		Ctime:           timestamppb.New(r.Ctime),
 	}
+}
+
+// ==================== Reconciliation RPCs ====================
+
+func (s *PaymentGRPCServer) RunReconciliation(ctx context.Context, req *paymentv1.RunReconciliationRequest) (*paymentv1.RunReconciliationResponse, error) {
+	batchId, err := s.reconSvc.RunReconciliation(ctx, req.GetChannel(), req.GetBillDate())
+	if err != nil {
+		return nil, err
+	}
+	return &paymentv1.RunReconciliationResponse{BatchId: batchId}, nil
+}
+
+func (s *PaymentGRPCServer) ListReconciliationBatches(ctx context.Context, req *paymentv1.ListReconciliationBatchesRequest) (*paymentv1.ListReconciliationBatchesResponse, error) {
+	batches, total, err := s.reconSvc.ListBatches(ctx, req.GetPage(), req.GetPageSize())
+	if err != nil {
+		return nil, err
+	}
+	dtos := make([]*paymentv1.ReconciliationBatch, 0, len(batches))
+	for _, b := range batches {
+		dtos = append(dtos, &paymentv1.ReconciliationBatch{
+			Id:            b.ID,
+			BatchNo:       b.BatchNo,
+			Channel:       b.Channel,
+			BillDate:      b.BillDate,
+			Status:        b.Status,
+			TotalChannel:  b.TotalChannel,
+			TotalLocal:    b.TotalLocal,
+			TotalMatch:    b.TotalMatch,
+			TotalMismatch: b.TotalMismatch,
+			ChannelAmount: b.ChannelAmount,
+			LocalAmount:   b.LocalAmount,
+			ErrorMsg:      b.ErrorMsg,
+			Ctime:         timestamppb.New(time.UnixMilli(b.Ctime)),
+		})
+	}
+	return &paymentv1.ListReconciliationBatchesResponse{Batches: dtos, Total: total}, nil
+}
+
+func (s *PaymentGRPCServer) GetReconciliationBatchDetail(ctx context.Context, req *paymentv1.GetReconciliationBatchDetailRequest) (*paymentv1.GetReconciliationBatchDetailResponse, error) {
+	batch, details, total, err := s.reconSvc.GetBatchDetail(ctx, req.GetBatchId(), req.GetPage(), req.GetPageSize())
+	if err != nil {
+		return nil, err
+	}
+
+	batchDTO := &paymentv1.ReconciliationBatch{
+		Id:            batch.ID,
+		BatchNo:       batch.BatchNo,
+		Channel:       batch.Channel,
+		BillDate:      batch.BillDate,
+		Status:        batch.Status,
+		TotalChannel:  batch.TotalChannel,
+		TotalLocal:    batch.TotalLocal,
+		TotalMatch:    batch.TotalMatch,
+		TotalMismatch: batch.TotalMismatch,
+		ChannelAmount: batch.ChannelAmount,
+		LocalAmount:   batch.LocalAmount,
+		ErrorMsg:      batch.ErrorMsg,
+		Ctime:         timestamppb.New(time.UnixMilli(batch.Ctime)),
+	}
+
+	detailDTOs := make([]*paymentv1.ReconciliationDetail, 0, len(details))
+	for _, d := range details {
+		detailDTOs = append(detailDTOs, &paymentv1.ReconciliationDetail{
+			Id:             d.ID,
+			BatchId:        d.BatchId,
+			PaymentNo:      d.PaymentNo,
+			ChannelTradeNo: d.ChannelTradeNo,
+			Type:           d.Type,
+			LocalAmount:    d.LocalAmount,
+			ChannelAmount:  d.ChannelAmount,
+			LocalStatus:    d.LocalStatus,
+			ChannelStatus:  d.ChannelStatus,
+			Handled:        d.Handled,
+			Remark:         d.Remark,
+		})
+	}
+
+	return &paymentv1.GetReconciliationBatchDetailResponse{
+		Batch:   batchDTO,
+		Details: detailDTOs,
+		Total:   total,
+	}, nil
 }

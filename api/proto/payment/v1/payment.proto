@@ -54,6 +54,10 @@ service PaymentService {
   rpc GetRefund(GetRefundRequest) returns (GetRefundResponse);
   // 支付单列表（平台监管）
   rpc ListPayments(ListPaymentsRequest) returns (ListPaymentsResponse);
+  // 对账
+  rpc RunReconciliation(RunReconciliationRequest) returns (RunReconciliationResponse);
+  rpc ListReconciliationBatches(ListReconciliationBatchesRequest) returns (ListReconciliationBatchesResponse);
+  rpc GetReconciliationBatchDetail(GetReconciliationBatchDetailRequest) returns (GetReconciliationBatchDetailResponse);
 }
 
 // ==================== Requests & Responses ====================
@@ -116,4 +120,67 @@ message ListPaymentsRequest {
 message ListPaymentsResponse {
   repeated PaymentOrder payments = 1;
   int64 total = 2;
+}
+
+// ==================== Reconciliation ====================
+
+message RunReconciliationRequest {
+  string channel = 1;
+  string bill_date = 2;
+}
+
+message RunReconciliationResponse {
+  int64 batch_id = 1;
+}
+
+message ReconciliationBatch {
+  int64 id = 1;
+  string batch_no = 2;
+  string channel = 3;
+  string bill_date = 4;
+  int32 status = 5;
+  int32 total_channel = 6;
+  int32 total_local = 7;
+  int32 total_match = 8;
+  int32 total_mismatch = 9;
+  int64 channel_amount = 10;
+  int64 local_amount = 11;
+  string error_msg = 12;
+  google.protobuf.Timestamp ctime = 13;
+}
+
+message ReconciliationDetail {
+  int64 id = 1;
+  int64 batch_id = 2;
+  string payment_no = 3;
+  string channel_trade_no = 4;
+  int32 type = 5;
+  int64 local_amount = 6;
+  int64 channel_amount = 7;
+  int32 local_status = 8;
+  string channel_status = 9;
+  bool handled = 10;
+  string remark = 11;
+}
+
+message ListReconciliationBatchesRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListReconciliationBatchesResponse {
+  repeated ReconciliationBatch batches = 1;
+  int64 total = 2;
+}
+
+message GetReconciliationBatchDetailRequest {
+  int64 batch_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+}
+
+message GetReconciliationBatchDetailResponse {
+  ReconciliationBatch batch = 1;
+  repeated ReconciliationDetail details = 2;
+  int64 total = 3;
 }

@@ -35,10 +35,14 @@ func InitApp() *App {
 	alipayChannel := channel.NewAlipayChannel(alipayClient)
 	logger := ioc.InitLogger()
 	paymentService := service.NewPaymentService(paymentRepository, producer, idempotencyService, node, mockChannel, alipayChannel, logger)
-	paymentGRPCServer := grpc.NewPaymentGRPCServer(paymentService)
+	reconciliationDAO := dao.NewReconciliationDAO(db)
+	reconciliationService := service.NewReconciliationService(reconciliationDAO, paymentRepository, mockChannel, alipayChannel, node, logger)
+	paymentGRPCServer := grpc.NewPaymentGRPCServer(paymentService, reconciliationService)
 	server := ioc.InitGRPCServer(paymentGRPCServer, logger)
+	reconciliationJob := service.NewReconciliationJob(reconciliationService, logger)
 	app := &App{
-		Server: server,
+		Server:   server,
+		ReconJob: reconciliationJob,
 	}
 	return app
 }
@@ -47,4 +51,4 @@ func InitApp() *App {
 
 var thirdPartySet = wire.NewSet(ioc.InitDB, ioc.InitRedis, ioc.InitKafka, ioc.InitLogger, ioc.InitEtcdClient, ioc.InitIdempotencyService, ioc.InitSnowflakeNode)
 
-var paymentSet = wire.NewSet(dao.NewPaymentDAO, cache.NewPaymentCache, repository.NewPaymentRepository, channel.NewMockChannel, ioc.InitAlipayClient, channel.NewAlipayChannel, service.NewPaymentService, grpc.NewPaymentGRPCServer, ioc.InitSyncProducer, ioc.InitProducer, ioc.InitGRPCServer)
+var paymentSet = wire.NewSet(dao.NewPaymentDAO, dao.NewReconciliationDAO, cache.NewPaymentCache, repository.NewPaymentRepository, channel.NewMockChannel, ioc.InitAlipayClient, channel.NewAlipayChannel, service.NewPaymentService, service.NewReconciliationService, service.NewReconciliationJob, grpc.NewPaymentGRPCServer, ioc.InitSyncProducer, ioc.InitProducer, ioc.InitGRPCServer)

@@ -6,5 +6,7 @@ func InitTables(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&PaymentOrderModel{},
 		&RefundRecordModel{},
+		&ReconciliationBatchModel{},
+		&ReconciliationDetailModel{},
 	)
 }
