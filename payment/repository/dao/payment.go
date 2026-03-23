@@ -7,6 +7,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// statusPaid mirrors domain.PaymentStatusPaid to avoid circular imports.
+const statusPaid int32 = 3
+
 type PaymentOrderModel struct {
 	ID             int64  `gorm:"primaryKey;autoIncrement"`
 	TenantId       int64  `gorm:"index:idx_tenant_status"`
@@ -132,14 +135,21 @@ func (d *GORMPaymentDAO) FindRefundByNo(ctx context.Context, refundNo string) (R
 func (d *GORMPaymentDAO) UpdateRefundStatus(ctx context.Context, refundNo string, status int32, updates map[string]any) error {
 	updates["status"] = status
 	updates["utime"] = time.Now().UnixMilli()
-	return d.db.WithContext(ctx).Model(&RefundRecordModel{}).
-		Where("refund_no = ?", refundNo).Updates(updates).Error
+	result := d.db.WithContext(ctx).Model(&RefundRecordModel{}).
+		Where("refund_no = ?", refundNo).Updates(updates)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	return nil
 }
 
 func (d *GORMPaymentDAO) ListPaymentsByDateAndChannel(ctx context.Context, channel string, startTime, endTime int64) ([]PaymentOrderModel, error) {
 	var payments []PaymentOrderModel
 	err := d.db.WithContext(ctx).
-		Where("channel = ? AND pay_time >= ? AND pay_time < ? AND status = ?", channel, startTime, endTime, 3).
+		Where("channel = ? AND pay_time >= ? AND pay_time < ? AND status = ?", channel, startTime, endTime, statusPaid).
 		Find(&payments).Error
 	return payments, err
 }

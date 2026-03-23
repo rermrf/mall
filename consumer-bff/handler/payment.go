@@ -32,9 +32,12 @@ type CreatePaymentReq struct {
 }
 
 func (h *PaymentHandler) CreatePayment(ctx *gin.Context, req CreatePaymentReq) (ginx.Result, error) {
-	tenantId, _ := ctx.Get("tenant_id")
+	tenantId, tidErr := ginx.GetTenantID(ctx)
+	if tidErr != nil {
+		return ginx.Result{Code: 401001, Msg: "未登录"}, nil
+	}
 	resp, err := h.paymentClient.CreatePayment(ctx.Request.Context(), &paymentv1.CreatePaymentRequest{
-		TenantId: tenantId.(int64),
+		TenantId: tenantId,
 		OrderId:  req.OrderID,
 		OrderNo:  req.OrderNo,
 		Channel:  req.Channel,

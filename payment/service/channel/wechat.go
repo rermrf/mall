@@ -152,6 +152,11 @@ func (c *WechatChannel) QueryRefund(ctx context.Context, refundNo string) (int32
 // The data map is expected to contain:
 //   - "body": the raw JSON request body
 //
+// SECURITY WARNING: HTTP-level RSA signature verification is not yet implemented.
+// Currently relies on AES-256-GCM decryption with API V3 key for authentication.
+// Full security requires verifying Wechatpay-Signature using the platform certificate.
+// See: https://pay.weixin.qq.com/docs/merchant/development/interface-rules/signature-verification.html
+//
 // We decrypt the resource ciphertext using AES-GCM with the API V3 key,
 // then extract OutTradeNo and TransactionId from the decrypted transaction.
 func (c *WechatChannel) VerifyNotify(ctx context.Context, data map[string]string) (string, string, error) {
@@ -163,6 +168,14 @@ func (c *WechatChannel) VerifyNotify(ctx context.Context, data map[string]string
 	if body == "" {
 		return "", "", fmt.Errorf("微信支付回调数据为空")
 	}
+
+	// TODO: 验证 HTTP 签名（需要平台证书公钥）
+	// timestamp := data["Wechatpay-Timestamp"]
+	// nonce := data["Wechatpay-Nonce"]
+	// signature := data["Wechatpay-Signature"]
+	// serial := data["Wechatpay-Serial"]
+	// message := timestamp + "\n" + nonce + "\n" + body + "\n"
+	// Verify RSA-SHA256 signature over message using platform certificate
 
 	// Parse the notification envelope
 	var notification struct {

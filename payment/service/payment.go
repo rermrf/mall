@@ -101,9 +101,11 @@ func (s *paymentService) CreatePayment(ctx context.Context, tenantId int64, orde
 	}
 	// 更新渠道交易号
 	if channelTradeNo != "" {
-		_ = s.repo.UpdateStatus(ctx, paymentNo, domain.PaymentStatusPending, domain.PaymentStatusPending, map[string]any{
+		if err := s.repo.UpdateStatus(ctx, paymentNo, domain.PaymentStatusPending, domain.PaymentStatusPending, map[string]any{
 			"channel_trade_no": channelTradeNo,
-		})
+		}); err != nil {
+			s.l.Error("保存渠道交易号失败", logger.String("paymentNo", paymentNo), logger.Error(err))
+		}
 	}
 	return paymentNo, payUrl, nil
 }
@@ -157,7 +159,11 @@ func (s *paymentService) HandleNotify(ctx context.Context, ch string, notifyBody
 		"pay_time":         now,
 	})
 	if err != nil {
-		// CAS failed — another goroutine already updated, treat as idempotent success
+		// CAS failed — check if another goroutine already set it to paid
+		current, queryErr := s.repo.FindByPaymentNo(ctx, paymentNo)
+		if queryErr == nil && current.Status == domain.PaymentStatusPaid {
+			return true, nil // idempotent success
+		}
 		return false, fmt.Errorf("更新支付状态失败: %w", err)
 	}
 	// 发送 order_paid 事件
@@ -166,7 +172,11 @@ func (s *paymentService) HandleNotify(ctx context.Context, ch string, notifyBody
 		PaymentNo: paymentNo,
 		PaidAt:    now,
 	}); produceErr != nil {
-		s.l.Error("发送 order_paid 事件失败", logger.String("paymentNo", paymentNo), logger.Error(produceErr))
+		s.l.Error("发送 order_paid 事件失败，需要人工补偿",
+			logger.String("paymentNo", paymentNo),
+			logger.String("orderNo", payment.OrderNo),
+			logger.Error(produceErr))
+		// TODO: 实现补偿任务扫描已支付但未发送事件的支付单
 	}
 	return true, nil
 }
@@ -214,13 +224,20 @@ func (s *paymentService) Refund(ctx context.Context, paymentNo string, amount in
 	}
 	channelRefundNo, err := c.Refund(ctx, refund)
 	if err != nil {
-		_ = s.repo.UpdateRefundStatus(ctx, refundNo, domain.RefundStatusFailed, map[string]any{})
+		if updateErr := s.repo.UpdateRefundStatus(ctx, refundNo, domain.RefundStatusFailed, map[string]any{}); updateErr != nil {
+			s.l.Error("更新退款记录状态为失败时出错", logger.String("refundNo", refundNo), logger.Error(updateErr))
+		}
 		return "", fmt.Errorf("渠道退款失败: %w", err)
 	}
-	_ = s.repo.UpdateRefundStatus(ctx, refundNo, domain.RefundStatusRefunded, map[string]any{
+	if err := s.repo.UpdateRefundStatus(ctx, refundNo, domain.RefundStatusRefunded, map[string]any{
 		"channel_refund_no": channelRefundNo,
-	})
-	_ = s.repo.UpdateStatus(ctx, paymentNo, domain.PaymentStatusPaid, domain.PaymentStatusRefunding, map[string]any{})
+	}); err != nil {
+		s.l.Error("更新退款记录状态失败", logger.String("refundNo", refundNo), logger.Error(err))
+		return "", fmt.Errorf("更新退款记录状态失败: %w", err)
+	}
+	if err := s.repo.UpdateStatus(ctx, paymentNo, domain.PaymentStatusPaid, domain.PaymentStatusRefunding, map[string]any{}); err != nil {
+		s.l.Error("更新支付单状态为退款中失败", logger.String("paymentNo", paymentNo), logger.Error(err))
+	}
 	return refundNo, nil
 }
 

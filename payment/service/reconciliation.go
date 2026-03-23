@@ -87,7 +87,8 @@ func (s *reconciliationService) RunReconciliation(ctx context.Context, ch string
 	}
 
 	// 4. 查询本地当日支付记录
-	billDateParsed, err := time.Parse("2006-01-02", billDate)
+	loc, _ := time.LoadLocation("Asia/Shanghai")
+	billDateParsed, err := time.ParseInLocation("2006-01-02", billDate, loc)
 	if err != nil {
 		s.failBatch(ctx, batch.ID, "对账日期格式错误: "+err.Error())
 		return batch.ID, fmt.Errorf("对账日期格式错误: %w", err)
