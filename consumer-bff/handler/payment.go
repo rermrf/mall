@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -81,4 +82,30 @@ func (h *PaymentHandler) HandleNotify(ctx *gin.Context, req HandleNotifyReq) (gi
 	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
 		"success": resp.GetSuccess(),
 	}}, nil
+}
+
+func (h *PaymentHandler) AlipayNotify(ctx *gin.Context) {
+	if err := ctx.Request.ParseForm(); err != nil {
+		ctx.String(http.StatusOK, "FAIL")
+		return
+	}
+
+	data := make(map[string]string)
+	for k, v := range ctx.Request.Form {
+		if len(v) > 0 {
+			data[k] = v[0]
+		}
+	}
+	bodyBytes, _ := json.Marshal(data)
+
+	_, err := h.paymentClient.HandleNotify(ctx.Request.Context(), &paymentv1.HandleNotifyRequest{
+		Channel:    "alipay",
+		NotifyBody: string(bodyBytes),
+	})
+	if err != nil {
+		h.l.Error("支付宝异步回调处理失败", logger.Error(err))
+		ctx.String(http.StatusOK, "FAIL")
+		return
+	}
+	ctx.String(http.StatusOK, "success")
 }

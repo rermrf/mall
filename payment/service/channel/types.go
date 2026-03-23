@@ -14,3 +14,16 @@ type Channel interface {
 	QueryRefund(ctx context.Context, refundNo string) (status int32, channelRefundNo string, err error)
 	VerifyNotify(ctx context.Context, data map[string]string) (paymentNo string, channelTradeNo string, err error)
 }
+
+// Reconciler is an optional interface for channels that support bill download
+type Reconciler interface {
+	DownloadBill(ctx context.Context, billDate string) ([]BillItem, error)
+}
+
+type BillItem struct {
+	ChannelTradeNo string
+	OutTradeNo     string // payment_no
+	Amount         int64  // fen
+	Status         string // TRADE_SUCCESS / TRADE_CLOSED etc.
+	PayTime        string
+}

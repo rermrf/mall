@@ -40,6 +40,9 @@ func InitGinServer(
 
 	engine.Use(middleware.NewTenantResolve(tenantClient, redisClient).Build())
 
+	// Alipay async notification callback (no auth required)
+	engine.POST("/api/v1/payment/notify/alipay", paymentHandler.AlipayNotify)
+
 	pub := engine.Group("/api/v1")
 	{
 		pub.POST("/signup", ginx.WrapBody[handler.SignupReq](l, userHandler.Signup))

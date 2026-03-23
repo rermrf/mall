@@ -31,8 +31,10 @@ func InitApp() *App {
 	idempotencyService := ioc.InitIdempotencyService(cmdable)
 	node := ioc.InitSnowflakeNode()
 	mockChannel := channel.NewMockChannel(node)
+	alipayClient := ioc.InitAlipayClient()
+	alipayChannel := channel.NewAlipayChannel(alipayClient)
 	logger := ioc.InitLogger()
-	paymentService := service.NewPaymentService(paymentRepository, producer, idempotencyService, node, mockChannel, logger)
+	paymentService := service.NewPaymentService(paymentRepository, producer, idempotencyService, node, mockChannel, alipayChannel, logger)
 	paymentGRPCServer := grpc.NewPaymentGRPCServer(paymentService)
 	server := ioc.InitGRPCServer(paymentGRPCServer, logger)
 	app := &App{
@@ -45,4 +47,4 @@ func InitApp() *App {
 
 var thirdPartySet = wire.NewSet(ioc.InitDB, ioc.InitRedis, ioc.InitKafka, ioc.InitLogger, ioc.InitEtcdClient, ioc.InitIdempotencyService, ioc.InitSnowflakeNode)
 
-var paymentSet = wire.NewSet(dao.NewPaymentDAO, cache.NewPaymentCache, repository.NewPaymentRepository, channel.NewMockChannel, service.NewPaymentService, grpc.NewPaymentGRPCServer, ioc.InitSyncProducer, ioc.InitProducer, ioc.InitGRPCServer)
+var paymentSet = wire.NewSet(dao.NewPaymentDAO, cache.NewPaymentCache, repository.NewPaymentRepository, channel.NewMockChannel, ioc.InitAlipayClient, channel.NewAlipayChannel, service.NewPaymentService, grpc.NewPaymentGRPCServer, ioc.InitSyncProducer, ioc.InitProducer, ioc.InitGRPCServer)

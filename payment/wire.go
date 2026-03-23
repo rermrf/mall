@@ -28,6 +28,8 @@ var paymentSet = wire.NewSet(
 	cache.NewPaymentCache,
 	repository.NewPaymentRepository,
 	channel.NewMockChannel,
+	ioc.InitAlipayClient,
+	channel.NewAlipayChannel,
 	service.NewPaymentService,
 	pgrpc.NewPaymentGRPCServer,
 	ioc.InitSyncProducer,

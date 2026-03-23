@@ -40,12 +40,12 @@ func NewPaymentService(
 	idempotencySvc idempotent.IdempotencyService,
 	node *snowflake.Node,
 	mockCh *channel.MockChannel,
+	alipayCh *channel.AlipayChannel,
 	l logger.Logger,
 ) PaymentService {
 	channels := map[string]channel.Channel{
 		"mock":   mockCh,
-		"wechat": channel.NewWechatChannel(),
-		"alipay": channel.NewAlipayChannel(),
+		"alipay": alipayCh,
 	}
 	return &paymentService{
 		repo:           repo,
