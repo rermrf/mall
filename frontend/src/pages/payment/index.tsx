@@ -43,8 +43,8 @@ export default function PaymentPage() {
       attemptsRef.current += 1
       try {
         const payment = await getPayment(paymentNo)
-        // status 2 = paid
-        if (payment.status >= 2) {
+        // status 3 = paid
+        if (payment.status === 3) {
           setPolling(false)
           setPaid(true)
           Toast.show('支付成功')
@@ -75,7 +75,6 @@ export default function PaymentPage() {
         orderId: 0,
         orderNo: orderNo,
         channel: selectedChannel as 'mock' | 'wechat' | 'alipay',
-        amount: payAmount,
       })
       setLoading(false)
       pollPaymentStatus(result.paymentNo)

@@ -103,7 +103,7 @@ func (c *WechatChannel) Refund(ctx context.Context, refund domain.RefundRecord) 
 		Reason:      core.String("用户退款"),
 		Amount: &refunddomestic.AmountReq{
 			Refund:   core.Int64(refund.Amount),
-			Total:    core.Int64(refund.Amount),
+			Total:    core.Int64(refund.TotalAmount),
 			Currency: core.String("CNY"),
 		},
 	})

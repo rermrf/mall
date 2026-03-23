@@ -39,6 +39,7 @@ type RefundRecord struct {
 	RefundNo        string
 	Channel         string
 	Amount          int64 // 分
+	TotalAmount     int64 // 原始支付总额（用于部分退款场景）
 	Status          RefundStatus
 	ChannelRefundNo string
 	Ctime           time.Time

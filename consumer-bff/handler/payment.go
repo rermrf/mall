@@ -8,18 +8,21 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/rermrf/emo/logger"
+	orderv1 "github.com/rermrf/mall/api/proto/gen/order/v1"
 	paymentv1 "github.com/rermrf/mall/api/proto/gen/payment/v1"
 	"github.com/rermrf/mall/pkg/ginx"
 )
 
 type PaymentHandler struct {
 	paymentClient paymentv1.PaymentServiceClient
+	orderClient   orderv1.OrderServiceClient
 	l             logger.Logger
 }
 
-func NewPaymentHandler(paymentClient paymentv1.PaymentServiceClient, l logger.Logger) *PaymentHandler {
+func NewPaymentHandler(paymentClient paymentv1.PaymentServiceClient, orderClient orderv1.OrderServiceClient, l logger.Logger) *PaymentHandler {
 	return &PaymentHandler{
 		paymentClient: paymentClient,
+		orderClient:   orderClient,
 		l:             l,
 	}
 }
@@ -28,7 +31,6 @@ type CreatePaymentReq struct {
 	OrderID int64  `json:"orderId" binding:"required"`
 	OrderNo string `json:"orderNo" binding:"required"`
 	Channel string `json:"channel" binding:"required,oneof=mock wechat alipay"`
-	Amount  int64  `json:"amount" binding:"required,min=1"`
 }
 
 func (h *PaymentHandler) CreatePayment(ctx *gin.Context, req CreatePaymentReq) (ginx.Result, error) {
@@ -36,12 +38,30 @@ func (h *PaymentHandler) CreatePayment(ctx *gin.Context, req CreatePaymentReq) (
 	if tidErr != nil {
 		return ginx.Result{Code: 401001, Msg: "未登录"}, nil
 	}
+
+	// Verify order exists, belongs to this tenant, and get real amount
+	orderResp, err := h.orderClient.GetOrder(ctx.Request.Context(), &orderv1.GetOrderRequest{
+		OrderNo: req.OrderNo,
+	})
+	if err != nil {
+		return ginx.Result{Code: 4, Msg: "订单不存在"}, nil
+	}
+	order := orderResp.GetOrder()
+	if order.GetTenantId() != tenantId {
+		return ginx.Result{Code: 403001, Msg: "无权操作此订单"}, nil
+	}
+	// Order status 1 = pending payment
+	if order.GetStatus() != 1 {
+		return ginx.Result{Code: 4, Msg: "订单状态不允许支付"}, nil
+	}
+	realAmount := order.GetPayAmount()
+
 	resp, err := h.paymentClient.CreatePayment(ctx.Request.Context(), &paymentv1.CreatePaymentRequest{
 		TenantId: tenantId,
 		OrderId:  req.OrderID,
 		OrderNo:  req.OrderNo,
 		Channel:  req.Channel,
-		Amount:   req.Amount,
+		Amount:   realAmount,
 	})
 	if err != nil {
 		return ginx.HandleGRPCError(err, "创建支付单失败")
@@ -58,6 +78,11 @@ func (h *PaymentHandler) GetPayment(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, ginx.Result{Code: 4, Msg: "无效的支付单号"})
 		return
 	}
+	tenantId, tidErr := ginx.GetTenantID(ctx)
+	if tidErr != nil {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: 401001, Msg: "未登录"})
+		return
+	}
 	resp, err := h.paymentClient.GetPayment(ctx.Request.Context(), &paymentv1.GetPaymentRequest{
 		PaymentNo: paymentNo,
 	})
@@ -67,25 +92,12 @@ func (h *PaymentHandler) GetPayment(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, result)
 		return
 	}
-	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetPayment()})
-}
-
-type HandleNotifyReq struct {
-	Channel    string `json:"channel" binding:"required"`
-	NotifyBody string `json:"notifyBody" binding:"required"`
-}
-
-func (h *PaymentHandler) HandleNotify(ctx *gin.Context, req HandleNotifyReq) (ginx.Result, error) {
-	resp, err := h.paymentClient.HandleNotify(ctx.Request.Context(), &paymentv1.HandleNotifyRequest{
-		Channel:    req.Channel,
-		NotifyBody: req.NotifyBody,
-	})
-	if err != nil {
-		return ginx.HandleGRPCError(err, "处理支付回调失败")
+	payment := resp.GetPayment()
+	if payment.GetTenantId() != tenantId {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: 403001, Msg: "无权查看此支付单"})
+		return
 	}
-	return ginx.Result{Code: 0, Msg: "success", Data: map[string]any{
-		"success": resp.GetSuccess(),
-	}}, nil
+	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: payment})
 }
 
 func (h *PaymentHandler) AlipayNotify(ctx *gin.Context) {

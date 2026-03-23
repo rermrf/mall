@@ -28,7 +28,7 @@ func InitApp() *App {
 	orderServiceClient := ioc.InitOrderClient(client)
 	orderHandler := handler.NewOrderHandler(orderServiceClient, logger)
 	paymentServiceClient := ioc.InitPaymentClient(client)
-	paymentHandler := handler.NewPaymentHandler(paymentServiceClient, logger)
+	paymentHandler := handler.NewPaymentHandler(paymentServiceClient, orderServiceClient, logger)
 	cartServiceClient := ioc.InitCartClient(client)
 	productServiceClient := ioc.InitProductClient(client)
 	cartHandler := handler.NewCartHandler(cartServiceClient, productServiceClient, logger)

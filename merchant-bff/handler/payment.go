@@ -54,6 +54,11 @@ func (h *PaymentHandler) GetPayment(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的支付单号"})
 		return
 	}
+	tenantId, tidErr := ginx.GetTenantID(ctx)
+	if tidErr != nil {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeForbidden, Msg: "需要商家身份"})
+		return
+	}
 	resp, err := h.paymentClient.GetPayment(ctx.Request.Context(), &paymentv1.GetPaymentRequest{
 		PaymentNo: paymentNo,
 	})
@@ -63,7 +68,12 @@ func (h *PaymentHandler) GetPayment(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, result)
 		return
 	}
-	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetPayment()})
+	payment := resp.GetPayment()
+	if payment.GetTenantId() != tenantId {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeForbidden, Msg: "无权查看此支付单"})
+		return
+	}
+	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: payment})
 }
 
 type RefundReq struct {
@@ -73,6 +83,20 @@ type RefundReq struct {
 
 func (h *PaymentHandler) Refund(ctx *gin.Context, req RefundReq) (ginx.Result, error) {
 	paymentNo := ctx.Param("paymentNo")
+	tenantId, errResult := ginx.MustGetTenantID(ctx)
+	if errResult != nil {
+		return *errResult, nil
+	}
+	// Verify payment belongs to this tenant before refunding
+	getResp, err := h.paymentClient.GetPayment(ctx.Request.Context(), &paymentv1.GetPaymentRequest{
+		PaymentNo: paymentNo,
+	})
+	if err != nil {
+		return ginx.HandleGRPCError(err, "查询支付单失败")
+	}
+	if getResp.GetPayment().GetTenantId() != tenantId {
+		return ginx.Result{Code: ginx.CodeForbidden, Msg: "无权操作此支付单"}, nil
+	}
 	resp, err := h.paymentClient.Refund(ctx.Request.Context(), &paymentv1.RefundRequest{
 		PaymentNo: paymentNo,
 		Amount:    req.Amount,
@@ -92,6 +116,11 @@ func (h *PaymentHandler) GetRefund(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeBadReq, Msg: "无效的退款单号"})
 		return
 	}
+	tenantId, tidErr := ginx.GetTenantID(ctx)
+	if tidErr != nil {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeForbidden, Msg: "需要商家身份"})
+		return
+	}
 	resp, err := h.paymentClient.GetRefund(ctx.Request.Context(), &paymentv1.GetRefundRequest{
 		RefundNo: refundNo,
 	})
@@ -101,5 +130,10 @@ func (h *PaymentHandler) GetRefund(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, result)
 		return
 	}
-	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: resp.GetRefund()})
+	refund := resp.GetRefund()
+	if refund.GetTenantId() != tenantId {
+		ctx.JSON(http.StatusOK, ginx.Result{Code: ginx.CodeForbidden, Msg: "无权查看此退款单"})
+		return
+	}
+	ctx.JSON(http.StatusOK, ginx.Result{Code: 0, Msg: "success", Data: refund})
 }

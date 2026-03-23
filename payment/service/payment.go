@@ -75,6 +75,16 @@ func (s *paymentService) CreatePayment(ctx context.Context, tenantId int64, orde
 	if amount <= 0 {
 		return "", "", fmt.Errorf("支付金额必须大于0")
 	}
+	// Check if payment already exists for this order (idempotent)
+	existing, findErr := s.repo.FindByOrderNo(ctx, orderNo)
+	if findErr == nil && existing.ID > 0 {
+		if existing.Status == domain.PaymentStatusPending || existing.Status == domain.PaymentStatusPaying {
+			s.l.Info("支付单已存在，返回已有支付单",
+				logger.String("orderNo", orderNo),
+				logger.String("paymentNo", existing.PaymentNo))
+			return existing.PaymentNo, "", nil
+		}
+	}
 	c, err := s.getChannel(ch)
 	if err != nil {
 		return "", "", err
@@ -212,12 +222,13 @@ func (s *paymentService) Refund(ctx context.Context, paymentNo string, amount in
 	}
 	refundNo := fmt.Sprintf("R%d", s.node.Generate())
 	refund := domain.RefundRecord{
-		TenantID:  payment.TenantID,
-		PaymentNo: paymentNo,
-		RefundNo:  refundNo,
-		Channel:   payment.Channel,
-		Amount:    amount,
-		Status:    domain.RefundStatusRefunding,
+		TenantID:    payment.TenantID,
+		PaymentNo:   paymentNo,
+		RefundNo:    refundNo,
+		Channel:     payment.Channel,
+		Amount:      amount,
+		TotalAmount: payment.Amount,
+		Status:      domain.RefundStatusRefunding,
 	}
 	if err := s.repo.CreateRefund(ctx, refund); err != nil {
 		return "", fmt.Errorf("创建退款记录失败: %w", err)
@@ -235,8 +246,8 @@ func (s *paymentService) Refund(ctx context.Context, paymentNo string, amount in
 		s.l.Error("更新退款记录状态失败", logger.String("refundNo", refundNo), logger.Error(err))
 		return "", fmt.Errorf("更新退款记录状态失败: %w", err)
 	}
-	if err := s.repo.UpdateStatus(ctx, paymentNo, domain.PaymentStatusPaid, domain.PaymentStatusRefunding, map[string]any{}); err != nil {
-		s.l.Error("更新支付单状态为退款中失败", logger.String("paymentNo", paymentNo), logger.Error(err))
+	if err := s.repo.UpdateStatus(ctx, paymentNo, domain.PaymentStatusPaid, domain.PaymentStatusRefunded, map[string]any{}); err != nil {
+		s.l.Error("更新支付单状态为已退款失败", logger.String("paymentNo", paymentNo), logger.Error(err))
 	}
 	return refundNo, nil
 }

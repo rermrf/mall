@@ -4,7 +4,6 @@ export interface CreatePaymentParams {
   orderId: number
   orderNo: string
   channel: 'mock' | 'wechat' | 'alipay'
-  amount: number
 }
 
 export interface CreatePaymentResult {

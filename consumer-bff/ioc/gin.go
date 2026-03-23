@@ -94,7 +94,6 @@ func InitGinServer(
 		// 支付
 		auth.POST("/payments", ginx.WrapBody[handler.CreatePaymentReq](l, paymentHandler.CreatePayment))
 		auth.GET("/payments/:paymentNo", paymentHandler.GetPayment)
-		auth.POST("/payments/notify", ginx.WrapBody[handler.HandleNotifyReq](l, paymentHandler.HandleNotify))
 		// 购物车
 		auth.POST("/cart/items", ginx.WrapBody[handler.AddCartItemReq](l, cartHandler.AddItem))
 		auth.PUT("/cart/items/:skuId", ginx.WrapBody[handler.UpdateCartItemReq](l, cartHandler.UpdateItem))
