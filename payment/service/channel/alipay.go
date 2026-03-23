@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/url"
-	"strconv"
 
 	"github.com/smartwalle/alipay/v3"
 	"github.com/spf13/viper"
@@ -13,11 +12,17 @@ import (
 )
 
 type AlipayChannel struct {
-	client *alipay.Client
+	client    *alipay.Client
+	notifyURL string
+	returnURL string
 }
 
 func NewAlipayChannel(client *alipay.Client) *AlipayChannel {
-	return &AlipayChannel{client: client}
+	return &AlipayChannel{
+		client:    client,
+		notifyURL: viper.GetString("alipay.notifyUrl"),
+		returnURL: viper.GetString("alipay.returnUrl"),
+	}
 }
 
 func (c *AlipayChannel) Pay(ctx context.Context, payment domain.PaymentOrder) (string, string, error) {
@@ -26,12 +31,12 @@ func (c *AlipayChannel) Pay(ctx context.Context, payment domain.PaymentOrder) (s
 	}
 
 	// 金额从分转为元（字符串，保留两位小数）
-	amount := fmt.Sprintf("%.2f", float64(payment.Amount)/100.0)
+	amount := fmt.Sprintf("%d.%02d", payment.Amount/100, payment.Amount%100)
 
 	param := alipay.TradeWapPay{
 		Trade: alipay.Trade{
-			NotifyURL:   viper.GetString("alipay.notifyUrl"),
-			ReturnURL:   viper.GetString("alipay.returnUrl"),
+			NotifyURL:   c.notifyURL,
+			ReturnURL:   c.returnURL,
 			Subject:     fmt.Sprintf("订单 %s", payment.OrderNo),
 			OutTradeNo:  payment.PaymentNo,
 			TotalAmount: amount,
@@ -74,7 +79,7 @@ func (c *AlipayChannel) Refund(ctx context.Context, refund domain.RefundRecord) 
 		return "", fmt.Errorf("支付宝客户端未初始化")
 	}
 
-	amount := fmt.Sprintf("%.2f", float64(refund.Amount)/100.0)
+	amount := fmt.Sprintf("%d.%02d", refund.Amount/100, refund.Amount%100)
 
 	param := alipay.TradeRefund{
 		OutTradeNo:   refund.PaymentNo,
@@ -189,13 +194,4 @@ func mapAlipayTradeStatus(status alipay.TradeStatus) domain.PaymentStatus {
 	default:
 		return domain.PaymentStatusPending
 	}
-}
-
-// amountToFen converts yuan string (e.g. "99.00") to fen int64 (9900)
-func amountToFen(yuan string) int64 {
-	f, err := strconv.ParseFloat(yuan, 64)
-	if err != nil {
-		return 0
-	}
-	return int64(f * 100)
 }

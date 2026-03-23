@@ -19,7 +19,7 @@ func NewReconciliationJob(svc ReconciliationService, l logger.Logger) *Reconcili
 	return &ReconciliationJob{
 		svc:      svc,
 		l:        l,
-		channels: []string{"alipay"},
+		channels: []string{}, // enable "alipay" once DownloadBill is implemented
 		runHour:  1, // 每天凌晨1点执行
 	}
 }

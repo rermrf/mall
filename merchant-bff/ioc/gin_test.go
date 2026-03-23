@@ -59,6 +59,7 @@ func TestRefreshRouteAllowsRefreshTokenWithoutAccessToken(t *testing.T) {
 		&handler.LogisticsHandler{},
 		&handler.NotificationHandler{},
 		&handler.ProductHandler{},
+		&handler.AccountHandler{},
 		pkglogger.NewNopLogger(),
 	)
 

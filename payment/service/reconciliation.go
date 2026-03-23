@@ -36,8 +36,10 @@ func NewReconciliationService(
 	l logger.Logger,
 ) ReconciliationService {
 	channels := map[string]channel.Channel{
-		"mock":   mockCh,
-		"alipay": alipayCh,
+		"mock": mockCh,
+	}
+	if alipayCh != nil {
+		channels["alipay"] = alipayCh
 	}
 	return &reconciliationService{
 		reconDAO: reconDAO,
@@ -114,6 +116,10 @@ func (s *reconciliationService) RunReconciliation(ctx context.Context, ch string
 	localMap := make(map[string]localRecord, len(localPayments))
 	var localTotalAmount int64
 	for _, p := range localPayments {
+		if p.ChannelTradeNo == "" {
+			s.l.Warn("支付记录缺少渠道交易号，跳过对账", logger.String("paymentNo", p.PaymentNo))
+			continue
+		}
 		localMap[p.ChannelTradeNo] = localRecord{
 			PaymentNo:      p.PaymentNo,
 			ChannelTradeNo: p.ChannelTradeNo,
@@ -197,6 +203,8 @@ func (s *reconciliationService) RunReconciliation(ctx context.Context, ch string
 	if len(details) > 0 {
 		if err := s.reconDAO.CreateDetails(ctx, details); err != nil {
 			s.l.Error("保存对账差异明细失败", logger.Error(err))
+			_ = s.reconDAO.UpdateBatch(ctx, batch.ID, map[string]any{"status": 3, "error_msg": "保存差异明细失败: " + err.Error()})
+			return batch.ID, fmt.Errorf("保存对账差异明细失败: %w", err)
 		}
 	}
 

@@ -44,8 +44,10 @@ func NewPaymentService(
 	l logger.Logger,
 ) PaymentService {
 	channels := map[string]channel.Channel{
-		"mock":   mockCh,
-		"alipay": alipayCh,
+		"mock": mockCh,
+	}
+	if alipayCh != nil {
+		channels["alipay"] = alipayCh
 	}
 	return &paymentService{
 		repo:           repo,
@@ -151,6 +153,7 @@ func (s *paymentService) HandleNotify(ctx context.Context, ch string, notifyBody
 		"pay_time":         now,
 	})
 	if err != nil {
+		// CAS failed — another goroutine already updated, treat as idempotent success
 		return false, fmt.Errorf("更新支付状态失败: %w", err)
 	}
 	// 发送 order_paid 事件

@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -31,6 +32,9 @@ type RunReconciliationReq struct {
 
 // RunReconciliation 手动触发对账
 func (h *ReconciliationHandler) RunReconciliation(ctx *gin.Context, req RunReconciliationReq) (ginx.Result, error) {
+	if _, err := time.Parse("2006-01-02", req.BillDate); err != nil {
+		return ginx.Result{Code: 4, Msg: "日期格式错误，应为 YYYY-MM-DD"}, nil
+	}
 	resp, err := h.paymentClient.RunReconciliation(ctx.Request.Context(), &paymentv1.RunReconciliationRequest{
 		Channel:  req.Channel,
 		BillDate: req.BillDate,
