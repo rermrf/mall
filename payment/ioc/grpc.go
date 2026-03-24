@@ -4,12 +4,15 @@ import (
 	"fmt"
 
 	"github.com/rermrf/emo/logger"
+	orderv1 "github.com/rermrf/mall/api/proto/gen/order/v1"
 	pgrpc "github.com/rermrf/mall/payment/grpc"
 	"github.com/rermrf/mall/pkg/grpcx"
 	"github.com/rermrf/mall/pkg/tenantx"
 	"github.com/spf13/viper"
 	clientv3 "go.etcd.io/etcd/client/v3"
+	"go.etcd.io/etcd/client/v3/naming/resolver"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func InitEtcdClient() *clientv3.Client {
@@ -25,6 +28,27 @@ func InitEtcdClient() *clientv3.Client {
 		panic(fmt.Errorf("连接 etcd 失败: %w", err))
 	}
 	return client
+}
+
+func initServiceConn(etcdClient *clientv3.Client, serviceName string) *grpc.ClientConn {
+	etcdResolver, err := resolver.NewBuilder(etcdClient)
+	if err != nil {
+		panic(fmt.Errorf("创建 etcd resolver 失败: %w", err))
+	}
+	conn, err := grpc.NewClient(
+		"etcd:///service/"+serviceName,
+		grpc.WithResolvers(etcdResolver),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(tenantx.GRPCUnaryClientInterceptor()),
+	)
+	if err != nil {
+		panic(fmt.Errorf("连接 gRPC 服务 %s 失败: %w", serviceName, err))
+	}
+	return conn
+}
+
+func InitOrderClient(etcdClient *clientv3.Client) orderv1.OrderServiceClient {
+	return orderv1.NewOrderServiceClient(initServiceConn(etcdClient, "order"))
 }
 
 func InitGRPCServer(paymentServer *pgrpc.PaymentGRPCServer, l logger.Logger) *grpcx.Server {

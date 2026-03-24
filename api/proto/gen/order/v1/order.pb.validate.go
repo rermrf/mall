@@ -3260,3 +3260,217 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CancelRefundResponseValidationError{}
+
+// Validate checks the field values on HandlePaymentRefundedRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *HandlePaymentRefundedRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on HandlePaymentRefundedRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// HandlePaymentRefundedRequestMultiError, or nil if none found.
+func (m *HandlePaymentRefundedRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *HandlePaymentRefundedRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for OrderNo
+
+	// no validation rules for PaymentNo
+
+	// no validation rules for RefundNo
+
+	// no validation rules for Amount
+
+	if len(errors) > 0 {
+		return HandlePaymentRefundedRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// HandlePaymentRefundedRequestMultiError is an error wrapping multiple
+// validation errors returned by HandlePaymentRefundedRequest.ValidateAll() if
+// the designated constraints aren't met.
+type HandlePaymentRefundedRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m HandlePaymentRefundedRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m HandlePaymentRefundedRequestMultiError) AllErrors() []error { return m }
+
+// HandlePaymentRefundedRequestValidationError is the validation error returned
+// by HandlePaymentRefundedRequest.Validate if the designated constraints
+// aren't met.
+type HandlePaymentRefundedRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e HandlePaymentRefundedRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e HandlePaymentRefundedRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e HandlePaymentRefundedRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e HandlePaymentRefundedRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e HandlePaymentRefundedRequestValidationError) ErrorName() string {
+	return "HandlePaymentRefundedRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e HandlePaymentRefundedRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sHandlePaymentRefundedRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = HandlePaymentRefundedRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = HandlePaymentRefundedRequestValidationError{}
+
+// Validate checks the field values on HandlePaymentRefundedResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *HandlePaymentRefundedResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on HandlePaymentRefundedResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// HandlePaymentRefundedResponseMultiError, or nil if none found.
+func (m *HandlePaymentRefundedResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *HandlePaymentRefundedResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return HandlePaymentRefundedResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// HandlePaymentRefundedResponseMultiError is an error wrapping multiple
+// validation errors returned by HandlePaymentRefundedResponse.ValidateAll()
+// if the designated constraints aren't met.
+type HandlePaymentRefundedResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m HandlePaymentRefundedResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m HandlePaymentRefundedResponseMultiError) AllErrors() []error { return m }
+
+// HandlePaymentRefundedResponseValidationError is the validation error
+// returned by HandlePaymentRefundedResponse.Validate if the designated
+// constraints aren't met.
+type HandlePaymentRefundedResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e HandlePaymentRefundedResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e HandlePaymentRefundedResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e HandlePaymentRefundedResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e HandlePaymentRefundedResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e HandlePaymentRefundedResponseValidationError) ErrorName() string {
+	return "HandlePaymentRefundedResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e HandlePaymentRefundedResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sHandlePaymentRefundedResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = HandlePaymentRefundedResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = HandlePaymentRefundedResponseValidationError{}

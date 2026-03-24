@@ -23,6 +23,7 @@ const (
 	PaymentService_GetPayment_FullMethodName                   = "/payment.v1.PaymentService/GetPayment"
 	PaymentService_HandleNotify_FullMethodName                 = "/payment.v1.PaymentService/HandleNotify"
 	PaymentService_ClosePayment_FullMethodName                 = "/payment.v1.PaymentService/ClosePayment"
+	PaymentService_CloseOrderPayments_FullMethodName           = "/payment.v1.PaymentService/CloseOrderPayments"
 	PaymentService_Refund_FullMethodName                       = "/payment.v1.PaymentService/Refund"
 	PaymentService_GetRefund_FullMethodName                    = "/payment.v1.PaymentService/GetRefund"
 	PaymentService_ListPayments_FullMethodName                 = "/payment.v1.PaymentService/ListPayments"
@@ -43,6 +44,8 @@ type PaymentServiceClient interface {
 	HandleNotify(ctx context.Context, in *HandleNotifyRequest, opts ...grpc.CallOption) (*HandleNotifyResponse, error)
 	// 关闭支付单（超时未支付）
 	ClosePayment(ctx context.Context, in *ClosePaymentRequest, opts ...grpc.CallOption) (*ClosePaymentResponse, error)
+	// 按订单关闭所有未完成支付单（订单取消/超时关单）
+	CloseOrderPayments(ctx context.Context, in *CloseOrderPaymentsRequest, opts ...grpc.CallOption) (*CloseOrderPaymentsResponse, error)
 	// 退款
 	Refund(ctx context.Context, in *RefundRequest, opts ...grpc.CallOption) (*RefundResponse, error)
 	// 查询退款
@@ -97,6 +100,16 @@ func (c *paymentServiceClient) ClosePayment(ctx context.Context, in *ClosePaymen
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ClosePaymentResponse)
 	err := c.cc.Invoke(ctx, PaymentService_ClosePayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentServiceClient) CloseOrderPayments(ctx context.Context, in *CloseOrderPaymentsRequest, opts ...grpc.CallOption) (*CloseOrderPaymentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CloseOrderPaymentsResponse)
+	err := c.cc.Invoke(ctx, PaymentService_CloseOrderPayments_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -175,6 +188,8 @@ type PaymentServiceServer interface {
 	HandleNotify(context.Context, *HandleNotifyRequest) (*HandleNotifyResponse, error)
 	// 关闭支付单（超时未支付）
 	ClosePayment(context.Context, *ClosePaymentRequest) (*ClosePaymentResponse, error)
+	// 按订单关闭所有未完成支付单（订单取消/超时关单）
+	CloseOrderPayments(context.Context, *CloseOrderPaymentsRequest) (*CloseOrderPaymentsResponse, error)
 	// 退款
 	Refund(context.Context, *RefundRequest) (*RefundResponse, error)
 	// 查询退款
@@ -205,6 +220,9 @@ func (UnimplementedPaymentServiceServer) HandleNotify(context.Context, *HandleNo
 }
 func (UnimplementedPaymentServiceServer) ClosePayment(context.Context, *ClosePaymentRequest) (*ClosePaymentResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ClosePayment not implemented")
+}
+func (UnimplementedPaymentServiceServer) CloseOrderPayments(context.Context, *CloseOrderPaymentsRequest) (*CloseOrderPaymentsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CloseOrderPayments not implemented")
 }
 func (UnimplementedPaymentServiceServer) Refund(context.Context, *RefundRequest) (*RefundResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Refund not implemented")
@@ -312,6 +330,24 @@ func _PaymentService_ClosePayment_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PaymentServiceServer).ClosePayment(ctx, req.(*ClosePaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentService_CloseOrderPayments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CloseOrderPaymentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentServiceServer).CloseOrderPayments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentService_CloseOrderPayments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentServiceServer).CloseOrderPayments(ctx, req.(*CloseOrderPaymentsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -446,6 +482,10 @@ var PaymentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ClosePayment",
 			Handler:    _PaymentService_ClosePayment_Handler,
+		},
+		{
+			MethodName: "CloseOrderPayments",
+			Handler:    _PaymentService_CloseOrderPayments_Handler,
 		},
 		{
 			MethodName: "Refund",

@@ -101,6 +101,9 @@ service OrderService {
 
   // 取消退款申请（买家主动取消，仅待审核状态可取消）
   rpc CancelRefund(CancelRefundRequest) returns (CancelRefundResponse);
+
+  // 内部调用：payment 退款成功后回写订单/售后状态
+  rpc HandlePaymentRefunded(HandlePaymentRefundedRequest) returns (HandlePaymentRefundedResponse);
 }
 
 // ==================== Requests & Responses ====================
@@ -202,3 +205,11 @@ message CancelRefundRequest {
   int64 buyer_id = 2;
 }
 message CancelRefundResponse {}
+
+message HandlePaymentRefundedRequest {
+  string order_no = 1;
+  string payment_no = 2;
+  string refund_no = 3;
+  int64 amount = 4;
+}
+message HandlePaymentRefundedResponse {}

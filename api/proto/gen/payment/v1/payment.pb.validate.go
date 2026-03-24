@@ -1229,6 +1229,212 @@ var _ interface {
 	ErrorName() string
 } = ClosePaymentResponseValidationError{}
 
+// Validate checks the field values on CloseOrderPaymentsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CloseOrderPaymentsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CloseOrderPaymentsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CloseOrderPaymentsRequestMultiError, or nil if none found.
+func (m *CloseOrderPaymentsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CloseOrderPaymentsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for OrderNo
+
+	if len(errors) > 0 {
+		return CloseOrderPaymentsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CloseOrderPaymentsRequestMultiError is an error wrapping multiple validation
+// errors returned by CloseOrderPaymentsRequest.ValidateAll() if the
+// designated constraints aren't met.
+type CloseOrderPaymentsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CloseOrderPaymentsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CloseOrderPaymentsRequestMultiError) AllErrors() []error { return m }
+
+// CloseOrderPaymentsRequestValidationError is the validation error returned by
+// CloseOrderPaymentsRequest.Validate if the designated constraints aren't met.
+type CloseOrderPaymentsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CloseOrderPaymentsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CloseOrderPaymentsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CloseOrderPaymentsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CloseOrderPaymentsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CloseOrderPaymentsRequestValidationError) ErrorName() string {
+	return "CloseOrderPaymentsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CloseOrderPaymentsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCloseOrderPaymentsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CloseOrderPaymentsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CloseOrderPaymentsRequestValidationError{}
+
+// Validate checks the field values on CloseOrderPaymentsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CloseOrderPaymentsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CloseOrderPaymentsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CloseOrderPaymentsResponseMultiError, or nil if none found.
+func (m *CloseOrderPaymentsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CloseOrderPaymentsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return CloseOrderPaymentsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CloseOrderPaymentsResponseMultiError is an error wrapping multiple
+// validation errors returned by CloseOrderPaymentsResponse.ValidateAll() if
+// the designated constraints aren't met.
+type CloseOrderPaymentsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CloseOrderPaymentsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CloseOrderPaymentsResponseMultiError) AllErrors() []error { return m }
+
+// CloseOrderPaymentsResponseValidationError is the validation error returned
+// by CloseOrderPaymentsResponse.Validate if the designated constraints aren't met.
+type CloseOrderPaymentsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CloseOrderPaymentsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CloseOrderPaymentsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CloseOrderPaymentsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CloseOrderPaymentsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CloseOrderPaymentsResponseValidationError) ErrorName() string {
+	return "CloseOrderPaymentsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CloseOrderPaymentsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCloseOrderPaymentsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CloseOrderPaymentsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CloseOrderPaymentsResponseValidationError{}
+
 // Validate checks the field values on RefundRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

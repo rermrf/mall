@@ -2,13 +2,16 @@ package channel
 
 import (
 	"context"
-	"crypto/aes"
-	"crypto/cipher"
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"strings"
 
 	"github.com/wechatpay-apiv3/wechatpay-go/core"
+	"github.com/wechatpay-apiv3/wechatpay-go/core/auth/verifiers"
+	"github.com/wechatpay-apiv3/wechatpay-go/core/downloader"
+	"github.com/wechatpay-apiv3/wechatpay-go/core/notify"
+	"github.com/wechatpay-apiv3/wechatpay-go/services/payments"
 	"github.com/wechatpay-apiv3/wechatpay-go/services/payments/native"
 	"github.com/wechatpay-apiv3/wechatpay-go/services/refunddomestic"
 
@@ -31,10 +34,18 @@ type WechatChannel struct {
 	mchId     string
 	apiV3Key  string
 	notifyUrl string
+	notifier  *notify.Handler
 }
 
 func NewWechatChannel(client *core.Client, cfg *WechatConfig) *WechatChannel {
 	if client == nil || cfg == nil {
+		return nil
+	}
+	notifier, err := notify.NewRSANotifyHandler(
+		cfg.MchApiV3Key,
+		verifiers.NewSHA256WithRSAVerifier(downloader.MgrInstance().GetCertificateVisitor(cfg.MchId)),
+	)
+	if err != nil {
 		return nil
 	}
 	return &WechatChannel{
@@ -43,6 +54,7 @@ func NewWechatChannel(client *core.Client, cfg *WechatConfig) *WechatChannel {
 		mchId:     cfg.MchId,
 		apiV3Key:  cfg.MchApiV3Key,
 		notifyUrl: cfg.NotifyUrl,
+		notifier:  notifier,
 	}
 }
 
@@ -148,76 +160,42 @@ func (c *WechatChannel) QueryRefund(ctx context.Context, refundNo string) (int32
 	}
 }
 
-// VerifyNotify verifies and parses a WeChat Pay V3 payment notification.
-// The data map is expected to contain:
-//   - "body": the raw JSON request body
-//
-// SECURITY WARNING: HTTP-level RSA signature verification is not yet implemented.
-// Currently relies on AES-256-GCM decryption with API V3 key for authentication.
-// Full security requires verifying Wechatpay-Signature using the platform certificate.
-// See: https://pay.weixin.qq.com/docs/merchant/development/interface-rules/signature-verification.html
-//
-// We decrypt the resource ciphertext using AES-GCM with the API V3 key,
-// then extract OutTradeNo and TransactionId from the decrypted transaction.
 func (c *WechatChannel) VerifyNotify(ctx context.Context, data map[string]string) (string, string, error) {
 	if c.client == nil {
 		return "", "", fmt.Errorf("微信支付客户端未初始化")
+	}
+	if c.notifier == nil {
+		return "", "", fmt.Errorf("微信支付通知处理器未初始化")
 	}
 
 	body := data["body"]
 	if body == "" {
 		return "", "", fmt.Errorf("微信支付回调数据为空")
 	}
-
-	// TODO: 验证 HTTP 签名（需要平台证书公钥）
-	// timestamp := data["Wechatpay-Timestamp"]
-	// nonce := data["Wechatpay-Nonce"]
-	// signature := data["Wechatpay-Signature"]
-	// serial := data["Wechatpay-Serial"]
-	// message := timestamp + "\n" + nonce + "\n" + body + "\n"
-	// Verify RSA-SHA256 signature over message using platform certificate
-
-	// Parse the notification envelope
-	var notification struct {
-		ID         string `json:"id"`
-		EventType  string `json:"event_type"`
-		Resource   struct {
-			Algorithm      string `json:"algorithm"`
-			Ciphertext     string `json:"ciphertext"`
-			AssociatedData string `json:"associated_data"`
-			Nonce          string `json:"nonce"`
-		} `json:"resource"`
-	}
-	if err := json.Unmarshal([]byte(body), &notification); err != nil {
-		return "", "", fmt.Errorf("解析微信支付回调报文失败: %w", err)
-	}
-
-	// Decrypt the resource using AES-256-GCM
-	plaintext, err := decryptAESGCM(
-		c.apiV3Key,
-		notification.Resource.Nonce,
-		notification.Resource.Ciphertext,
-		notification.Resource.AssociatedData,
-	)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.notifyUrl, io.NopCloser(strings.NewReader(body)))
 	if err != nil {
-		return "", "", fmt.Errorf("微信支付回调解密失败: %w", err)
+		return "", "", fmt.Errorf("构造微信支付回调请求失败: %w", err)
+	}
+	req.Header.Set("Wechatpay-Timestamp", data["Wechatpay-Timestamp"])
+	req.Header.Set("Wechatpay-Nonce", data["Wechatpay-Nonce"])
+	req.Header.Set("Wechatpay-Signature", data["Wechatpay-Signature"])
+	req.Header.Set("Wechatpay-Serial", data["Wechatpay-Serial"])
+	if data["Wechatpay-Signature-Type"] != "" {
+		req.Header.Set("Wechatpay-Signature-Type", data["Wechatpay-Signature-Type"])
 	}
 
-	// Parse the decrypted transaction
-	var transaction struct {
-		OutTradeNo    string `json:"out_trade_no"`
-		TransactionId string `json:"transaction_id"`
-		TradeState    string `json:"trade_state"`
+	transaction := new(payments.Transaction)
+	if _, err := c.notifier.ParseNotifyRequest(ctx, req, transaction); err != nil {
+		return "", "", fmt.Errorf("验证微信支付回调失败: %w", err)
 	}
-	if err := json.Unmarshal([]byte(plaintext), &transaction); err != nil {
-		return "", "", fmt.Errorf("解析微信支付交易数据失败: %w", err)
+	if transaction.TradeState == nil || *transaction.TradeState != "SUCCESS" {
+		return "", "", fmt.Errorf("微信交易状态非成功")
 	}
-
-	if transaction.TradeState != "SUCCESS" {
-		return "", "", fmt.Errorf("微信交易状态非成功: %s", transaction.TradeState)
+	if transaction.OutTradeNo == nil || transaction.TransactionId == nil {
+		return "", "", fmt.Errorf("微信支付回调缺少订单标识")
 	}
 
-	return transaction.OutTradeNo, transaction.TransactionId, nil
+	return *transaction.OutTradeNo, *transaction.TransactionId, nil
 }
 
 // DownloadBill implements Reconciler interface
@@ -227,31 +205,6 @@ func (c *WechatChannel) DownloadBill(ctx context.Context, billDate string) ([]Bi
 	}
 	// TODO: implement bill download using /v3/bill/tradebill
 	return nil, fmt.Errorf("对账单解析暂未实现")
-}
-
-// decryptAESGCM decrypts WeChat Pay V3 notification resource using AES-256-GCM
-func decryptAESGCM(apiV3Key, nonce, ciphertext, associatedData string) (string, error) {
-	ciphertextBytes, err := base64.StdEncoding.DecodeString(ciphertext)
-	if err != nil {
-		return "", fmt.Errorf("base64解码失败: %w", err)
-	}
-
-	block, err := aes.NewCipher([]byte(apiV3Key))
-	if err != nil {
-		return "", fmt.Errorf("创建AES密码块失败: %w", err)
-	}
-
-	gcm, err := cipher.NewGCM(block)
-	if err != nil {
-		return "", fmt.Errorf("创建GCM失败: %w", err)
-	}
-
-	plaintext, err := gcm.Open(nil, []byte(nonce), ciphertextBytes, []byte(associatedData))
-	if err != nil {
-		return "", fmt.Errorf("AES-GCM解密失败: %w", err)
-	}
-
-	return string(plaintext), nil
 }
 
 func mapWechatTradeState(state string) domain.PaymentStatus {

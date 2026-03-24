@@ -134,6 +134,13 @@ func (s *OrderGRPCServer) CancelRefund(ctx context.Context, req *orderv1.CancelR
 	return &orderv1.CancelRefundResponse{}, nil
 }
 
+func (s *OrderGRPCServer) HandlePaymentRefunded(ctx context.Context, req *orderv1.HandlePaymentRefundedRequest) (*orderv1.HandlePaymentRefundedResponse, error) {
+	if err := s.svc.HandlePaymentRefunded(ctx, req.GetOrderNo(), req.GetPaymentNo(), req.GetRefundNo(), req.GetAmount()); err != nil {
+		return nil, err
+	}
+	return &orderv1.HandlePaymentRefundedResponse{}, nil
+}
+
 func (s *OrderGRPCServer) toOrderDTO(o domain.Order) *orderv1.Order {
 	items := make([]*orderv1.OrderItem, 0, len(o.Items))
 	for _, item := range o.Items {

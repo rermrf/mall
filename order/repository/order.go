@@ -15,6 +15,7 @@ import (
 
 type OrderRepository interface {
 	CreateOrder(ctx context.Context, order domain.Order) (domain.Order, error)
+	FindByID(ctx context.Context, id int64) (domain.Order, error)
 	FindByOrderNo(ctx context.Context, orderNo string) (domain.Order, error)
 	FindByBuyerIdAndHash(ctx context.Context, buyerId int64, hash string) (domain.Order, error)
 	ListOrders(ctx context.Context, buyerId, tenantId int64, status int32, page, pageSize int32) ([]domain.Order, int64, error)
@@ -24,6 +25,7 @@ type OrderRepository interface {
 	InsertStatusLog(ctx context.Context, log domain.OrderStatusLog) error
 	CreateRefund(ctx context.Context, refund domain.RefundOrder) error
 	FindRefundByNo(ctx context.Context, refundNo string) (domain.RefundOrder, error)
+	FindLatestActiveRefundByOrderID(ctx context.Context, orderId int64, amount int64) (domain.RefundOrder, error)
 	UpdateRefundStatus(ctx context.Context, refundNo string, status domain.RefundStatus, updates map[string]any) error
 	ListRefunds(ctx context.Context, tenantId, buyerId int64, status int32, page, pageSize int32) ([]domain.RefundOrder, int64, error)
 }
@@ -60,6 +62,14 @@ func (r *orderRepository) CreateOrder(ctx context.Context, order domain.Order) (
 	}
 	order.ID = orderModel.ID
 	return order, nil
+}
+
+func (r *orderRepository) FindByID(ctx context.Context, id int64) (domain.Order, error) {
+	model, err := r.dao.FindByID(ctx, id)
+	if err != nil {
+		return domain.Order{}, err
+	}
+	return r.toDomainOrder(model), nil
 }
 
 func (r *orderRepository) FindByOrderNo(ctx context.Context, orderNo string) (domain.Order, error) {
@@ -166,6 +176,14 @@ func (r *orderRepository) CreateRefund(ctx context.Context, refund domain.Refund
 
 func (r *orderRepository) FindRefundByNo(ctx context.Context, refundNo string) (domain.RefundOrder, error) {
 	model, err := r.dao.FindRefundByNo(ctx, refundNo)
+	if err != nil {
+		return domain.RefundOrder{}, err
+	}
+	return r.toDomainRefund(model), nil
+}
+
+func (r *orderRepository) FindLatestActiveRefundByOrderID(ctx context.Context, orderId int64, amount int64) (domain.RefundOrder, error) {
+	model, err := r.dao.FindLatestActiveRefundByOrderID(ctx, orderId, amount)
 	if err != nil {
 		return domain.RefundOrder{}, err
 	}

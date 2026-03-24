@@ -37,6 +37,7 @@ type OrderService interface {
 	// 内部方法：消费者调用
 	HandleOrderPaid(ctx context.Context, evt events.OrderPaidEvent) error
 	HandleOrderCloseDelay(ctx context.Context, orderNo string) error
+	HandlePaymentRefunded(ctx context.Context, orderNo, paymentNo, refundNo string, amount int64) error
 }
 
 type CreateOrderReq struct {
@@ -201,34 +202,6 @@ func (s *orderService) CreateOrder(ctx context.Context, req CreateOrderReq) (str
 		s.l.Error("发送超时关单延迟消息失败", logger.String("orderNo", orderNo), logger.Error(delayErr))
 	}
 
-	// 8. 创建支付单
-	channel := req.Channel
-	if channel == "" {
-		channel = "mock"
-	}
-	payResp, err := s.paymentClient.CreatePayment(ctx, &paymentv1.CreatePaymentRequest{
-		TenantId: req.TenantID,
-		OrderId:  order.ID,
-		OrderNo:  orderNo,
-		Channel:  channel,
-		Amount:   order.PayAmount,
-	})
-	if err != nil {
-		// 补偿：回滚库存 + 取消订单
-		if _, rollbackErr := s.inventoryClient.Rollback(ctx, &inventoryv1.RollbackRequest{OrderId: order.ID}); rollbackErr != nil {
-			s.l.Error("库存回滚失败", logger.String("orderNo", orderNo), logger.Error(rollbackErr))
-		}
-		if statusErr := s.repo.UpdateStatus(ctx, orderNo, domain.OrderStatusPending, domain.OrderStatusCancelled, map[string]any{
-			"closed_at": time.Now().UnixMilli(),
-		}); statusErr != nil {
-			s.l.Error("取消订单状态更新失败", logger.String("orderNo", orderNo), logger.Error(statusErr))
-		}
-		return "", 0, fmt.Errorf("创建支付单失败: %w", err)
-	}
-	if updateErr := s.repo.UpdatePaymentNo(ctx, orderNo, payResp.GetPaymentNo()); updateErr != nil {
-		s.l.Error("更新支付单号失败", logger.String("orderNo", orderNo), logger.Error(updateErr))
-	}
-
 	return orderNo, order.PayAmount, nil
 }
 
@@ -261,10 +234,10 @@ func (s *orderService) CancelOrder(ctx context.Context, orderNo string, buyerId 
 	if _, rollbackErr := s.inventoryClient.Rollback(ctx, &inventoryv1.RollbackRequest{OrderId: order.ID}); rollbackErr != nil {
 		s.l.Error("库存回滚失败", logger.String("orderNo", orderNo), logger.Error(rollbackErr))
 	}
-	// 关闭支付单
-	if order.PaymentNo != "" {
-		if _, closeErr := s.paymentClient.ClosePayment(ctx, &paymentv1.ClosePaymentRequest{PaymentNo: order.PaymentNo}); closeErr != nil {
-			s.l.Error("关闭支付单失败", logger.String("orderNo", orderNo), logger.String("paymentNo", order.PaymentNo), logger.Error(closeErr))
+	// 关闭该订单所有未完成支付单
+	if s.paymentClient != nil {
+		if _, closeErr := s.paymentClient.CloseOrderPayments(ctx, &paymentv1.CloseOrderPaymentsRequest{OrderNo: orderNo}); closeErr != nil {
+			s.l.Error("关闭订单未完成支付单失败", logger.String("orderNo", orderNo), logger.Error(closeErr))
 		}
 	}
 	// 写日志
@@ -388,15 +361,39 @@ func (s *orderService) HandleRefund(ctx context.Context, refundNo string, tenant
 	if refund.Status != domain.RefundStatusPending {
 		return fmt.Errorf("退款单状态不允许处理")
 	}
+	order, err := s.repo.FindByID(ctx, refund.OrderID)
+	if err != nil {
+		return err
+	}
+	if order.TenantID != tenantId {
+		return fmt.Errorf("无权处理此退款单")
+	}
 	if !approved {
 		return s.repo.UpdateRefundStatus(ctx, refundNo, domain.RefundStatusRejected, map[string]any{
 			"reject_reason": reason,
 		})
 	}
+	if order.PaymentNo == "" {
+		return fmt.Errorf("订单缺少支付单号，无法发起退款")
+	}
 	// 审核通过 → 更新状态为退款中
 	err = s.repo.UpdateRefundStatus(ctx, refundNo, domain.RefundStatusRefunding, nil)
 	if err != nil {
 		return err
+	}
+	refundReason := refund.Reason
+	if reason != "" {
+		refundReason = reason
+	}
+	if _, err := s.paymentClient.Refund(ctx, &paymentv1.RefundRequest{
+		PaymentNo: order.PaymentNo,
+		Amount:    refund.RefundAmount,
+		Reason:    refundReason,
+	}); err != nil {
+		if rollbackErr := s.repo.UpdateRefundStatus(ctx, refundNo, domain.RefundStatusApproved, nil); rollbackErr != nil {
+			s.l.Error("回滚退款审核状态失败", logger.String("refundNo", refundNo), logger.Error(rollbackErr))
+		}
+		return fmt.Errorf("发起退款失败: %w", err)
 	}
 	s.l.Info("退款审核通过", logger.String("refundNo", refundNo))
 	return nil
@@ -476,9 +473,9 @@ func (s *orderService) HandleOrderCloseDelay(ctx context.Context, orderNo string
 		s.l.Error("库存回滚失败", logger.String("orderNo", orderNo), logger.Error(rollbackErr))
 	}
 	// 关闭支付单
-	if order.PaymentNo != "" {
-		if _, closeErr := s.paymentClient.ClosePayment(ctx, &paymentv1.ClosePaymentRequest{PaymentNo: order.PaymentNo}); closeErr != nil {
-			s.l.Error("关闭支付单失败", logger.String("orderNo", orderNo), logger.String("paymentNo", order.PaymentNo), logger.Error(closeErr))
+	if s.paymentClient != nil {
+		if _, closeErr := s.paymentClient.CloseOrderPayments(ctx, &paymentv1.CloseOrderPaymentsRequest{OrderNo: orderNo}); closeErr != nil {
+			s.l.Error("关闭订单未完成支付单失败", logger.String("orderNo", orderNo), logger.Error(closeErr))
 		}
 	}
 	if logErr := s.repo.InsertStatusLog(ctx, domain.OrderStatusLog{
@@ -491,6 +488,50 @@ func (s *orderService) HandleOrderCloseDelay(ctx context.Context, orderNo string
 		OrderNo: orderNo, TenantID: order.TenantID, Reason: "超时未支付",
 	}); produceErr != nil {
 		s.l.Error("发送取消事件失败", logger.String("orderNo", orderNo), logger.Error(produceErr))
+	}
+	return nil
+}
+
+func (s *orderService) HandlePaymentRefunded(ctx context.Context, orderNo, paymentNo, refundNo string, amount int64) error {
+	if amount <= 0 {
+		return fmt.Errorf("退款金额必须大于0")
+	}
+	order, err := s.repo.FindByOrderNo(ctx, orderNo)
+	if err != nil {
+		return err
+	}
+	if order.PaymentNo != "" && paymentNo != "" && order.PaymentNo != paymentNo {
+		return fmt.Errorf("支付单号不匹配")
+	}
+	remaining := order.PayAmount - order.RefundedAmount
+	if amount > remaining {
+		return fmt.Errorf("退款金额超出订单剩余可退金额")
+	}
+	ctx = tenantx.WithTenantID(ctx, order.TenantID)
+	if err := s.repo.AddRefundedAmount(ctx, orderNo, amount); err != nil {
+		return err
+	}
+	refund, refundErr := s.repo.FindLatestActiveRefundByOrderID(ctx, order.ID, amount)
+	if refundErr == nil {
+		if err := s.repo.UpdateRefundStatus(ctx, refund.RefundNo, domain.RefundStatusRefunded, nil); err != nil {
+			return err
+		}
+	} else {
+		s.l.Warn("未找到可回写的售后退款单", logger.String("orderNo", orderNo), logger.String("refundNo", refundNo), logger.Error(refundErr))
+	}
+	if order.RefundedAmount+amount >= order.PayAmount && order.Status != domain.OrderStatusRefunded {
+		if err := s.repo.UpdateStatus(ctx, orderNo, order.Status, domain.OrderStatusRefunded, map[string]any{}); err != nil {
+			return err
+		}
+		if logErr := s.repo.InsertStatusLog(ctx, domain.OrderStatusLog{
+			OrderID:      order.ID,
+			FromStatus:   order.Status,
+			ToStatus:     domain.OrderStatusRefunded,
+			OperatorType: 4,
+			Remark:       "退款完成",
+		}); logErr != nil {
+			s.l.Error("写入退款完成状态日志失败", logger.String("orderNo", orderNo), logger.Error(logErr))
+		}
 	}
 	return nil
 }

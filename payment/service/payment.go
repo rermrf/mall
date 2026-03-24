@@ -20,6 +20,7 @@ type PaymentService interface {
 	GetPayment(ctx context.Context, paymentNo string) (domain.PaymentOrder, error)
 	HandleNotify(ctx context.Context, ch string, notifyBody string) (bool, error)
 	ClosePayment(ctx context.Context, paymentNo string) error
+	CloseOrderPayments(ctx context.Context, orderNo string) error
 	Refund(ctx context.Context, paymentNo string, amount int64, reason string) (string, error)
 	GetRefund(ctx context.Context, refundNo string) (domain.RefundRecord, error)
 	ListPayments(ctx context.Context, tenantId int64, status, page, pageSize int32) ([]domain.PaymentOrder, int64, error)
@@ -30,6 +31,7 @@ type paymentService struct {
 	producer       events.Producer
 	idempotencySvc idempotent.IdempotencyService
 	node           *snowflake.Node
+	refundSyncer   RefundSyncer
 	channels       map[string]channel.Channel
 	l              logger.Logger
 }
@@ -39,6 +41,7 @@ func NewPaymentService(
 	producer events.Producer,
 	idempotencySvc idempotent.IdempotencyService,
 	node *snowflake.Node,
+	refundSyncer RefundSyncer,
 	mockCh *channel.MockChannel,
 	alipayCh *channel.AlipayChannel,
 	wechatCh *channel.WechatChannel,
@@ -58,6 +61,7 @@ func NewPaymentService(
 		producer:       producer,
 		idempotencySvc: idempotencySvc,
 		node:           node,
+		refundSyncer:   refundSyncer,
 		channels:       channels,
 		l:              l,
 	}
@@ -75,19 +79,44 @@ func (s *paymentService) CreatePayment(ctx context.Context, tenantId int64, orde
 	if amount <= 0 {
 		return "", "", fmt.Errorf("支付金额必须大于0")
 	}
-	// Check if payment already exists for this order (idempotent)
-	existing, findErr := s.repo.FindByOrderNo(ctx, orderNo)
-	if findErr == nil && existing.ID > 0 {
-		if existing.Status == domain.PaymentStatusPending || existing.Status == domain.PaymentStatusPaying {
-			s.l.Info("支付单已存在，返回已有支付单",
-				logger.String("orderNo", orderNo),
-				logger.String("paymentNo", existing.PaymentNo))
-			return existing.PaymentNo, "", nil
-		}
-	}
 	c, err := s.getChannel(ch)
 	if err != nil {
 		return "", "", err
+	}
+	openPayments, err := s.repo.ListOpenPaymentsByOrderNo(ctx, orderNo)
+	if err != nil {
+		return "", "", fmt.Errorf("查询订单未完成支付单失败: %w", err)
+	}
+
+	var reusable *domain.PaymentOrder
+	for i := range openPayments {
+		payment := openPayments[i]
+		if reusable == nil && payment.Channel == ch {
+			copied := payment
+			reusable = &copied
+			continue
+		}
+		if err := s.repo.UpdateStatus(ctx, payment.PaymentNo, payment.Status, domain.PaymentStatusClosed, map[string]any{}); err != nil {
+			return "", "", fmt.Errorf("关闭旧支付单失败: %w", err)
+		}
+	}
+	if reusable != nil {
+		channelTradeNo, payURL, payErr := c.Pay(ctx, *reusable)
+		if payErr != nil {
+			return "", "", fmt.Errorf("渠道发起支付失败: %w", payErr)
+		}
+		if channelTradeNo != "" && channelTradeNo != reusable.ChannelTradeNo {
+			if updateErr := s.repo.UpdateStatus(ctx, reusable.PaymentNo, reusable.Status, reusable.Status, map[string]any{
+				"channel_trade_no": channelTradeNo,
+			}); updateErr != nil {
+				s.l.Error("更新复用支付单渠道交易号失败", logger.String("paymentNo", reusable.PaymentNo), logger.Error(updateErr))
+			}
+		}
+		s.l.Info("复用已有支付单",
+			logger.String("orderNo", orderNo),
+			logger.String("paymentNo", reusable.PaymentNo),
+			logger.String("channel", ch))
+		return reusable.PaymentNo, payURL, nil
 	}
 	paymentNo := fmt.Sprintf("P%d", s.node.Generate())
 	payment := domain.PaymentOrder{
@@ -202,6 +231,19 @@ func (s *paymentService) ClosePayment(ctx context.Context, paymentNo string) err
 	return s.repo.UpdateStatus(ctx, paymentNo, payment.Status, domain.PaymentStatusClosed, map[string]any{})
 }
 
+func (s *paymentService) CloseOrderPayments(ctx context.Context, orderNo string) error {
+	openPayments, err := s.repo.ListOpenPaymentsByOrderNo(ctx, orderNo)
+	if err != nil {
+		return fmt.Errorf("查询订单未完成支付单失败: %w", err)
+	}
+	for _, payment := range openPayments {
+		if err := s.repo.UpdateStatus(ctx, payment.PaymentNo, payment.Status, domain.PaymentStatusClosed, map[string]any{}); err != nil {
+			return fmt.Errorf("关闭支付单失败: %w", err)
+		}
+	}
+	return nil
+}
+
 func (s *paymentService) Refund(ctx context.Context, paymentNo string, amount int64, reason string) (string, error) {
 	if amount <= 0 {
 		return "", fmt.Errorf("退款金额必须大于0")
@@ -216,6 +258,18 @@ func (s *paymentService) Refund(ctx context.Context, paymentNo string, amount in
 	if amount > payment.Amount {
 		return "", fmt.Errorf("退款金额超出支付金额")
 	}
+
+	// FIX C3: Check cumulative refunds to prevent over-refund.
+	// NOTE: This does not fully prevent the race (two concurrent requests could both pass
+	// this check). For strict prevention, a DB-level lock or unique constraint would be needed.
+	totalRefunded, err := s.repo.SumRefundedAmountByPaymentNo(ctx, paymentNo)
+	if err != nil {
+		return "", fmt.Errorf("查询累计退款金额失败: %w", err)
+	}
+	if totalRefunded+amount > payment.Amount {
+		return "", fmt.Errorf("累计退款金额超出支付金额，已退: %d，本次: %d，支付: %d", totalRefunded, amount, payment.Amount)
+	}
+
 	c, err := s.getChannel(payment.Channel)
 	if err != nil {
 		return "", err
@@ -235,19 +289,51 @@ func (s *paymentService) Refund(ctx context.Context, paymentNo string, amount in
 	}
 	channelRefundNo, err := c.Refund(ctx, refund)
 	if err != nil {
-		if updateErr := s.repo.UpdateRefundStatus(ctx, refundNo, domain.RefundStatusFailed, map[string]any{}); updateErr != nil {
+		if updateErr := s.repo.UpdateRefundStatus(ctx, refundNo, domain.RefundStatusRefunding, domain.RefundStatusFailed, map[string]any{}); updateErr != nil {
 			s.l.Error("更新退款记录状态为失败时出错", logger.String("refundNo", refundNo), logger.Error(updateErr))
 		}
 		return "", fmt.Errorf("渠道退款失败: %w", err)
 	}
-	if err := s.repo.UpdateRefundStatus(ctx, refundNo, domain.RefundStatusRefunded, map[string]any{
+
+	// FIX I1: Determine refund finality based on channel.
+	// WeChat refund is async -- mark as Refunding and let a polling job finalize it.
+	finalStatus := domain.RefundStatusRefunded
+	if payment.Channel == "wechat" {
+		finalStatus = domain.RefundStatusRefunding // WeChat refund is async
+		// TODO: implement a refund polling job that periodically calls QueryRefund
+		// for Refunding records and updates them to Refunded or Failed.
+	}
+
+	if err := s.repo.UpdateRefundStatus(ctx, refundNo, domain.RefundStatusRefunding, finalStatus, map[string]any{
 		"channel_refund_no": channelRefundNo,
 	}); err != nil {
 		s.l.Error("更新退款记录状态失败", logger.String("refundNo", refundNo), logger.Error(err))
 		return "", fmt.Errorf("更新退款记录状态失败: %w", err)
 	}
-	if err := s.repo.UpdateStatus(ctx, paymentNo, domain.PaymentStatusPaid, domain.PaymentStatusRefunded, map[string]any{}); err != nil {
-		s.l.Error("更新支付单状态为已退款失败", logger.String("paymentNo", paymentNo), logger.Error(err))
+
+	// Only update payment status and sync refund when the refund is finalized (synchronous channels)
+	if finalStatus == domain.RefundStatusRefunded {
+		totalRefunded, totalErr := s.repo.SumRefundedAmountByPaymentNo(ctx, paymentNo)
+		if totalErr != nil {
+			s.l.Error("统计累计退款金额失败", logger.String("paymentNo", paymentNo), logger.Error(totalErr))
+			return refundNo, nil
+		}
+		if totalRefunded >= payment.Amount {
+			if err := s.repo.UpdateStatus(ctx, paymentNo, domain.PaymentStatusPaid, domain.PaymentStatusRefunded, map[string]any{}); err != nil {
+				s.l.Error("更新支付单状态为已退款失败", logger.String("paymentNo", paymentNo), logger.Error(err))
+			}
+		}
+		refund.ChannelRefundNo = channelRefundNo
+		refund.Status = domain.RefundStatusRefunded
+		if s.refundSyncer != nil {
+			if syncErr := s.refundSyncer.SyncRefund(ctx, payment, refund); syncErr != nil {
+				s.l.Error("回写订单退款状态失败，需要人工补偿",
+					logger.String("paymentNo", paymentNo),
+					logger.String("refundNo", refundNo),
+					logger.String("orderNo", payment.OrderNo),
+					logger.Error(syncErr))
+			}
+		}
 	}
 	return refundNo, nil
 }

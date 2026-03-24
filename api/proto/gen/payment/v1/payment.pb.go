@@ -670,6 +670,86 @@ func (*ClosePaymentResponse) Descriptor() ([]byte, []int) {
 	return file_payment_v1_payment_proto_rawDescGZIP(), []int{9}
 }
 
+type CloseOrderPaymentsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrderNo       string                 `protobuf:"bytes,1,opt,name=order_no,json=orderNo,proto3" json:"order_no,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CloseOrderPaymentsRequest) Reset() {
+	*x = CloseOrderPaymentsRequest{}
+	mi := &file_payment_v1_payment_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CloseOrderPaymentsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CloseOrderPaymentsRequest) ProtoMessage() {}
+
+func (x *CloseOrderPaymentsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CloseOrderPaymentsRequest.ProtoReflect.Descriptor instead.
+func (*CloseOrderPaymentsRequest) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *CloseOrderPaymentsRequest) GetOrderNo() string {
+	if x != nil {
+		return x.OrderNo
+	}
+	return ""
+}
+
+type CloseOrderPaymentsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CloseOrderPaymentsResponse) Reset() {
+	*x = CloseOrderPaymentsResponse{}
+	mi := &file_payment_v1_payment_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CloseOrderPaymentsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CloseOrderPaymentsResponse) ProtoMessage() {}
+
+func (x *CloseOrderPaymentsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_payment_v1_payment_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CloseOrderPaymentsResponse.ProtoReflect.Descriptor instead.
+func (*CloseOrderPaymentsResponse) Descriptor() ([]byte, []int) {
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{11}
+}
+
 type RefundRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	PaymentNo     string                 `protobuf:"bytes,1,opt,name=payment_no,json=paymentNo,proto3" json:"payment_no,omitempty"`
@@ -681,7 +761,7 @@ type RefundRequest struct {
 
 func (x *RefundRequest) Reset() {
 	*x = RefundRequest{}
-	mi := &file_payment_v1_payment_proto_msgTypes[10]
+	mi := &file_payment_v1_payment_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -693,7 +773,7 @@ func (x *RefundRequest) String() string {
 func (*RefundRequest) ProtoMessage() {}
 
 func (x *RefundRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[10]
+	mi := &file_payment_v1_payment_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -706,7 +786,7 @@ func (x *RefundRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefundRequest.ProtoReflect.Descriptor instead.
 func (*RefundRequest) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{10}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *RefundRequest) GetPaymentNo() string {
@@ -739,7 +819,7 @@ type RefundResponse struct {
 
 func (x *RefundResponse) Reset() {
 	*x = RefundResponse{}
-	mi := &file_payment_v1_payment_proto_msgTypes[11]
+	mi := &file_payment_v1_payment_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -751,7 +831,7 @@ func (x *RefundResponse) String() string {
 func (*RefundResponse) ProtoMessage() {}
 
 func (x *RefundResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[11]
+	mi := &file_payment_v1_payment_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -764,7 +844,7 @@ func (x *RefundResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RefundResponse.ProtoReflect.Descriptor instead.
 func (*RefundResponse) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{11}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *RefundResponse) GetRefundNo() string {
@@ -783,7 +863,7 @@ type GetRefundRequest struct {
 
 func (x *GetRefundRequest) Reset() {
 	*x = GetRefundRequest{}
-	mi := &file_payment_v1_payment_proto_msgTypes[12]
+	mi := &file_payment_v1_payment_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -795,7 +875,7 @@ func (x *GetRefundRequest) String() string {
 func (*GetRefundRequest) ProtoMessage() {}
 
 func (x *GetRefundRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[12]
+	mi := &file_payment_v1_payment_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -808,7 +888,7 @@ func (x *GetRefundRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRefundRequest.ProtoReflect.Descriptor instead.
 func (*GetRefundRequest) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{12}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *GetRefundRequest) GetRefundNo() string {
@@ -827,7 +907,7 @@ type GetRefundResponse struct {
 
 func (x *GetRefundResponse) Reset() {
 	*x = GetRefundResponse{}
-	mi := &file_payment_v1_payment_proto_msgTypes[13]
+	mi := &file_payment_v1_payment_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -839,7 +919,7 @@ func (x *GetRefundResponse) String() string {
 func (*GetRefundResponse) ProtoMessage() {}
 
 func (x *GetRefundResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[13]
+	mi := &file_payment_v1_payment_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -852,7 +932,7 @@ func (x *GetRefundResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRefundResponse.ProtoReflect.Descriptor instead.
 func (*GetRefundResponse) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{13}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *GetRefundResponse) GetRefund() *RefundRecord {
@@ -875,7 +955,7 @@ type ListPaymentsRequest struct {
 
 func (x *ListPaymentsRequest) Reset() {
 	*x = ListPaymentsRequest{}
-	mi := &file_payment_v1_payment_proto_msgTypes[14]
+	mi := &file_payment_v1_payment_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -887,7 +967,7 @@ func (x *ListPaymentsRequest) String() string {
 func (*ListPaymentsRequest) ProtoMessage() {}
 
 func (x *ListPaymentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[14]
+	mi := &file_payment_v1_payment_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -900,7 +980,7 @@ func (x *ListPaymentsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPaymentsRequest.ProtoReflect.Descriptor instead.
 func (*ListPaymentsRequest) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{14}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListPaymentsRequest) GetTenantId() int64 {
@@ -941,7 +1021,7 @@ type ListPaymentsResponse struct {
 
 func (x *ListPaymentsResponse) Reset() {
 	*x = ListPaymentsResponse{}
-	mi := &file_payment_v1_payment_proto_msgTypes[15]
+	mi := &file_payment_v1_payment_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -953,7 +1033,7 @@ func (x *ListPaymentsResponse) String() string {
 func (*ListPaymentsResponse) ProtoMessage() {}
 
 func (x *ListPaymentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[15]
+	mi := &file_payment_v1_payment_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -966,7 +1046,7 @@ func (x *ListPaymentsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListPaymentsResponse.ProtoReflect.Descriptor instead.
 func (*ListPaymentsResponse) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{15}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ListPaymentsResponse) GetPayments() []*PaymentOrder {
@@ -993,7 +1073,7 @@ type RunReconciliationRequest struct {
 
 func (x *RunReconciliationRequest) Reset() {
 	*x = RunReconciliationRequest{}
-	mi := &file_payment_v1_payment_proto_msgTypes[16]
+	mi := &file_payment_v1_payment_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1005,7 +1085,7 @@ func (x *RunReconciliationRequest) String() string {
 func (*RunReconciliationRequest) ProtoMessage() {}
 
 func (x *RunReconciliationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[16]
+	mi := &file_payment_v1_payment_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1018,7 +1098,7 @@ func (x *RunReconciliationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunReconciliationRequest.ProtoReflect.Descriptor instead.
 func (*RunReconciliationRequest) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{16}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *RunReconciliationRequest) GetChannel() string {
@@ -1044,7 +1124,7 @@ type RunReconciliationResponse struct {
 
 func (x *RunReconciliationResponse) Reset() {
 	*x = RunReconciliationResponse{}
-	mi := &file_payment_v1_payment_proto_msgTypes[17]
+	mi := &file_payment_v1_payment_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1056,7 +1136,7 @@ func (x *RunReconciliationResponse) String() string {
 func (*RunReconciliationResponse) ProtoMessage() {}
 
 func (x *RunReconciliationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[17]
+	mi := &file_payment_v1_payment_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1069,7 +1149,7 @@ func (x *RunReconciliationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunReconciliationResponse.ProtoReflect.Descriptor instead.
 func (*RunReconciliationResponse) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{17}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *RunReconciliationResponse) GetBatchId() int64 {
@@ -1100,7 +1180,7 @@ type ReconciliationBatch struct {
 
 func (x *ReconciliationBatch) Reset() {
 	*x = ReconciliationBatch{}
-	mi := &file_payment_v1_payment_proto_msgTypes[18]
+	mi := &file_payment_v1_payment_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1112,7 +1192,7 @@ func (x *ReconciliationBatch) String() string {
 func (*ReconciliationBatch) ProtoMessage() {}
 
 func (x *ReconciliationBatch) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[18]
+	mi := &file_payment_v1_payment_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1125,7 +1205,7 @@ func (x *ReconciliationBatch) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReconciliationBatch.ProtoReflect.Descriptor instead.
 func (*ReconciliationBatch) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{18}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ReconciliationBatch) GetId() int64 {
@@ -1238,7 +1318,7 @@ type ReconciliationDetail struct {
 
 func (x *ReconciliationDetail) Reset() {
 	*x = ReconciliationDetail{}
-	mi := &file_payment_v1_payment_proto_msgTypes[19]
+	mi := &file_payment_v1_payment_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1250,7 +1330,7 @@ func (x *ReconciliationDetail) String() string {
 func (*ReconciliationDetail) ProtoMessage() {}
 
 func (x *ReconciliationDetail) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[19]
+	mi := &file_payment_v1_payment_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1263,7 +1343,7 @@ func (x *ReconciliationDetail) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReconciliationDetail.ProtoReflect.Descriptor instead.
 func (*ReconciliationDetail) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{19}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ReconciliationDetail) GetId() int64 {
@@ -1353,7 +1433,7 @@ type ListReconciliationBatchesRequest struct {
 
 func (x *ListReconciliationBatchesRequest) Reset() {
 	*x = ListReconciliationBatchesRequest{}
-	mi := &file_payment_v1_payment_proto_msgTypes[20]
+	mi := &file_payment_v1_payment_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1365,7 +1445,7 @@ func (x *ListReconciliationBatchesRequest) String() string {
 func (*ListReconciliationBatchesRequest) ProtoMessage() {}
 
 func (x *ListReconciliationBatchesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[20]
+	mi := &file_payment_v1_payment_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1378,7 +1458,7 @@ func (x *ListReconciliationBatchesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListReconciliationBatchesRequest.ProtoReflect.Descriptor instead.
 func (*ListReconciliationBatchesRequest) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{20}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ListReconciliationBatchesRequest) GetPage() int32 {
@@ -1405,7 +1485,7 @@ type ListReconciliationBatchesResponse struct {
 
 func (x *ListReconciliationBatchesResponse) Reset() {
 	*x = ListReconciliationBatchesResponse{}
-	mi := &file_payment_v1_payment_proto_msgTypes[21]
+	mi := &file_payment_v1_payment_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1417,7 +1497,7 @@ func (x *ListReconciliationBatchesResponse) String() string {
 func (*ListReconciliationBatchesResponse) ProtoMessage() {}
 
 func (x *ListReconciliationBatchesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[21]
+	mi := &file_payment_v1_payment_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1430,7 +1510,7 @@ func (x *ListReconciliationBatchesResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ListReconciliationBatchesResponse.ProtoReflect.Descriptor instead.
 func (*ListReconciliationBatchesResponse) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{21}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ListReconciliationBatchesResponse) GetBatches() []*ReconciliationBatch {
@@ -1458,7 +1538,7 @@ type GetReconciliationBatchDetailRequest struct {
 
 func (x *GetReconciliationBatchDetailRequest) Reset() {
 	*x = GetReconciliationBatchDetailRequest{}
-	mi := &file_payment_v1_payment_proto_msgTypes[22]
+	mi := &file_payment_v1_payment_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1470,7 +1550,7 @@ func (x *GetReconciliationBatchDetailRequest) String() string {
 func (*GetReconciliationBatchDetailRequest) ProtoMessage() {}
 
 func (x *GetReconciliationBatchDetailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[22]
+	mi := &file_payment_v1_payment_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1483,7 +1563,7 @@ func (x *GetReconciliationBatchDetailRequest) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use GetReconciliationBatchDetailRequest.ProtoReflect.Descriptor instead.
 func (*GetReconciliationBatchDetailRequest) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{22}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *GetReconciliationBatchDetailRequest) GetBatchId() int64 {
@@ -1518,7 +1598,7 @@ type GetReconciliationBatchDetailResponse struct {
 
 func (x *GetReconciliationBatchDetailResponse) Reset() {
 	*x = GetReconciliationBatchDetailResponse{}
-	mi := &file_payment_v1_payment_proto_msgTypes[23]
+	mi := &file_payment_v1_payment_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1530,7 +1610,7 @@ func (x *GetReconciliationBatchDetailResponse) String() string {
 func (*GetReconciliationBatchDetailResponse) ProtoMessage() {}
 
 func (x *GetReconciliationBatchDetailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_payment_v1_payment_proto_msgTypes[23]
+	mi := &file_payment_v1_payment_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1543,7 +1623,7 @@ func (x *GetReconciliationBatchDetailResponse) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use GetReconciliationBatchDetailResponse.ProtoReflect.Descriptor instead.
 func (*GetReconciliationBatchDetailResponse) Descriptor() ([]byte, []int) {
-	return file_payment_v1_payment_proto_rawDescGZIP(), []int{23}
+	return file_payment_v1_payment_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetReconciliationBatchDetailResponse) GetBatch() *ReconciliationBatch {
@@ -1627,7 +1707,10 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"\x13ClosePaymentRequest\x12\x1d\n" +
 	"\n" +
 	"payment_no\x18\x01 \x01(\tR\tpaymentNo\"\x16\n" +
-	"\x14ClosePaymentResponse\"^\n" +
+	"\x14ClosePaymentResponse\"6\n" +
+	"\x19CloseOrderPaymentsRequest\x12\x19\n" +
+	"\border_no\x18\x01 \x01(\tR\aorderNo\"\x1c\n" +
+	"\x1aCloseOrderPaymentsResponse\"^\n" +
 	"\rRefundRequest\x12\x1d\n" +
 	"\n" +
 	"payment_no\x18\x01 \x01(\tR\tpaymentNo\x12\x16\n" +
@@ -1696,13 +1779,14 @@ const file_payment_v1_payment_proto_rawDesc = "" +
 	"$GetReconciliationBatchDetailResponse\x125\n" +
 	"\x05batch\x18\x01 \x01(\v2\x1f.payment.v1.ReconciliationBatchR\x05batch\x12:\n" +
 	"\adetails\x18\x02 \x03(\v2 .payment.v1.ReconciliationDetailR\adetails\x12\x14\n" +
-	"\x05total\x18\x03 \x01(\x03R\x05total2\x97\a\n" +
+	"\x05total\x18\x03 \x01(\x03R\x05total2\xfc\a\n" +
 	"\x0ePaymentService\x12T\n" +
 	"\rCreatePayment\x12 .payment.v1.CreatePaymentRequest\x1a!.payment.v1.CreatePaymentResponse\x12K\n" +
 	"\n" +
 	"GetPayment\x12\x1d.payment.v1.GetPaymentRequest\x1a\x1e.payment.v1.GetPaymentResponse\x12Q\n" +
 	"\fHandleNotify\x12\x1f.payment.v1.HandleNotifyRequest\x1a .payment.v1.HandleNotifyResponse\x12Q\n" +
-	"\fClosePayment\x12\x1f.payment.v1.ClosePaymentRequest\x1a .payment.v1.ClosePaymentResponse\x12?\n" +
+	"\fClosePayment\x12\x1f.payment.v1.ClosePaymentRequest\x1a .payment.v1.ClosePaymentResponse\x12c\n" +
+	"\x12CloseOrderPayments\x12%.payment.v1.CloseOrderPaymentsRequest\x1a&.payment.v1.CloseOrderPaymentsResponse\x12?\n" +
 	"\x06Refund\x12\x19.payment.v1.RefundRequest\x1a\x1a.payment.v1.RefundResponse\x12H\n" +
 	"\tGetRefund\x12\x1c.payment.v1.GetRefundRequest\x1a\x1d.payment.v1.GetRefundResponse\x12Q\n" +
 	"\fListPayments\x12\x1f.payment.v1.ListPaymentsRequest\x1a .payment.v1.ListPaymentsResponse\x12`\n" +
@@ -1725,7 +1809,7 @@ func file_payment_v1_payment_proto_rawDescGZIP() []byte {
 	return file_payment_v1_payment_proto_rawDescData
 }
 
-var file_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_payment_v1_payment_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_payment_v1_payment_proto_goTypes = []any{
 	(*PaymentOrder)(nil),                         // 0: payment.v1.PaymentOrder
 	(*RefundRecord)(nil),                         // 1: payment.v1.RefundRecord
@@ -1737,55 +1821,59 @@ var file_payment_v1_payment_proto_goTypes = []any{
 	(*HandleNotifyResponse)(nil),                 // 7: payment.v1.HandleNotifyResponse
 	(*ClosePaymentRequest)(nil),                  // 8: payment.v1.ClosePaymentRequest
 	(*ClosePaymentResponse)(nil),                 // 9: payment.v1.ClosePaymentResponse
-	(*RefundRequest)(nil),                        // 10: payment.v1.RefundRequest
-	(*RefundResponse)(nil),                       // 11: payment.v1.RefundResponse
-	(*GetRefundRequest)(nil),                     // 12: payment.v1.GetRefundRequest
-	(*GetRefundResponse)(nil),                    // 13: payment.v1.GetRefundResponse
-	(*ListPaymentsRequest)(nil),                  // 14: payment.v1.ListPaymentsRequest
-	(*ListPaymentsResponse)(nil),                 // 15: payment.v1.ListPaymentsResponse
-	(*RunReconciliationRequest)(nil),             // 16: payment.v1.RunReconciliationRequest
-	(*RunReconciliationResponse)(nil),            // 17: payment.v1.RunReconciliationResponse
-	(*ReconciliationBatch)(nil),                  // 18: payment.v1.ReconciliationBatch
-	(*ReconciliationDetail)(nil),                 // 19: payment.v1.ReconciliationDetail
-	(*ListReconciliationBatchesRequest)(nil),     // 20: payment.v1.ListReconciliationBatchesRequest
-	(*ListReconciliationBatchesResponse)(nil),    // 21: payment.v1.ListReconciliationBatchesResponse
-	(*GetReconciliationBatchDetailRequest)(nil),  // 22: payment.v1.GetReconciliationBatchDetailRequest
-	(*GetReconciliationBatchDetailResponse)(nil), // 23: payment.v1.GetReconciliationBatchDetailResponse
-	(*timestamppb.Timestamp)(nil),                // 24: google.protobuf.Timestamp
+	(*CloseOrderPaymentsRequest)(nil),            // 10: payment.v1.CloseOrderPaymentsRequest
+	(*CloseOrderPaymentsResponse)(nil),           // 11: payment.v1.CloseOrderPaymentsResponse
+	(*RefundRequest)(nil),                        // 12: payment.v1.RefundRequest
+	(*RefundResponse)(nil),                       // 13: payment.v1.RefundResponse
+	(*GetRefundRequest)(nil),                     // 14: payment.v1.GetRefundRequest
+	(*GetRefundResponse)(nil),                    // 15: payment.v1.GetRefundResponse
+	(*ListPaymentsRequest)(nil),                  // 16: payment.v1.ListPaymentsRequest
+	(*ListPaymentsResponse)(nil),                 // 17: payment.v1.ListPaymentsResponse
+	(*RunReconciliationRequest)(nil),             // 18: payment.v1.RunReconciliationRequest
+	(*RunReconciliationResponse)(nil),            // 19: payment.v1.RunReconciliationResponse
+	(*ReconciliationBatch)(nil),                  // 20: payment.v1.ReconciliationBatch
+	(*ReconciliationDetail)(nil),                 // 21: payment.v1.ReconciliationDetail
+	(*ListReconciliationBatchesRequest)(nil),     // 22: payment.v1.ListReconciliationBatchesRequest
+	(*ListReconciliationBatchesResponse)(nil),    // 23: payment.v1.ListReconciliationBatchesResponse
+	(*GetReconciliationBatchDetailRequest)(nil),  // 24: payment.v1.GetReconciliationBatchDetailRequest
+	(*GetReconciliationBatchDetailResponse)(nil), // 25: payment.v1.GetReconciliationBatchDetailResponse
+	(*timestamppb.Timestamp)(nil),                // 26: google.protobuf.Timestamp
 }
 var file_payment_v1_payment_proto_depIdxs = []int32{
-	24, // 0: payment.v1.PaymentOrder.ctime:type_name -> google.protobuf.Timestamp
-	24, // 1: payment.v1.PaymentOrder.utime:type_name -> google.protobuf.Timestamp
-	24, // 2: payment.v1.RefundRecord.ctime:type_name -> google.protobuf.Timestamp
+	26, // 0: payment.v1.PaymentOrder.ctime:type_name -> google.protobuf.Timestamp
+	26, // 1: payment.v1.PaymentOrder.utime:type_name -> google.protobuf.Timestamp
+	26, // 2: payment.v1.RefundRecord.ctime:type_name -> google.protobuf.Timestamp
 	0,  // 3: payment.v1.GetPaymentResponse.payment:type_name -> payment.v1.PaymentOrder
 	1,  // 4: payment.v1.GetRefundResponse.refund:type_name -> payment.v1.RefundRecord
 	0,  // 5: payment.v1.ListPaymentsResponse.payments:type_name -> payment.v1.PaymentOrder
-	24, // 6: payment.v1.ReconciliationBatch.ctime:type_name -> google.protobuf.Timestamp
-	18, // 7: payment.v1.ListReconciliationBatchesResponse.batches:type_name -> payment.v1.ReconciliationBatch
-	18, // 8: payment.v1.GetReconciliationBatchDetailResponse.batch:type_name -> payment.v1.ReconciliationBatch
-	19, // 9: payment.v1.GetReconciliationBatchDetailResponse.details:type_name -> payment.v1.ReconciliationDetail
+	26, // 6: payment.v1.ReconciliationBatch.ctime:type_name -> google.protobuf.Timestamp
+	20, // 7: payment.v1.ListReconciliationBatchesResponse.batches:type_name -> payment.v1.ReconciliationBatch
+	20, // 8: payment.v1.GetReconciliationBatchDetailResponse.batch:type_name -> payment.v1.ReconciliationBatch
+	21, // 9: payment.v1.GetReconciliationBatchDetailResponse.details:type_name -> payment.v1.ReconciliationDetail
 	2,  // 10: payment.v1.PaymentService.CreatePayment:input_type -> payment.v1.CreatePaymentRequest
 	4,  // 11: payment.v1.PaymentService.GetPayment:input_type -> payment.v1.GetPaymentRequest
 	6,  // 12: payment.v1.PaymentService.HandleNotify:input_type -> payment.v1.HandleNotifyRequest
 	8,  // 13: payment.v1.PaymentService.ClosePayment:input_type -> payment.v1.ClosePaymentRequest
-	10, // 14: payment.v1.PaymentService.Refund:input_type -> payment.v1.RefundRequest
-	12, // 15: payment.v1.PaymentService.GetRefund:input_type -> payment.v1.GetRefundRequest
-	14, // 16: payment.v1.PaymentService.ListPayments:input_type -> payment.v1.ListPaymentsRequest
-	16, // 17: payment.v1.PaymentService.RunReconciliation:input_type -> payment.v1.RunReconciliationRequest
-	20, // 18: payment.v1.PaymentService.ListReconciliationBatches:input_type -> payment.v1.ListReconciliationBatchesRequest
-	22, // 19: payment.v1.PaymentService.GetReconciliationBatchDetail:input_type -> payment.v1.GetReconciliationBatchDetailRequest
-	3,  // 20: payment.v1.PaymentService.CreatePayment:output_type -> payment.v1.CreatePaymentResponse
-	5,  // 21: payment.v1.PaymentService.GetPayment:output_type -> payment.v1.GetPaymentResponse
-	7,  // 22: payment.v1.PaymentService.HandleNotify:output_type -> payment.v1.HandleNotifyResponse
-	9,  // 23: payment.v1.PaymentService.ClosePayment:output_type -> payment.v1.ClosePaymentResponse
-	11, // 24: payment.v1.PaymentService.Refund:output_type -> payment.v1.RefundResponse
-	13, // 25: payment.v1.PaymentService.GetRefund:output_type -> payment.v1.GetRefundResponse
-	15, // 26: payment.v1.PaymentService.ListPayments:output_type -> payment.v1.ListPaymentsResponse
-	17, // 27: payment.v1.PaymentService.RunReconciliation:output_type -> payment.v1.RunReconciliationResponse
-	21, // 28: payment.v1.PaymentService.ListReconciliationBatches:output_type -> payment.v1.ListReconciliationBatchesResponse
-	23, // 29: payment.v1.PaymentService.GetReconciliationBatchDetail:output_type -> payment.v1.GetReconciliationBatchDetailResponse
-	20, // [20:30] is the sub-list for method output_type
-	10, // [10:20] is the sub-list for method input_type
+	10, // 14: payment.v1.PaymentService.CloseOrderPayments:input_type -> payment.v1.CloseOrderPaymentsRequest
+	12, // 15: payment.v1.PaymentService.Refund:input_type -> payment.v1.RefundRequest
+	14, // 16: payment.v1.PaymentService.GetRefund:input_type -> payment.v1.GetRefundRequest
+	16, // 17: payment.v1.PaymentService.ListPayments:input_type -> payment.v1.ListPaymentsRequest
+	18, // 18: payment.v1.PaymentService.RunReconciliation:input_type -> payment.v1.RunReconciliationRequest
+	22, // 19: payment.v1.PaymentService.ListReconciliationBatches:input_type -> payment.v1.ListReconciliationBatchesRequest
+	24, // 20: payment.v1.PaymentService.GetReconciliationBatchDetail:input_type -> payment.v1.GetReconciliationBatchDetailRequest
+	3,  // 21: payment.v1.PaymentService.CreatePayment:output_type -> payment.v1.CreatePaymentResponse
+	5,  // 22: payment.v1.PaymentService.GetPayment:output_type -> payment.v1.GetPaymentResponse
+	7,  // 23: payment.v1.PaymentService.HandleNotify:output_type -> payment.v1.HandleNotifyResponse
+	9,  // 24: payment.v1.PaymentService.ClosePayment:output_type -> payment.v1.ClosePaymentResponse
+	11, // 25: payment.v1.PaymentService.CloseOrderPayments:output_type -> payment.v1.CloseOrderPaymentsResponse
+	13, // 26: payment.v1.PaymentService.Refund:output_type -> payment.v1.RefundResponse
+	15, // 27: payment.v1.PaymentService.GetRefund:output_type -> payment.v1.GetRefundResponse
+	17, // 28: payment.v1.PaymentService.ListPayments:output_type -> payment.v1.ListPaymentsResponse
+	19, // 29: payment.v1.PaymentService.RunReconciliation:output_type -> payment.v1.RunReconciliationResponse
+	23, // 30: payment.v1.PaymentService.ListReconciliationBatches:output_type -> payment.v1.ListReconciliationBatchesResponse
+	25, // 31: payment.v1.PaymentService.GetReconciliationBatchDetail:output_type -> payment.v1.GetReconciliationBatchDetailResponse
+	21, // [21:32] is the sub-list for method output_type
+	10, // [10:21] is the sub-list for method input_type
 	10, // [10:10] is the sub-list for extension type_name
 	10, // [10:10] is the sub-list for extension extendee
 	0,  // [0:10] is the sub-list for field type_name
@@ -1802,7 +1890,7 @@ func file_payment_v1_payment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_payment_v1_payment_proto_rawDesc), len(file_payment_v1_payment_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   24,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

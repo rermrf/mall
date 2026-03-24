@@ -30,6 +30,9 @@ func InitApp() *App {
 	producer := ioc.InitProducer(syncProducer)
 	idempotencyService := ioc.InitIdempotencyService(cmdable)
 	node := ioc.InitSnowflakeNode()
+	clientv3Client := ioc.InitEtcdClient()
+	orderServiceClient := ioc.InitOrderClient(clientv3Client)
+	refundSyncer := service.NewOrderRefundSyncer(orderServiceClient)
 	mockChannel := channel.NewMockChannel(node)
 	alipayClient := ioc.InitAlipayClient()
 	alipayChannel := channel.NewAlipayChannel(alipayClient)
@@ -37,7 +40,7 @@ func InitApp() *App {
 	coreClient := ioc.InitWechatClient(wechatConfig)
 	wechatChannel := channel.NewWechatChannel(coreClient, wechatConfig)
 	logger := ioc.InitLogger()
-	paymentService := service.NewPaymentService(paymentRepository, producer, idempotencyService, node, mockChannel, alipayChannel, wechatChannel, logger)
+	paymentService := service.NewPaymentService(paymentRepository, producer, idempotencyService, node, refundSyncer, mockChannel, alipayChannel, wechatChannel, logger)
 	reconciliationDAO := dao.NewReconciliationDAO(db)
 	reconciliationService := service.NewReconciliationService(reconciliationDAO, paymentRepository, mockChannel, alipayChannel, wechatChannel, node, logger)
 	paymentGRPCServer := grpc.NewPaymentGRPCServer(paymentService, reconciliationService)
@@ -52,6 +55,6 @@ func InitApp() *App {
 
 // wire.go:
 
-var thirdPartySet = wire.NewSet(ioc.InitDB, ioc.InitRedis, ioc.InitKafka, ioc.InitLogger, ioc.InitEtcdClient, ioc.InitIdempotencyService, ioc.InitSnowflakeNode)
+var thirdPartySet = wire.NewSet(ioc.InitDB, ioc.InitRedis, ioc.InitKafka, ioc.InitLogger, ioc.InitEtcdClient, ioc.InitOrderClient, ioc.InitIdempotencyService, ioc.InitSnowflakeNode)
 
-var paymentSet = wire.NewSet(dao.NewPaymentDAO, dao.NewReconciliationDAO, cache.NewPaymentCache, repository.NewPaymentRepository, channel.NewMockChannel, ioc.InitAlipayClient, channel.NewAlipayChannel, ioc.InitWechatConfig, ioc.InitWechatClient, channel.NewWechatChannel, service.NewPaymentService, service.NewReconciliationService, service.NewReconciliationJob, grpc.NewPaymentGRPCServer, ioc.InitSyncProducer, ioc.InitProducer, ioc.InitGRPCServer)
+var paymentSet = wire.NewSet(dao.NewPaymentDAO, dao.NewReconciliationDAO, cache.NewPaymentCache, repository.NewPaymentRepository, channel.NewMockChannel, ioc.InitAlipayClient, channel.NewAlipayChannel, ioc.InitWechatConfig, ioc.InitWechatClient, channel.NewWechatChannel, service.NewOrderRefundSyncer, service.NewPaymentService, service.NewReconciliationService, service.NewReconciliationJob, grpc.NewPaymentGRPCServer, ioc.InitSyncProducer, ioc.InitProducer, ioc.InitGRPCServer)

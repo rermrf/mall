@@ -58,6 +58,13 @@ func (s *PaymentGRPCServer) ClosePayment(ctx context.Context, req *paymentv1.Clo
 	return &paymentv1.ClosePaymentResponse{}, nil
 }
 
+func (s *PaymentGRPCServer) CloseOrderPayments(ctx context.Context, req *paymentv1.CloseOrderPaymentsRequest) (*paymentv1.CloseOrderPaymentsResponse, error) {
+	if err := s.svc.CloseOrderPayments(ctx, req.GetOrderNo()); err != nil {
+		return nil, err
+	}
+	return &paymentv1.CloseOrderPaymentsResponse{}, nil
+}
+
 func (s *PaymentGRPCServer) Refund(ctx context.Context, req *paymentv1.RefundRequest) (*paymentv1.RefundResponse, error) {
 	refundNo, err := s.svc.Refund(ctx, req.GetPaymentNo(), req.GetAmount(), req.GetReason())
 	if err != nil {

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -67,6 +68,12 @@ func (s *reconciliationService) RunReconciliation(ctx context.Context, ch string
 		return 0, fmt.Errorf("创建对账批次失败: %w", err)
 	}
 
+	if ch != "mock" {
+		errMsg := fmt.Sprintf("渠道 %s 对账暂未实现", ch)
+		s.failBatch(ctx, batch.ID, errMsg)
+		return batch.ID, errors.New(errMsg)
+	}
+
 	// 2. 获取渠道并检查是否支持对账
 	c, ok := s.channels[ch]
 	if !ok {
@@ -120,9 +127,20 @@ func (s *reconciliationService) RunReconciliation(ctx context.Context, ch string
 	}
 	localMap := make(map[string]localRecord, len(localPayments))
 	var localTotalAmount int64
+	var details []dao.ReconciliationDetailModel
 	for _, p := range localPayments {
+		localTotalAmount += p.Amount
 		if p.ChannelTradeNo == "" {
-			s.l.Warn("支付记录缺少渠道交易号，跳过对账", logger.String("paymentNo", p.PaymentNo))
+			s.l.Warn("支付记录缺少渠道交易号，记为对账差异", logger.String("paymentNo", p.PaymentNo))
+			details = append(details, dao.ReconciliationDetailModel{
+				BatchId:       batch.ID,
+				PaymentNo:     p.PaymentNo,
+				Type:          1,
+				LocalAmount:   p.Amount,
+				LocalStatus:   int32(p.Status),
+				ChannelAmount: 0,
+				Remark:        "本地支付记录缺少渠道交易号，无法与渠道账单匹配",
+			})
 			continue
 		}
 		localMap[p.ChannelTradeNo] = localRecord{
@@ -131,11 +149,9 @@ func (s *reconciliationService) RunReconciliation(ctx context.Context, ch string
 			Amount:         p.Amount,
 			Status:         int32(p.Status),
 		}
-		localTotalAmount += p.Amount
 	}
 
 	// 6. 对比并生成差异明细
-	var details []dao.ReconciliationDetailModel
 	matchCount := 0
 
 	// 本地记录逐条与渠道对比

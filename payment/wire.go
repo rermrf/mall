@@ -19,6 +19,7 @@ var thirdPartySet = wire.NewSet(
 	ioc.InitKafka,
 	ioc.InitLogger,
 	ioc.InitEtcdClient,
+	ioc.InitOrderClient,
 	ioc.InitIdempotencyService,
 	ioc.InitSnowflakeNode,
 )
@@ -34,6 +35,7 @@ var paymentSet = wire.NewSet(
 	ioc.InitWechatConfig,
 	ioc.InitWechatClient,
 	channel.NewWechatChannel,
+	service.NewOrderRefundSyncer,
 	service.NewPaymentService,
 	service.NewReconciliationService,
 	service.NewReconciliationJob,

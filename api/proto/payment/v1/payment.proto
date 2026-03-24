@@ -48,6 +48,8 @@ service PaymentService {
   rpc HandleNotify(HandleNotifyRequest) returns (HandleNotifyResponse);
   // 关闭支付单（超时未支付）
   rpc ClosePayment(ClosePaymentRequest) returns (ClosePaymentResponse);
+  // 按订单关闭所有未完成支付单（订单取消/超时关单）
+  rpc CloseOrderPayments(CloseOrderPaymentsRequest) returns (CloseOrderPaymentsResponse);
   // 退款
   rpc Refund(RefundRequest) returns (RefundResponse);
   // 查询退款
@@ -93,6 +95,11 @@ message ClosePaymentRequest {
   string payment_no = 1;
 }
 message ClosePaymentResponse {}
+
+message CloseOrderPaymentsRequest {
+  string order_no = 1;
+}
+message CloseOrderPaymentsResponse {}
 
 message RefundRequest {
   string payment_no = 1;

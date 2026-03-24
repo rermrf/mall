@@ -86,6 +86,7 @@ func (RefundOrderModel) TableName() string { return "refund_orders" }
 
 type OrderDAO interface {
 	CreateOrder(ctx context.Context, tx *gorm.DB, order OrderModel, items []OrderItemModel) error
+	FindByID(ctx context.Context, id int64) (OrderModel, error)
 	FindByOrderNo(ctx context.Context, orderNo string) (OrderModel, error)
 	FindItemsByOrderId(ctx context.Context, orderId int64) ([]OrderItemModel, error)
 	FindByBuyerIdAndHash(ctx context.Context, buyerId int64, hash string) (OrderModel, error)
@@ -96,6 +97,7 @@ type OrderDAO interface {
 	InsertStatusLog(ctx context.Context, tx *gorm.DB, log OrderStatusLogModel) error
 	CreateRefund(ctx context.Context, refund RefundOrderModel) error
 	FindRefundByNo(ctx context.Context, refundNo string) (RefundOrderModel, error)
+	FindLatestActiveRefundByOrderID(ctx context.Context, orderId int64, amount int64) (RefundOrderModel, error)
 	UpdateRefundStatus(ctx context.Context, refundNo string, status int32, updates map[string]any) error
 	ListRefunds(ctx context.Context, tenantId, buyerId int64, status int32, offset, limit int) ([]RefundOrderModel, int64, error)
 	GetDB() *gorm.DB
@@ -123,6 +125,12 @@ func (d *GORMOrderDAO) CreateOrder(ctx context.Context, tx *gorm.DB, order Order
 		items[i].Ctime = now
 	}
 	return tx.WithContext(ctx).Create(&items).Error
+}
+
+func (d *GORMOrderDAO) FindByID(ctx context.Context, id int64) (OrderModel, error) {
+	var order OrderModel
+	err := d.db.WithContext(ctx).Where("id = ?", id).First(&order).Error
+	return order, err
 }
 
 func (d *GORMOrderDAO) FindByOrderNo(ctx context.Context, orderNo string) (OrderModel, error) {
@@ -208,6 +216,15 @@ func (d *GORMOrderDAO) CreateRefund(ctx context.Context, refund RefundOrderModel
 func (d *GORMOrderDAO) FindRefundByNo(ctx context.Context, refundNo string) (RefundOrderModel, error) {
 	var refund RefundOrderModel
 	err := d.db.WithContext(ctx).Where("refund_no = ?", refundNo).First(&refund).Error
+	return refund, err
+}
+
+func (d *GORMOrderDAO) FindLatestActiveRefundByOrderID(ctx context.Context, orderId int64, amount int64) (RefundOrderModel, error) {
+	var refund RefundOrderModel
+	err := d.db.WithContext(ctx).
+		Where("order_id = ? AND refund_amount = ? AND status IN ?", orderId, amount, []int32{2, 3}).
+		Order("id DESC").
+		First(&refund).Error
 	return refund, err
 }
 

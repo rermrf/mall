@@ -19,17 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OrderService_CreateOrder_FullMethodName       = "/order.v1.OrderService/CreateOrder"
-	OrderService_GetOrder_FullMethodName          = "/order.v1.OrderService/GetOrder"
-	OrderService_ListOrders_FullMethodName        = "/order.v1.OrderService/ListOrders"
-	OrderService_CancelOrder_FullMethodName       = "/order.v1.OrderService/CancelOrder"
-	OrderService_ConfirmReceive_FullMethodName    = "/order.v1.OrderService/ConfirmReceive"
-	OrderService_UpdateOrderStatus_FullMethodName = "/order.v1.OrderService/UpdateOrderStatus"
-	OrderService_ApplyRefund_FullMethodName       = "/order.v1.OrderService/ApplyRefund"
-	OrderService_HandleRefund_FullMethodName      = "/order.v1.OrderService/HandleRefund"
-	OrderService_GetRefundOrder_FullMethodName    = "/order.v1.OrderService/GetRefundOrder"
-	OrderService_ListRefundOrders_FullMethodName  = "/order.v1.OrderService/ListRefundOrders"
-	OrderService_CancelRefund_FullMethodName      = "/order.v1.OrderService/CancelRefund"
+	OrderService_CreateOrder_FullMethodName           = "/order.v1.OrderService/CreateOrder"
+	OrderService_GetOrder_FullMethodName              = "/order.v1.OrderService/GetOrder"
+	OrderService_ListOrders_FullMethodName            = "/order.v1.OrderService/ListOrders"
+	OrderService_CancelOrder_FullMethodName           = "/order.v1.OrderService/CancelOrder"
+	OrderService_ConfirmReceive_FullMethodName        = "/order.v1.OrderService/ConfirmReceive"
+	OrderService_UpdateOrderStatus_FullMethodName     = "/order.v1.OrderService/UpdateOrderStatus"
+	OrderService_ApplyRefund_FullMethodName           = "/order.v1.OrderService/ApplyRefund"
+	OrderService_HandleRefund_FullMethodName          = "/order.v1.OrderService/HandleRefund"
+	OrderService_GetRefundOrder_FullMethodName        = "/order.v1.OrderService/GetRefundOrder"
+	OrderService_ListRefundOrders_FullMethodName      = "/order.v1.OrderService/ListRefundOrders"
+	OrderService_CancelRefund_FullMethodName          = "/order.v1.OrderService/CancelRefund"
+	OrderService_HandlePaymentRefunded_FullMethodName = "/order.v1.OrderService/HandlePaymentRefunded"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -55,6 +56,8 @@ type OrderServiceClient interface {
 	ListRefundOrders(ctx context.Context, in *ListRefundOrdersRequest, opts ...grpc.CallOption) (*ListRefundOrdersResponse, error)
 	// 取消退款申请（买家主动取消，仅待审核状态可取消）
 	CancelRefund(ctx context.Context, in *CancelRefundRequest, opts ...grpc.CallOption) (*CancelRefundResponse, error)
+	// 内部调用：payment 退款成功后回写订单/售后状态
+	HandlePaymentRefunded(ctx context.Context, in *HandlePaymentRefundedRequest, opts ...grpc.CallOption) (*HandlePaymentRefundedResponse, error)
 }
 
 type orderServiceClient struct {
@@ -175,6 +178,16 @@ func (c *orderServiceClient) CancelRefund(ctx context.Context, in *CancelRefundR
 	return out, nil
 }
 
+func (c *orderServiceClient) HandlePaymentRefunded(ctx context.Context, in *HandlePaymentRefundedRequest, opts ...grpc.CallOption) (*HandlePaymentRefundedResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(HandlePaymentRefundedResponse)
+	err := c.cc.Invoke(ctx, OrderService_HandlePaymentRefunded_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderServiceServer is the server API for OrderService service.
 // All implementations should embed UnimplementedOrderServiceServer
 // for forward compatibility.
@@ -198,6 +211,8 @@ type OrderServiceServer interface {
 	ListRefundOrders(context.Context, *ListRefundOrdersRequest) (*ListRefundOrdersResponse, error)
 	// 取消退款申请（买家主动取消，仅待审核状态可取消）
 	CancelRefund(context.Context, *CancelRefundRequest) (*CancelRefundResponse, error)
+	// 内部调用：payment 退款成功后回写订单/售后状态
+	HandlePaymentRefunded(context.Context, *HandlePaymentRefundedRequest) (*HandlePaymentRefundedResponse, error)
 }
 
 // UnimplementedOrderServiceServer should be embedded to have
@@ -239,6 +254,9 @@ func (UnimplementedOrderServiceServer) ListRefundOrders(context.Context, *ListRe
 }
 func (UnimplementedOrderServiceServer) CancelRefund(context.Context, *CancelRefundRequest) (*CancelRefundResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CancelRefund not implemented")
+}
+func (UnimplementedOrderServiceServer) HandlePaymentRefunded(context.Context, *HandlePaymentRefundedRequest) (*HandlePaymentRefundedResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method HandlePaymentRefunded not implemented")
 }
 func (UnimplementedOrderServiceServer) testEmbeddedByValue() {}
 
@@ -458,6 +476,24 @@ func _OrderService_CancelRefund_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_HandlePaymentRefunded_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HandlePaymentRefundedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).HandlePaymentRefunded(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_HandlePaymentRefunded_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).HandlePaymentRefunded(ctx, req.(*HandlePaymentRefundedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -508,6 +544,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CancelRefund",
 			Handler:    _OrderService_CancelRefund_Handler,
+		},
+		{
+			MethodName: "HandlePaymentRefunded",
+			Handler:    _OrderService_HandlePaymentRefunded_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

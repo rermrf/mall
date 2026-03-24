@@ -28,9 +28,9 @@ func NewPaymentHandler(paymentClient paymentv1.PaymentServiceClient, orderClient
 }
 
 type CreatePaymentReq struct {
-	OrderID int64  `json:"orderId" binding:"required"`
+	OrderID int64  `json:"orderId"`
 	OrderNo string `json:"orderNo" binding:"required"`
-	Channel string `json:"channel" binding:"required,oneof=mock wechat alipay"`
+	Channel string `json:"channel" binding:"required,oneof=wechat alipay"`
 }
 
 func (h *PaymentHandler) CreatePayment(ctx *gin.Context, req CreatePaymentReq) (ginx.Result, error) {
@@ -58,7 +58,7 @@ func (h *PaymentHandler) CreatePayment(ctx *gin.Context, req CreatePaymentReq) (
 
 	resp, err := h.paymentClient.CreatePayment(ctx.Request.Context(), &paymentv1.CreatePaymentRequest{
 		TenantId: tenantId,
-		OrderId:  req.OrderID,
+		OrderId:  order.GetId(),
 		OrderNo:  req.OrderNo,
 		Channel:  req.Channel,
 		Amount:   realAmount,

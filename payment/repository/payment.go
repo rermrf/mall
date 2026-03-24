@@ -16,12 +16,14 @@ type PaymentRepository interface {
 	CreatePayment(ctx context.Context, payment domain.PaymentOrder) (domain.PaymentOrder, error)
 	FindByPaymentNo(ctx context.Context, paymentNo string) (domain.PaymentOrder, error)
 	FindByOrderNo(ctx context.Context, orderNo string) (domain.PaymentOrder, error)
+	ListOpenPaymentsByOrderNo(ctx context.Context, orderNo string) ([]domain.PaymentOrder, error)
 	UpdateStatus(ctx context.Context, paymentNo string, oldStatus, newStatus domain.PaymentStatus, updates map[string]any) error
 	ListPayments(ctx context.Context, tenantId int64, status int32, page, pageSize int32) ([]domain.PaymentOrder, int64, error)
 	ListPaymentsByDateAndChannel(ctx context.Context, channel string, startTime, endTime int64) ([]domain.PaymentOrder, error)
 	CreateRefund(ctx context.Context, refund domain.RefundRecord) error
 	FindRefundByNo(ctx context.Context, refundNo string) (domain.RefundRecord, error)
-	UpdateRefundStatus(ctx context.Context, refundNo string, status domain.RefundStatus, updates map[string]any) error
+	UpdateRefundStatus(ctx context.Context, refundNo string, oldStatus, newStatus domain.RefundStatus, updates map[string]any) error
+	SumRefundedAmountByPaymentNo(ctx context.Context, paymentNo string) (int64, error)
 }
 
 type paymentRepository struct {
@@ -73,6 +75,18 @@ func (r *paymentRepository) FindByOrderNo(ctx context.Context, orderNo string) (
 	return r.toDomain(model), nil
 }
 
+func (r *paymentRepository) ListOpenPaymentsByOrderNo(ctx context.Context, orderNo string) ([]domain.PaymentOrder, error) {
+	models, err := r.dao.ListOpenPaymentsByOrderNo(ctx, orderNo)
+	if err != nil {
+		return nil, err
+	}
+	payments := make([]domain.PaymentOrder, 0, len(models))
+	for _, model := range models {
+		payments = append(payments, r.toDomain(model))
+	}
+	return payments, nil
+}
+
 func (r *paymentRepository) UpdateStatus(ctx context.Context, paymentNo string, oldStatus, newStatus domain.PaymentStatus, updates map[string]any) error {
 	err := r.dao.UpdateStatus(ctx, paymentNo, int32(oldStatus), int32(newStatus), updates)
 	if err != nil {
@@ -97,12 +111,13 @@ func (r *paymentRepository) ListPayments(ctx context.Context, tenantId int64, st
 
 func (r *paymentRepository) CreateRefund(ctx context.Context, refund domain.RefundRecord) error {
 	return r.dao.CreateRefund(ctx, dao.RefundRecordModel{
-		TenantId:  refund.TenantID,
-		PaymentNo: refund.PaymentNo,
-		RefundNo:  refund.RefundNo,
-		Channel:   refund.Channel,
-		Amount:    refund.Amount,
-		Status:    int32(refund.Status),
+		TenantId:    refund.TenantID,
+		PaymentNo:   refund.PaymentNo,
+		RefundNo:    refund.RefundNo,
+		Channel:     refund.Channel,
+		Amount:      refund.Amount,
+		TotalAmount: refund.TotalAmount,
+		Status:      int32(refund.Status),
 	})
 }
 
@@ -114,8 +129,12 @@ func (r *paymentRepository) FindRefundByNo(ctx context.Context, refundNo string)
 	return r.toDomainRefund(model), nil
 }
 
-func (r *paymentRepository) UpdateRefundStatus(ctx context.Context, refundNo string, status domain.RefundStatus, updates map[string]any) error {
-	return r.dao.UpdateRefundStatus(ctx, refundNo, int32(status), updates)
+func (r *paymentRepository) UpdateRefundStatus(ctx context.Context, refundNo string, oldStatus, newStatus domain.RefundStatus, updates map[string]any) error {
+	return r.dao.UpdateRefundStatus(ctx, refundNo, int32(oldStatus), int32(newStatus), updates)
+}
+
+func (r *paymentRepository) SumRefundedAmountByPaymentNo(ctx context.Context, paymentNo string) (int64, error) {
+	return r.dao.SumRefundedAmountByPaymentNo(ctx, paymentNo)
 }
 
 func (r *paymentRepository) ListPaymentsByDateAndChannel(ctx context.Context, channel string, startTime, endTime int64) ([]domain.PaymentOrder, error) {
@@ -178,6 +197,7 @@ func (r *paymentRepository) toDomainRefund(m dao.RefundRecordModel) domain.Refun
 		RefundNo:        m.RefundNo,
 		Channel:         m.Channel,
 		Amount:          m.Amount,
+		TotalAmount:     m.TotalAmount,
 		Status:          domain.RefundStatus(m.Status),
 		ChannelRefundNo: m.ChannelRefundNo,
 		Ctime:           time.UnixMilli(m.Ctime),
