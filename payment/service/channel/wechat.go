@@ -1,6 +1,7 @@
 package channel
 
 import (
+	"bytes"
 	"compress/gzip"
 	"context"
 	"encoding/csv"
@@ -241,15 +242,17 @@ func (c *WechatChannel) DownloadBill(ctx context.Context, billDate string) ([]Bi
 	}
 	defer billResp.Response.Body.Close()
 
-	// 3. Decompress gzip; fallback to raw if not actually gzipped
-	gzReader, gzErr := gzip.NewReader(billResp.Response.Body)
+	// 3. Read full body first, then try gzip decompression
+	rawBody, err := io.ReadAll(billResp.Response.Body)
+	if err != nil {
+		return nil, fmt.Errorf("读取微信对账单失败: %w", err)
+	}
+
+	// Try gzip decompression
+	gzReader, gzErr := gzip.NewReader(bytes.NewReader(rawBody))
 	if gzErr != nil {
-		// Not gzipped — read body directly (WeChat sometimes returns plain text)
-		billBody, readErr := io.ReadAll(billResp.Response.Body)
-		if readErr != nil {
-			return nil, fmt.Errorf("读取微信对账单失败: %w", readErr)
-		}
-		return parseWechatBillCSV(string(billBody))
+		// Not gzipped — use raw body directly
+		return parseWechatBillCSV(string(rawBody))
 	}
 	defer gzReader.Close()
 

@@ -46,6 +46,7 @@ func (ReconciliationDetailModel) TableName() string { return "reconciliation_det
 type ReconciliationDAO interface {
 	CreateBatch(ctx context.Context, batch ReconciliationBatchModel) (ReconciliationBatchModel, error)
 	UpdateBatch(ctx context.Context, id int64, updates map[string]any) error
+	FindBatchByChannelAndDate(ctx context.Context, channel, billDate string) (ReconciliationBatchModel, error)
 	ListBatches(ctx context.Context, offset, limit int) ([]ReconciliationBatchModel, int64, error)
 	GetBatch(ctx context.Context, id int64) (ReconciliationBatchModel, error)
 	CreateDetails(ctx context.Context, details []ReconciliationDetailModel) error
@@ -71,6 +72,12 @@ func (d *GORMReconciliationDAO) CreateBatch(ctx context.Context, batch Reconcili
 func (d *GORMReconciliationDAO) UpdateBatch(ctx context.Context, id int64, updates map[string]any) error {
 	updates["utime"] = time.Now().UnixMilli()
 	return d.db.WithContext(ctx).Model(&ReconciliationBatchModel{}).Where("id = ?", id).Updates(updates).Error
+}
+
+func (d *GORMReconciliationDAO) FindBatchByChannelAndDate(ctx context.Context, channel, billDate string) (ReconciliationBatchModel, error) {
+	var batch ReconciliationBatchModel
+	err := d.db.WithContext(ctx).Where("channel = ? AND bill_date = ? AND status = ?", channel, billDate, 2).First(&batch).Error
+	return batch, err
 }
 
 func (d *GORMReconciliationDAO) ListBatches(ctx context.Context, offset, limit int) ([]ReconciliationBatchModel, int64, error) {

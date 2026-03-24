@@ -11,6 +11,7 @@ import (
 	"github.com/rermrf/mall/payment/repository/dao"
 	"github.com/rermrf/mall/payment/service/channel"
 	"github.com/rermrf/mall/pkg/snowflake"
+	"gorm.io/gorm"
 )
 
 type fakePaymentRepo struct {
@@ -303,6 +304,10 @@ func (f *fakeReconciliationDAO) CreateDetails(ctx context.Context, details []dao
 
 func (f *fakeReconciliationDAO) ListDetails(ctx context.Context, batchId int64, offset, limit int) ([]dao.ReconciliationDetailModel, int64, error) {
 	return nil, 0, nil
+}
+
+func (f *fakeReconciliationDAO) FindBatchByChannelAndDate(ctx context.Context, channel, billDate string) (dao.ReconciliationBatchModel, error) {
+	return dao.ReconciliationBatchModel{}, gorm.ErrRecordNotFound
 }
 
 func newTestNode() *snowflake.Node {

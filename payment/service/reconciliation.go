@@ -55,6 +55,16 @@ func NewReconciliationService(
 }
 
 func (s *reconciliationService) RunReconciliation(ctx context.Context, ch string, billDate string) (int64, error) {
+	// 0. 去重检查：同渠道同日期已有成功的对账批次则跳过
+	existing, err := s.reconDAO.FindBatchByChannelAndDate(ctx, ch, billDate)
+	if err == nil && existing.ID > 0 {
+		s.l.Info("该渠道和日期已完成对账，跳过",
+			logger.String("channel", ch),
+			logger.String("billDate", billDate),
+			logger.String("batchNo", existing.BatchNo))
+		return existing.ID, nil
+	}
+
 	// 1. 生成批次号并创建批次记录
 	batchNo := fmt.Sprintf("R%d", s.node.Generate())
 	batch, err := s.reconDAO.CreateBatch(ctx, dao.ReconciliationBatchModel{
