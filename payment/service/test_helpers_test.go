@@ -316,3 +316,27 @@ func newTestNode() *snowflake.Node {
 func newTestLogger() logger.Logger {
 	return logger.NewNopLogger()
 }
+
+// nonReconcilerChannel implements Channel but NOT Reconciler,
+// used to test the "channel does not support reconciliation" code path.
+type nonReconcilerChannel struct{}
+
+func (c *nonReconcilerChannel) Pay(ctx context.Context, payment domain.PaymentOrder) (string, string, error) {
+	return "", "", nil
+}
+
+func (c *nonReconcilerChannel) QueryPayment(ctx context.Context, paymentNo string) (int32, string, error) {
+	return 0, "", nil
+}
+
+func (c *nonReconcilerChannel) Refund(ctx context.Context, refund domain.RefundRecord) (string, error) {
+	return "", nil
+}
+
+func (c *nonReconcilerChannel) QueryRefund(ctx context.Context, refundNo string) (int32, string, error) {
+	return 0, "", nil
+}
+
+func (c *nonReconcilerChannel) VerifyNotify(ctx context.Context, data map[string]string) (string, string, error) {
+	return "", "", nil
+}

@@ -1,12 +1,20 @@
 package channel
 
 import (
+	"archive/zip"
+	"bytes"
 	"context"
+	"encoding/csv"
 	"fmt"
+	"io"
+	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/smartwalle/alipay/v3"
 	"github.com/spf13/viper"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 
 	"github.com/rermrf/mall/payment/domain"
 )
@@ -171,14 +179,117 @@ func (c *AlipayChannel) DownloadBill(ctx context.Context, billDate string) ([]Bi
 	return downloadAndParseBill(result.BillDownloadURL)
 }
 
-// downloadAndParseBill downloads the zip file from Alipay, extracts CSV, and parses bill items
+// downloadAndParseBill downloads the zip file from Alipay, extracts CSV, and parses bill items.
+// Alipay ZIP contains 2 CSVs: one with "业务明细" in the filename (detail) and one summary.
+// The detail CSV uses GBK encoding.
 func downloadAndParseBill(downloadURL string) ([]BillItem, error) {
-	// TODO: implement CSV download and parsing
-	// 1. HTTP GET downloadURL -> zip file
-	// 2. Unzip -> find the detail CSV file (not summary)
-	// 3. Parse each row into BillItem
-	// For now, return empty - will be implemented in reconciliation task
-	return nil, fmt.Errorf("对账单解析暂未实现")
+	// 1. Download ZIP
+	resp, err := http.Get(downloadURL)
+	if err != nil {
+		return nil, fmt.Errorf("下载对账单失败: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("读取对账单失败: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("下载对账单HTTP状态异常: %d", resp.StatusCode)
+	}
+
+	// 2. Open ZIP in memory
+	zipReader, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
+	if err != nil {
+		return nil, fmt.Errorf("解压对账单失败: %w", err)
+	}
+
+	// 3. Find the detail CSV file (contains "业务明细" in filename)
+	var detailFile *zip.File
+	for _, f := range zipReader.File {
+		if strings.Contains(f.Name, "业务明细") {
+			detailFile = f
+			break
+		}
+	}
+	if detailFile == nil {
+		return nil, fmt.Errorf("对账单中未找到业务明细文件")
+	}
+
+	// 4. Read and decode GBK → UTF-8
+	rc, err := detailFile.Open()
+	if err != nil {
+		return nil, fmt.Errorf("打开明细文件失败: %w", err)
+	}
+	defer rc.Close()
+
+	decoder := simplifiedchinese.GBK.NewDecoder()
+	reader := csv.NewReader(transform.NewReader(rc, decoder))
+	reader.LazyQuotes = true
+
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, fmt.Errorf("解析CSV失败: %w", err)
+	}
+
+	// 5. Parse records, skip header row and footer/summary rows
+	var items []BillItem
+	for i, row := range records {
+		if i == 0 {
+			continue // skip column header
+		}
+		if len(row) < 12 {
+			continue
+		}
+
+		// Trim all fields (Alipay adds leading/trailing spaces)
+		for j := range row {
+			row[j] = strings.TrimSpace(row[j])
+		}
+
+		// Skip summary/footer rows (start with '#', contain '总计', or are empty)
+		if row[0] == "" || strings.HasPrefix(row[0], "#") || strings.Contains(row[0], "总") {
+			continue
+		}
+
+		// Map columns:
+		//  0: 支付宝交易号  → ChannelTradeNo
+		//  1: 商户订单号    → OutTradeNo (payment_no)
+		//  5: 完成时间      → PayTime
+		// 11: 订单金额      → Amount (yuan → fen)
+		// last or 22: 交易状态 → Status
+		statusIdx := len(row) - 1
+		if statusIdx > 22 {
+			statusIdx = 22
+		}
+
+		items = append(items, BillItem{
+			ChannelTradeNo: row[0],
+			OutTradeNo:     row[1],
+			Amount:         YuanToFen(row[11]),
+			Status:         mapAlipayBillStatus(row[statusIdx]),
+			PayTime:        row[5],
+		})
+	}
+
+	return items, nil
+}
+
+// mapAlipayBillStatus converts Chinese trade status from Alipay bill CSV
+// to standardised status strings used by the reconciliation engine.
+func mapAlipayBillStatus(status string) string {
+	status = strings.TrimSpace(status)
+	switch status {
+	case "交易成功":
+		return "TRADE_SUCCESS"
+	case "交易关闭":
+		return "TRADE_CLOSED"
+	case "退款成功":
+		return "REFUND_SUCCESS"
+	default:
+		return status
+	}
 }
 
 func mapAlipayTradeStatus(status alipay.TradeStatus) domain.PaymentStatus {

@@ -59,24 +59,26 @@ func TestRunReconciliation_TracksMissingChannelTradeNoAsMismatch(t *testing.T) {
 	}
 }
 
-func TestRunReconciliation_RejectsUnavailableChannelClearly(t *testing.T) {
+func TestRunReconciliation_RejectsNonReconcilerChannel(t *testing.T) {
 	reconDAO := &fakeReconciliationDAO{}
+	// Use a channel that does NOT implement Reconciler
+	nonReconcilerCh := &nonReconcilerChannel{}
 	svc := &reconciliationService{
 		reconDAO: reconDAO,
 		repo:     &fakePaymentRepo{},
-		channels: map[string]channel.Channel{"wechat": &fakeChannel{}},
+		channels: map[string]channel.Channel{"custom": nonReconcilerCh},
 		node:     newTestNode(),
 		l:        newTestLogger(),
 	}
 
-	batchID, err := svc.RunReconciliation(context.Background(), "wechat", "2026-03-23")
+	batchID, err := svc.RunReconciliation(context.Background(), "custom", "2026-03-23")
 
 	assert.Error(t, err)
 	assert.Equal(t, int64(1), batchID)
-	assert.Contains(t, err.Error(), "对账暂未实现")
+	assert.Contains(t, err.Error(), "不支持对账")
 	if assert.NotEmpty(t, reconDAO.batchUpdates) {
 		last := reconDAO.batchUpdates[len(reconDAO.batchUpdates)-1].updates
 		assert.EqualValues(t, 3, last["status"])
-		assert.Contains(t, last["error_msg"], "对账暂未实现")
+		assert.Contains(t, last["error_msg"], "不支持对账")
 	}
 }

@@ -1,7 +1,10 @@
 package channel
 
 import (
+	"compress/gzip"
 	"context"
+	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -198,13 +201,113 @@ func (c *WechatChannel) VerifyNotify(ctx context.Context, data map[string]string
 	return *transaction.OutTradeNo, *transaction.TransactionId, nil
 }
 
-// DownloadBill implements Reconciler interface
+// DownloadBill implements Reconciler interface.
+// It calls WeChat Pay V3 /v3/bill/tradebill to get a download URL,
+// downloads the gzip-compressed CSV, decompresses it, and parses it.
 func (c *WechatChannel) DownloadBill(ctx context.Context, billDate string) ([]BillItem, error) {
 	if c.client == nil {
 		return nil, fmt.Errorf("微信支付客户端未初始化")
 	}
-	// TODO: implement bill download using /v3/bill/tradebill
-	return nil, fmt.Errorf("对账单解析暂未实现")
+
+	// 1. Get download URL via /v3/bill/tradebill
+	billURL := fmt.Sprintf("https://api.mch.weixin.qq.com/v3/bill/tradebill?bill_date=%s&bill_type=ALL", billDate)
+	apiResp, err := c.client.Get(ctx, billURL)
+	if err != nil {
+		return nil, fmt.Errorf("查询微信对账单下载地址失败: %w", err)
+	}
+	defer apiResp.Response.Body.Close()
+
+	apiBody, err := io.ReadAll(apiResp.Response.Body)
+	if err != nil {
+		return nil, fmt.Errorf("读取微信账单响应失败: %w", err)
+	}
+
+	var billResult struct {
+		HashType    string `json:"hash_type"`
+		HashValue   string `json:"hash_value"`
+		DownloadURL string `json:"download_url"`
+	}
+	if err := json.Unmarshal(apiBody, &billResult); err != nil {
+		return nil, fmt.Errorf("解析微信账单响应失败: %w", err)
+	}
+	if billResult.DownloadURL == "" {
+		return nil, fmt.Errorf("微信账单下载地址为空")
+	}
+
+	// 2. Download the bill (gzip-compressed CSV)
+	billResp, err := c.client.Get(ctx, billResult.DownloadURL)
+	if err != nil {
+		return nil, fmt.Errorf("下载微信对账单失败: %w", err)
+	}
+	defer billResp.Response.Body.Close()
+
+	// 3. Decompress gzip; fallback to raw if not actually gzipped
+	gzReader, gzErr := gzip.NewReader(billResp.Response.Body)
+	if gzErr != nil {
+		// Not gzipped — read body directly (WeChat sometimes returns plain text)
+		billBody, readErr := io.ReadAll(billResp.Response.Body)
+		if readErr != nil {
+			return nil, fmt.Errorf("读取微信对账单失败: %w", readErr)
+		}
+		return parseWechatBillCSV(string(billBody))
+	}
+	defer gzReader.Close()
+
+	billData, err := io.ReadAll(gzReader)
+	if err != nil {
+		return nil, fmt.Errorf("解压微信对账单失败: %w", err)
+	}
+
+	return parseWechatBillCSV(string(billData))
+}
+
+// parseWechatBillCSV parses WeChat Pay trade bill CSV content into BillItem slices.
+// WeChat CSVs use UTF-8 encoding and prepend "`" to cell values to prevent Excel auto-formatting.
+func parseWechatBillCSV(csvContent string) ([]BillItem, error) {
+	reader := csv.NewReader(strings.NewReader(csvContent))
+	reader.LazyQuotes = true
+
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, fmt.Errorf("解析微信账单CSV失败: %w", err)
+	}
+
+	var items []BillItem
+	for i, row := range records {
+		if i == 0 {
+			continue // skip header
+		}
+		if len(row) < 25 {
+			continue
+		}
+
+		// Trim spaces and backtick prefix from every field
+		for j := range row {
+			row[j] = strings.TrimSpace(row[j])
+			row[j] = strings.TrimPrefix(row[j], "`")
+		}
+
+		// Skip summary/footer rows
+		if row[0] == "" || strings.HasPrefix(row[0], "总") {
+			continue
+		}
+
+		// Column mapping:
+		//  0: 交易时间       → PayTime
+		//  5: 微信订单号     → ChannelTradeNo
+		//  6: 商户订单号     → OutTradeNo (payment_no)
+		//  9: 交易状态       → Status (SUCCESS/REFUND/REVOKED)
+		// 24: 订单金额       → Amount (yuan → fen)
+		items = append(items, BillItem{
+			ChannelTradeNo: row[5],
+			OutTradeNo:     row[6],
+			Amount:         YuanToFen(row[24]),
+			Status:         row[9],
+			PayTime:        row[0],
+		})
+	}
+
+	return items, nil
 }
 
 func mapWechatTradeState(state string) domain.PaymentStatus {

@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -66,12 +65,6 @@ func (s *reconciliationService) RunReconciliation(ctx context.Context, ch string
 	})
 	if err != nil {
 		return 0, fmt.Errorf("创建对账批次失败: %w", err)
-	}
-
-	if ch != "mock" {
-		errMsg := fmt.Sprintf("渠道 %s 对账暂未实现", ch)
-		s.failBatch(ctx, batch.ID, errMsg)
-		return batch.ID, errors.New(errMsg)
 	}
 
 	// 2. 获取渠道并检查是否支持对账
